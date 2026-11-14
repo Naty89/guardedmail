@@ -4,7 +4,7 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M8 (voice and languages) — code written, live checks not finished
+**Current milestone:** M9 (eval script) — not started
 **Backend tests:** 598 passing
 **Frontend build:** passing, no TypeScript errors
 
@@ -22,7 +22,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 | M5 | Confirm flow, payer, receipt, ledger (demo beat 1) | Done, checked in a browser and with one live Nessie payment |
 | M6 | `scam.py` + Scam blocked screen (demo beat 2) | Done, checked in a browser |
 | M7 | Audit log, audit screen, judge panel | Done with the local file; MongoDB path untested |
-| M8 | TTS + languages wired | Not started |
+| M8 | TTS + languages wired | Done; 2 of 12 sample audio files still to generate (daily quota) |
 | M9 | Eval script (demo beat 3) | Not started |
 
 ---
@@ -32,7 +32,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 - [x] **Nessie API key.** In `.env`; demo data seeded.
 - [x] **Does a Nessie purchase change the balance?** No. See the result below. We show our own ledger.
 - [x] **Gemini API key.** In `.env`, working.
-- [ ] **Gemini free-tier limits.** The key is on the free tier: `gemini-3.8-flash` allows 20 requests a day (used up on 2026-11-14), and `gemini-3.5-flash-lite` has a per-minute cap that a burst of reads trips (429), plus occasional 503s. Each letter costs 3 calls. `.env` now sets `GEMINI_MODEL=gemini-3.5-flash-lite` (reads take about 3s). Before the demo: enable billing on the key or get a second key, and rely on cached fixtures for the demo letters (M4).
+- [ ] **Gemini free-tier limits.** The key is on the free tier. Daily caps seen: `gemini-3.8-flash` 20 requests, `gemini-3.8-flash-tts` **10 requests**. `gemini-3.5-flash-lite` has a per-minute cap plus occasional 503s. Each new letter costs 3 text calls and 1 speech call. `.env` sets `GEMINI_MODEL=gemini-3.5-flash-lite`. The two sample letters are fully cached, but a NEW photo during the demo will get speech only until the 10 daily speech calls run out, then the browser voice. Enable billing on the key before judging.
 - [ ] **`TOKEN_SECRET`.** Must be at least 16 characters or signing refuses to run; generate with `python -c "import secrets; print(secrets.token_hex(32))"`.
 - [ ] **Translations not reviewed by native speakers.** Amharic, Telugu and Tamil need it most.
 - [ ] **Nothing tested on a real phone.** Camera capture and photo rotation were only tried in desktop headless Chrome.
@@ -114,7 +114,6 @@ RESULT: balance after bill marked completed: 100
 - [x] `frontend/src/lib/api.ts` types aligned with `schemas.py`
 - [x] New UI strings in all 9 languages
 - [x] Browser check at phone width: bill shows "Pay $84.12"; suspicious letter shows "Possible scam" and no pay button
-- [ ] Sample letters are cached for English only; other languages call Gemini the first time
 
 ## M5 — Pay (demo beat 1)
 
@@ -158,19 +157,22 @@ RESULT: balance after bill marked completed: 100
 - [ ] MongoDB backend is written but has never been run against a real cluster (no `MONGODB_URI` set)
 - [ ] Nessie request ID: shown if Nessie sends an `x-request-id` header; not yet seen whether it does
 
-## M8 — Voice and languages (in progress)
+## M8 — Voice and languages
 
 - [x] `tts.py`: Gemini speech with a disk cache in `backend/fixtures/audio`; needs API version `v1alpha` (the default rejects `speech_config`); returns WAV
 - [x] `GET /letters/{id}/audio`: WAV, or 204 so the browser voice is used
 - [x] Audio generation starts in the background when a letter is read
 - [x] Play/pause button on the Explanation and Scam blocked screens (no autoplay; hidden for zh, ar, am)
-- [x] Live check: English speech generated (5.3s for 17s of audio)
-- [ ] Play button not yet tried in a browser or on a phone
-- [ ] Telugu and Tamil speech not yet heard: the one Telugu attempt got a 503 from Gemini
-- [ ] Telugu and Tamil end-to-end test (explanation + audio)
-- [ ] Free-tier quota for the speech model is unknown
+- [x] Browser check (English and Telugu): Play starts the audio, Pause stops it, nothing plays by itself; no button in Amharic
+- [x] Telugu and Tamil end to end through the live server: correct payee and amount, explanation in the language, 22s of audio each
+- [x] Generated Telugu and Tamil audio transcribed back by Gemini: recognised as Telugu / Tamil and matching the text
+- [x] Explanations now write dates with the month as a word, so they read well aloud
+- [x] `scripts/warm_fixtures.py`: both sample letters are cached in all 9 languages (18 readings), so the demo letters do not call Gemini
+- [ ] Audio cached for 10 of 12 sample/language pairs. Missing: suspicious letter in Tamil and Portuguese. Rerun `python -m scripts.warm_fixtures` after the daily quota resets.
+- [ ] Not yet heard by a person, and not yet tried on a real phone
+- [ ] Telugu and Tamil wording needs a native speaker's review (the Tamil sample has spelling slips)
 
-## M9 — Eval (demo beat 3)
+## M9 — Eval (demo beat 3) (next)
 
 - [ ] Folder of labelled invented letter photos
 - [ ] Script prints: amount / date / payee accuracy, scams caught, real bills wrongly flagged, unauthorised payments

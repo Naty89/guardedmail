@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Pioneer Valley Electric",
+    "amount_cents": 8412,
+    "currency": "USD",
+    "due_date": "2026-11-24",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric\n400 Mill River Road, Northampton, MA 01060\nSTATEMENT OF ACCOUNT\nCustomer: Demo User\nService address: 12 Juniper Lane, Amherst, MA 01002\nAccount number: 4471-220-918\nBilling period: 30 days\nElectricity used: 512 kWh\nDelivery and supply charges: $79.87\nTaxes and fees: $4.25\nTOTAL AMOUNT DUE: $84.12\nPAYMENT DUE DATE: November 24, 2026\nIf payment is not received by the due date, a late fee\nof 1.5% may be added to your next statement.\nQuestions about this bill? Call 413-555-0142."
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Pioneer Valley Electric",
+    "amount_cents": 8412,
+    "currency": "USD",
+    "due_date": "2026-11-24",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric 400 Mill River Road, Northampton, MA 01060 STATEMENT OF ACCOUNT Customer: Demo User Service address: 12 Juniper Lane, Amherst, MA 01002 Account number: 4471-220-918 Billing period: 30 days Electricity used: 512 kWh Delivery and supply charges: $79.87 Taxes and fees: $4.25 TOTAL AMOUNT DUE: $84.12 PAYMENT DUE DATE: November 24, 2026 If payment is not received by the due date, a late fee of 1.5% may be added to your next statement. Questions about this bill? Call 413-555-0142."
+  },
+  "evidence_ok": true,
+  "explanation": "Pioneer Valley Electric te envió esta carta. Quieren que pagues por la electricidad que usaste en tu casa. Debes pagar $84.12 antes de 24 de noviembre de 2026. Si no pagas a tiempo, te pueden cobrar un cargo por pago atrasado de 1.5% en tu próxima factura.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

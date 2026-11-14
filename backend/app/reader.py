@@ -352,8 +352,11 @@ def explanation_prompt(reading: ReaderOutput, language: str) -> str:
         "- Use this order: who sent it, what they want, how much and by when, "
         "what happens next according to the letter.\n"
         "- Do not add facts, opinions or advice that are not in the letter.\n"
-        "- Copy amounts, dates and reference numbers exactly as given, using "
-        "Western digits 0-9 only. Do not write any other numbers.\n"
+        "- Copy amounts and reference numbers exactly as given, using Western "
+        "digits 0-9 only. Do not write any other numbers.\n"
+        f"- Write each date with the month as a word in {language_name} and the "
+        "day and year as digits (not as 2026-11-24), so it reads well aloud. "
+        "Keep the same day, month and year.\n"
         "- Plain text only: no headings, lists or formatting.\n\n"
         f"Letter data (JSON):\n{explanation_input(reading)}"
     )

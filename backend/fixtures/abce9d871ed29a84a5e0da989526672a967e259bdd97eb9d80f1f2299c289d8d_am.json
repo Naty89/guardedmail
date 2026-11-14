@@ -20,7 +20,7 @@
     "raw_text": "Pioneer Valley Electric 400 Mill River Road, Northampton, MA 01060 STATEMENT OF ACCOUNT Customer: Demo User Service address: 12 Juniper Lane, Amherst, MA 01002 Account number: 4471-220-918 Billing period: 30 days Electricity used: 512 kWh Delivery and supply charges: $79.87 Taxes and fees: $4.25 TOTAL AMOUNT DUE: $84.12 PAYMENT DUE DATE: November 24, 2026 If payment is not received by the due date, a late fee of 1.5% may be added to your next statement. Questions about this bill? Call 413-555-0142."
   },
   "evidence_ok": true,
-  "explanation": "Pioneer Valley Electric የተባለ ድርጅት ደብዳቤ ልኮልዎታል። የኤሌክትሪክ ክፍያ እንዲከፍሉ ይፈልጋሉ። የክፍያው መጠን $84.12 ሲሆን፣ መክፈል ያለብዎት በ 2026-11-24 ቀን ወይም ከዚያ በፊት ነው። ክፍያውን ካልከፈሉ፣ በሚቀጥለው ሂሳብዎ ላይ የ 1.5 በመቶ የዘግይ ቅጣት ሊጨመር ይችላል።",
+  "explanation": "ፓዮነር ቫሊ ኤሌክትሪክ ደብዳቤ ልኮልናል። የኤሌክትሪክ ክፍያ እንድንከፍል ይፈልጋሉ። የክፍያው መጠን $84.12 ነው። ክፍያው የሚጠናቀቀው ህዳር 24, 2026 ነው። ክፍያው በዚህ ቀን ካልተከፈለ ቀጣዩ ሂሳብ ላይ የዘግየት ቅጣት ሊጨመር ይችላል።",
   "explanation_source": "model",
   "model_ids": [
     "gemini-3.5-flash-lite",
