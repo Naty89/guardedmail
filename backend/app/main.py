@@ -8,6 +8,7 @@ are added in.
 
 from pathlib import Path
 
+from datetime import datetime, timezone
 from uuid import UUID
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
@@ -16,9 +17,21 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app.letters import process_letter
+from app import payer
+from app.letters import current_balance_cents, demo_account_id, process_letter
+from app.nessie import NessieError, get_read_client
 from app.reader import MAX_UPLOAD_BYTES, ReaderError
-from app.schemas import LetterResponse
+from app.schemas import (
+    AccountResponse,
+    BillSummary,
+    ConfirmRequest,
+    ConfirmResponse,
+    LetterResponse,
+    PaymentSummary,
+    ReasonId,
+    Receipt,
+    RejectResponse,
+)
 from app.store import STORE, sample_image_bytes
 
 FRONTEND_DIST: Path = REPO_ROOT / "frontend" / "dist"
@@ -88,6 +101,96 @@ def get_letter_debug(letter_id: UUID) -> dict:
     if record is None:
         raise HTTPException(404, {"error": "letter_not_found"})
     return record.debug
+
+
+@app.get("/letters/{letter_id}/image")
+def get_letter_image(letter_id: UUID) -> Response:
+    """A small picture of the letter, shown beside the confirm question."""
+    record = STORE.by_letter(letter_id)
+    if record is None or record.thumbnail_jpeg is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    return Response(record.thumbnail_jpeg, media_type="image/jpeg")
+
+
+@app.post("/proposals/{proposal_id}/confirm")
+async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmResponse:
+    """Pay a proposal the user confirmed.
+
+    The body holds the token and nothing else (extra fields are rejected).
+    Amount and payee come from the intent this server stored earlier.
+    """
+    record = STORE.by_proposal(proposal_id)
+    if record is None or record.intent is None or record.expires_at is None:
+        return ConfirmResponse(status="blocked", block_reason=ReasonId.PROPOSAL_NOT_FOUND)
+    if record.status == "rejected":
+        return ConfirmResponse(status="blocked", block_reason=ReasonId.PROPOSAL_REJECTED)
+    if record.status != "paid" and STORE.is_paid(record.image_sha256):
+        return ConfirmResponse(status="blocked", block_reason=ReasonId.ALREADY_PAID)
+
+    settings = get_settings()
+    result = await payer.pay(
+        record.intent, body.token,
+        expires_at=record.expires_at,
+        now=datetime.now(timezone.utc),
+        secret=settings.token_secret,
+        account_id=demo_account_id(),
+        balance_cents=current_balance_cents(),
+    )
+    if result.steps:  # keep the steps of the attempt that reached the bank
+        record.debug["payer_steps"] = list(result.steps)
+    if not result.paid:
+        return ConfirmResponse(status="blocked", block_reason=result.reason)
+
+    record.status = "paid"
+    STORE.mark_paid(record.image_sha256)
+    record.receipt = Receipt(
+        nessie_id=result.nessie_id,
+        payee_name=record.payee_name or "",
+        amount_cents=record.intent.amount_cents,
+        new_balance_cents=current_balance_cents(),  # our ledger, after this payment
+    ).model_dump()
+    record.debug["paid_at"] = datetime.now(timezone.utc).isoformat()
+    return ConfirmResponse(status="paid", receipt=Receipt(**record.receipt))
+
+
+@app.post("/proposals/{proposal_id}/reject")
+def reject_proposal(proposal_id: UUID) -> RejectResponse:
+    """The user said no. The proposal can no longer be confirmed."""
+    record = STORE.by_proposal(proposal_id)
+    if record is None:
+        raise HTTPException(404, {"error": "proposal_not_found"})
+    if record.status == "proposed":
+        record.status = "rejected"
+    return RejectResponse()
+
+
+@app.get("/account")
+async def get_account() -> AccountResponse:
+    """Balance from our own ledger, bills from the bank, payments we made."""
+    settings = get_settings()
+    bills: list[BillSummary] = []
+    client = get_read_client()
+    try:
+        for bill in await client.list_account_bills(demo_account_id()):
+            bills.append(BillSummary(
+                bill_id=str(bill.get("_id", "")), payee=str(bill.get("payee", "")),
+                amount_cents=round(float(bill.get("payment_amount") or 0) * 100),
+                due_date=bill.get("payment_date") or None,
+                status=str(bill.get("status", "")),
+            ))
+    except (NessieError, ValueError):
+        bills = []  # the bank is unreachable: still show our own ledger
+    finally:
+        await client.aclose()
+    payments = [
+        PaymentSummary(
+            purchase_id=record.receipt["nessie_id"], merchant_name=record.payee_name or "",
+            amount_cents=record.intent.amount_cents,
+            paid_on=(record.debug.get("paid_at") or "")[:10] or None)
+        for record in STORE.paid_records() if record.receipt
+    ]
+    return AccountResponse(balance_cents=current_balance_cents(), bills=bills,
+                           recent_payments=payments)
 
 
 # Later milestones add their routes here.

@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M5 (confirm and pay) — not started
-**Backend tests:** 497 passing
+**Current milestone:** M6 (scam checks) — not started
+**Backend tests:** 527 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -19,7 +19,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 | M2 | `policy.py` + tests | Done |
 | M3 | `reader.py` | Done, verified live on both sample letters |
 | M4 | `POST /letters` + Capture / Reading / Explanation UI | Done, checked in a browser with both samples |
-| M5 | Confirm flow, payer, receipt, ledger (demo beat 1) | Not started |
+| M5 | Confirm flow, payer, receipt, ledger (demo beat 1) | Done, checked in a browser and with one live Nessie payment |
 | M6 | `scam.py` + Scam blocked screen (demo beat 2) | Not started |
 | M7 | Audit log, audit screen, judge panel | Not started |
 | M8 | TTS + languages wired | Not started |
@@ -61,7 +61,7 @@ RESULT: balance after bill marked completed: 100
 - [x] All UI strings in `frontend/src/i18n/strings.json` for 9 languages
 - [x] Placeholder screens: Reading, Explanation, Confirm, Receipt, Scam blocked, Audit
 - [x] `?debug=1` judge panel placeholder (has jump-to-screen buttons)
-- [ ] First git commit (repo is initialised, nothing committed)
+- [x] First git commit (`a113fa5`, M0–M4)
 
 ## M1 — Nessie
 
@@ -86,7 +86,7 @@ RESULT: balance after bill marked completed: 100
 - [x] Tests: disagreeing passes, unknown payee, scam signal, over cap, over balance, bad date, expired token, reused token, tampered token
 - [x] Tests: arbitrary text in `raw_text` or `payee_candidate` cannot produce an Allow for an unknown merchant (fixed list plus 3,000 random strings)
 - [x] Test: `policy.py` never reads `raw_text` and imports no model or network code
-- [ ] Single-use token record is in memory only; back it with storage in M5
+- [ ] Single-use token record is in memory only; persist it in M7
 
 ## M3 — Reader
 
@@ -116,16 +116,23 @@ RESULT: balance after bill marked completed: 100
 - [x] Browser check at phone width: bill shows "Pay $84.12"; suspicious letter shows "Possible scam" and no pay button
 - [ ] Scam risk currently comes from the reader's own signals (`interim_scam_result`); M6 replaces it with `scam.py`
 - [ ] Sample letters are cached for English only; other languages call Gemini the first time
-- [ ] The "Pay" button opens the Confirm screen, which is still a placeholder (M5)
 
-## M5 — Pay (demo beat 1) (next)
+## M5 — Pay (demo beat 1)
 
-- [ ] `payer.py`: only module importing the write client; idempotency per proposal
-- [ ] `POST /proposals/{id}/confirm` and `/reject`
-- [ ] Own ledger; `GET /account`
-- [ ] Confirm dialog (focus on "No") and Receipt screen
+- [x] `payer.py`: only app module importing the Nessie write client (enforced by a test)
+- [x] Token checked before any bank call; single use; proposal id in the purchase description as the idempotency key
+- [x] After an unclear bank failure, looks for the purchase before reporting failure (no double charge)
+- [x] `POST /proposals/{id}/confirm` (token only; extra fields rejected with 422) and `/reject`
+- [x] Own ledger; `GET /account` (our balance, bank bills, our payments)
+- [x] One payment per letter image, even with a fresh proposal
+- [x] `GET /letters/{id}/image` thumbnail for the confirm dialog
+- [x] Confirm dialog: focus starts on "No", equal-size buttons, closing pays nothing
+- [x] Receipt screen
+- [x] `scripts/reset_demo.py` sets the demo bills back to pending
+- [x] Live check against real Nessie: paid $84.12, bill marked completed, second confirm blocked (bill then reset)
+- [ ] Ledger, proposals and used tokens are in memory: a server restart resets the balance to $2,000 and forgets paid letters. Persist them with the audit log in M7.
 
-## M6 — Scam (demo beat 2)
+## M6 — Scam (demo beat 2) (next)
 
 - [ ] Rule signals + model judgement, stricter wins
 - [ ] Scam blocked screen with no pay button

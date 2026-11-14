@@ -431,7 +431,9 @@ def test_proposal_rejects_unknown_block_reason():
 
 
 def test_confirm_and_reject_responses():
-    paid = ConfirmResponse(status="paid", receipt={"nessie_id": "abc123", "new_balance_cents": 191588})
+    paid = ConfirmResponse(status="paid", receipt={
+        "nessie_id": "abc123", "payee_name": "Pioneer Valley Electric",
+        "amount_cents": 8412, "new_balance_cents": 191588})
     assert paid.receipt.new_balance_cents == 191588
     blocked = ConfirmResponse(status="blocked", block_reason="token_expired")
     assert blocked.receipt is None and blocked.block_reason is ReasonId.TOKEN_EXPIRED
@@ -538,8 +540,10 @@ def test_reason_ids():
         "token_reused",
         "already_paid",
         "proposal_not_found",
+        "proposal_rejected",
+        "payment_failed",
     }
-    assert len(values) == len(set(values)) == 16
+    assert len(values) == len(set(values)) == 18
     for reason in ReasonId:
         assert re.fullmatch(r"[a-z]+(_[a-z]+)*", reason.value)
         assert reason.name == reason.value.upper()

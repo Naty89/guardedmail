@@ -65,7 +65,17 @@
     "signal_crypto": "It asks you to pay with crypto.",
     "signal_threat": "It threatens you.",
     "signal_mismatch_sender": "It tells you to pay someone other than the sender.",
-    "signal_unknown_payee": "We do not know who it asks you to pay."
+    "signal_unknown_payee": "We do not know who it asks you to pay.",
+    "paying": "Paying…",
+    "payment_done": "Payment done",
+    "paid_to": "Paid to",
+    "balance_left": "Money left in Checking",
+    "reference": "Reference number",
+    "payment_failed": "The payment did not go through. Nothing was paid.",
+    "payment_expired": "Too much time has passed. Nothing was paid. Please read the letter again.",
+    "already_paid": "This letter was already paid. It cannot be paid again.",
+    "letter_photo_alt": "Photo of the letter",
+    "nothing_paid": "Nothing was paid."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -130,7 +140,17 @@
     "signal_crypto": "Le pide pagar con criptomonedas.",
     "signal_threat": "Le amenaza.",
     "signal_mismatch_sender": "Le dice que pague a alguien distinto del remitente.",
-    "signal_unknown_payee": "No sabemos a quién le pide pagar."
+    "signal_unknown_payee": "No sabemos a quién le pide pagar.",
+    "paying": "Pagando…",
+    "payment_done": "Pago realizado",
+    "paid_to": "Pagado a",
+    "balance_left": "Dinero que queda en la cuenta",
+    "reference": "Número de referencia",
+    "payment_failed": "El pago no se realizó. No se pagó nada.",
+    "payment_expired": "Pasó demasiado tiempo. No se pagó nada. Lea la carta otra vez.",
+    "already_paid": "Esta carta ya se pagó. No se puede pagar otra vez.",
+    "letter_photo_alt": "Foto de la carta",
+    "nothing_paid": "No se pagó nada."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -195,7 +215,17 @@
     "signal_crypto": "यह क्रिप्टो से भुगतान माँगता है।",
     "signal_threat": "यह आपको धमकी देता है।",
     "signal_mismatch_sender": "यह भेजने वाले के बजाय किसी और को भुगतान करने को कहता है।",
-    "signal_unknown_payee": "हमें नहीं पता कि यह किसे भुगतान करने को कहता है।"
+    "signal_unknown_payee": "हमें नहीं पता कि यह किसे भुगतान करने को कहता है।",
+    "paying": "भुगतान हो रहा है…",
+    "payment_done": "भुगतान हो गया",
+    "paid_to": "किसे भुगतान हुआ",
+    "balance_left": "खाते में बची रकम",
+    "reference": "संदर्भ संख्या",
+    "payment_failed": "भुगतान नहीं हो सका। कुछ भी नहीं चुकाया गया।",
+    "payment_expired": "बहुत समय बीत गया। कुछ भी नहीं चुकाया गया। कृपया पत्र फिर से पढ़ें।",
+    "already_paid": "इस पत्र का भुगतान पहले ही हो चुका है। दोबारा भुगतान नहीं हो सकता।",
+    "letter_photo_alt": "पत्र की फ़ोटो",
+    "nothing_paid": "कुछ भी नहीं चुकाया गया।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -260,7 +290,17 @@
     "signal_crypto": "ఇది క్రిప్టోతో చెల్లించమని అడుగుతుంది.",
     "signal_threat": "ఇది మిమ్మల్ని బెదిరిస్తుంది.",
     "signal_mismatch_sender": "పంపినవారికి కాకుండా వేరొకరికి చెల్లించమని చెబుతుంది.",
-    "signal_unknown_payee": "ఇది ఎవరికి చెల్లించమంటుందో మాకు తెలియదు."
+    "signal_unknown_payee": "ఇది ఎవరికి చెల్లించమంటుందో మాకు తెలియదు.",
+    "paying": "చెల్లిస్తోంది…",
+    "payment_done": "చెల్లింపు పూర్తయింది",
+    "paid_to": "ఎవరికి చెల్లించారు",
+    "balance_left": "ఖాతాలో మిగిలిన డబ్బు",
+    "reference": "రిఫరెన్స్ సంఖ్య",
+    "payment_failed": "చెల్లింపు జరగలేదు. ఏమీ చెల్లించబడలేదు.",
+    "payment_expired": "చాలా సమయం గడిచింది. ఏమీ చెల్లించబడలేదు. దయచేసి లేఖను మళ్లీ చదవండి.",
+    "already_paid": "ఈ లేఖకు ఇప్పటికే చెల్లించారు. మళ్లీ చెల్లించలేరు.",
+    "letter_photo_alt": "లేఖ ఫోటో",
+    "nothing_paid": "ఏమీ చెల్లించబడలేదు."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -325,7 +365,17 @@
     "signal_crypto": "கிரிப்டோ மூலம் செலுத்தச் சொல்கிறது.",
     "signal_threat": "இது உங்களை மிரட்டுகிறது.",
     "signal_mismatch_sender": "அனுப்பியவருக்கு அல்லாமல் வேறொருவருக்குச் செலுத்தச் சொல்கிறது.",
-    "signal_unknown_payee": "யாருக்குச் செலுத்தச் சொல்கிறது என்று எங்களுக்குத் தெரியவில்லை."
+    "signal_unknown_payee": "யாருக்குச் செலுத்தச் சொல்கிறது என்று எங்களுக்குத் தெரியவில்லை.",
+    "paying": "செலுத்தப்படுகிறது…",
+    "payment_done": "பணம் செலுத்தப்பட்டது",
+    "paid_to": "யாருக்குச் செலுத்தப்பட்டது",
+    "balance_left": "கணக்கில் மீதமுள்ள பணம்",
+    "reference": "குறிப்பு எண்",
+    "payment_failed": "பணம் செலுத்தப்படவில்லை. எதுவும் செலுத்தப்படவில்லை.",
+    "payment_expired": "அதிக நேரம் கடந்துவிட்டது. எதுவும் செலுத்தப்படவில்லை. கடிதத்தை மீண்டும் படிக்கவும்.",
+    "already_paid": "இந்தக் கடிதத்துக்கு ஏற்கனவே பணம் செலுத்தப்பட்டது. மீண்டும் செலுத்த முடியாது.",
+    "letter_photo_alt": "கடிதத்தின் படம்",
+    "nothing_paid": "எதுவும் செலுத்தப்படவில்லை."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -390,7 +440,17 @@
     "signal_crypto": "Pede pagamento com criptomoedas.",
     "signal_threat": "Faz ameaças a você.",
     "signal_mismatch_sender": "Manda pagar a outra pessoa, não a quem enviou.",
-    "signal_unknown_payee": "Não sabemos a quem pede para pagar."
+    "signal_unknown_payee": "Não sabemos a quem pede para pagar.",
+    "paying": "Pagando…",
+    "payment_done": "Pagamento feito",
+    "paid_to": "Pago a",
+    "balance_left": "Dinheiro que resta na conta",
+    "reference": "Número de referência",
+    "payment_failed": "O pagamento não foi feito. Nada foi pago.",
+    "payment_expired": "Passou tempo demais. Nada foi pago. Leia a carta de novo.",
+    "already_paid": "Esta carta já foi paga. Não pode ser paga de novo.",
+    "letter_photo_alt": "Foto da carta",
+    "nothing_paid": "Nada foi pago."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -455,7 +515,17 @@
     "signal_crypto": "它要求用加密货币付款。",
     "signal_threat": "它在威胁您。",
     "signal_mismatch_sender": "它让您付款给寄信人以外的人。",
-    "signal_unknown_payee": "我们不知道它让您付款给谁。"
+    "signal_unknown_payee": "我们不知道它让您付款给谁。",
+    "paying": "正在支付…",
+    "payment_done": "支付完成",
+    "paid_to": "收款方",
+    "balance_left": "账户余额",
+    "reference": "参考编号",
+    "payment_failed": "支付没有成功。没有扣款。",
+    "payment_expired": "时间过长。没有扣款。请重新读取这封信。",
+    "already_paid": "这封信已经付过款，不能再付。",
+    "letter_photo_alt": "信件照片",
+    "nothing_paid": "没有扣款。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -520,7 +590,17 @@
     "signal_crypto": "تطلب الدفع بالعملات الرقمية.",
     "signal_threat": "تهددك.",
     "signal_mismatch_sender": "تطلب الدفع لشخص غير المرسل.",
-    "signal_unknown_payee": "لا نعرف لمن تطلب منك الدفع."
+    "signal_unknown_payee": "لا نعرف لمن تطلب منك الدفع.",
+    "paying": "جارٍ الدفع…",
+    "payment_done": "تم الدفع",
+    "paid_to": "دُفع إلى",
+    "balance_left": "المال المتبقي في الحساب",
+    "reference": "الرقم المرجعي",
+    "payment_failed": "لم يتم الدفع. لم يُدفع أي شيء.",
+    "payment_expired": "مرّ وقت طويل. لم يُدفع أي شيء. اقرأ الرسالة مرة أخرى.",
+    "already_paid": "هذه الرسالة دُفعت من قبل. لا يمكن دفعها مرة أخرى.",
+    "letter_photo_alt": "صورة الرسالة",
+    "nothing_paid": "لم يُدفع أي شيء."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -585,6 +665,16 @@
     "signal_crypto": "በክሪፕቶ እንዲከፍሉ ይጠይቃል።",
     "signal_threat": "ያስፈራራዎታል።",
     "signal_mismatch_sender": "ከላኪው ሌላ ለሆነ ሰው እንዲከፍሉ ይላል።",
-    "signal_unknown_payee": "ለማን እንዲከፍሉ እንደሚጠይቅ አናውቅም።"
+    "signal_unknown_payee": "ለማን እንዲከፍሉ እንደሚጠይቅ አናውቅም።",
+    "paying": "በመክፈል ላይ…",
+    "payment_done": "ክፍያው ተፈጽሟል",
+    "paid_to": "የተከፈለው ለ",
+    "balance_left": "በሂሳቡ የቀረ ገንዘብ",
+    "reference": "የማጣቀሻ ቁጥር",
+    "payment_failed": "ክፍያው አልተሳካም። ምንም አልተከፈለም።",
+    "payment_expired": "ብዙ ጊዜ አልፏል። ምንም አልተከፈለም። እባክዎ ደብዳቤውን እንደገና ያንብቡ።",
+    "already_paid": "ይህ ደብዳቤ አስቀድሞ ተከፍሏል። እንደገና ሊከፈል አይችልም።",
+    "letter_photo_alt": "የደብዳቤው ፎቶ",
+    "nothing_paid": "ምንም አልተከፈለም።"
   }
 }

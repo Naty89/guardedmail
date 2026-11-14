@@ -80,6 +80,8 @@ class ReasonId(str, Enum):
     TOKEN_REUSED = "token_reused"
     ALREADY_PAID = "already_paid"
     PROPOSAL_NOT_FOUND = "proposal_not_found"
+    PROPOSAL_REJECTED = "proposal_rejected"
+    PAYMENT_FAILED = "payment_failed"
 
 
 # ------------------------------------------------- untrusted: reader output
@@ -242,10 +244,12 @@ class ConfirmRequest(BaseModel):
 
 
 class Receipt(BaseModel):
-    """Proof of a completed mock payment."""
+    """Proof of a completed mock payment. Every field comes from our own records."""
 
-    nessie_id: str
-    new_balance_cents: int
+    nessie_id: str            # id of the purchase at the mock bank
+    payee_name: str           # trusted merchant name
+    amount_cents: int
+    new_balance_cents: int    # from our own ledger
 
 
 class ConfirmResponse(BaseModel):

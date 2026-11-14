@@ -18,7 +18,14 @@ from app import policy
 from app.config import get_settings
 from app.controller import choose_action
 from app.nessie import NessieError, get_read_client
-from app.reader import ModelCaller, ReaderError, ReaderResult, image_sha256, read_letter
+from app.reader import (
+    ModelCaller,
+    ReaderError,
+    ReaderResult,
+    image_sha256,
+    read_letter,
+    thumbnail,
+)
 from app.schemas import (
     LANGUAGES,
     LetterResponse,
@@ -78,6 +85,15 @@ async def get_trusted_merchants() -> list[policy.TrustedMerchant]:
 def reset_merchant_cache() -> None:
     global _merchant_cache
     _merchant_cache = None
+
+
+def demo_account_id() -> str:
+    """The checking account payments come from (the mock's account when offline)."""
+    settings = get_settings()
+    if settings.demo_offline:
+        from app.nessie_mock import MOCK_ACCOUNT_ID
+        return MOCK_ACCOUNT_ID
+    return settings.nessie_account_id
 
 
 def current_balance_cents() -> int:
@@ -159,6 +175,8 @@ async def process_letter(image_bytes: bytes, language: str, *,
     STORE.add(LetterRecord(
         response=response, image_sha256=reading.image_sha256,
         intent=intent, expires_at=expires_at,
+        payee_name=verdict.merchant.name if intent is not None else None,
+        thumbnail_jpeg=thumbnail(image_bytes),
         debug={
             "from_cache": from_cache,
             "reader_ms": reading.latency_ms,

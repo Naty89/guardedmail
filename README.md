@@ -102,7 +102,7 @@ Then confirm the account and its balance:
 - [x] M2 - policy.py with full test coverage, before any model code
 - [x] M3 - reader.py: preprocess, two-pass extraction, explanation, number guard
 - [x] M4 - POST /letters end to end; Capture / Reading / Explanation screens
-- [ ] M5 - Confirm flow, payer.py, receipt, ledger (demo beat 1)
+- [x] M5 - Confirm flow, payer.py, receipt, ledger (demo beat 1)
 - [ ] M6 - scam.py and the Scam blocked screen (demo beat 2)
 - [ ] M7 - audit.py, audit screen, judge panel
 - [ ] M8 - tts.py with audio cache; language picker wired; Telugu and Tamil tested

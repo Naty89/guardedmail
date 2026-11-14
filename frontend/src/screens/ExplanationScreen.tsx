@@ -47,6 +47,7 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
 function blockMessage(reason: string | null): StringKey {
   if (reason === "unknown_payee") return "cannot_pay_unknown_payee";
   if (reason === "readings_disagree") return "cannot_pay_readings_disagree";
+  if (reason === "already_paid") return "already_paid";
   return "cannot_pay_generic";
 }
 
@@ -95,6 +96,18 @@ function ActionCard({
           <Num>{formatDate(proposal.due_date, lang)}</Num>
         </p>
         <p className="text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
+      </Card>
+    );
+  }
+
+  if (proposal.block_reason === "proposal_rejected") {
+    // The user just said "No, don't pay".
+    return (
+      <Card>
+        <CardTitle className="flex items-center gap-2">
+          <CircleHelp className="size-6 shrink-0" aria-hidden="true" />
+          {t(lang, "nothing_paid")}
+        </CardTitle>
       </Card>
     );
   }

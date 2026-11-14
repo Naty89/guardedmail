@@ -230,8 +230,9 @@ Required test: a letter containing an embedded instruction to pay a different ac
 | `POST /letters` | multipart `language` + `image` (or `sample` = `electric_bill` / `suspicious_letter`) | letter_id, explanation, summary {doc_type, sender, amount_cents, due_date}, scam {risk, reasons[]}, proposal {id, action, payee_name, amount_cents, due_date, expires_at, token} |
 | `GET /letters/{id}` | — | cached result |
 | `GET /letters/{id}/debug` | — | timings, model ids, policy verdict and reasons (no letter text) |
+| `GET /letters/{id}/image` | — | small JPEG of the letter for the confirm dialog |
 | `GET /letters/{id}/audio` | — | audio bytes, or 204 (client falls back to `speechSynthesis`) |
-| `POST /proposals/{id}/confirm` | `{token}` only | status, receipt {nessie_id, new_balance} |
+| `POST /proposals/{id}/confirm` | `{token}` only | status (paid / blocked), receipt {nessie_id, payee_name, amount_cents, new_balance_cents}, block_reason |
 | `POST /proposals/{id}/reject` | — | status |
 | `GET /account` | — | balance, bills, recent payments |
 | `GET /audit?letter_id=` | — | events |

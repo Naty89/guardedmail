@@ -130,17 +130,38 @@ export function getLetter(id: string): Promise<Letter> {
   return request<Letter>(`/letters/${encodeURIComponent(id)}`);
 }
 
+/** GET /letters/{id}/image: a small picture of the letter for the confirm dialog. */
+export function letterImageUrl(id: string): string {
+  return `/letters/${encodeURIComponent(id)}/image`;
+}
+
 /* ------------------------------------------------------------------ */
-/* Not built yet on the server (M5, M7, M8). Types are placeholders.   */
+/* Payments (M5)                                                       */
 /* ------------------------------------------------------------------ */
 
-export type Receipt = { nessie_id: string; new_balance_cents: number };
+/** Proof of a mock payment. All fields come from the server's own records. */
+export type Receipt = {
+  nessie_id: string;
+  payee_name: string;
+  amount_cents: number;
+  new_balance_cents: number;
+};
 export type ConfirmResult = {
   status: "paid" | "blocked";
   receipt: Receipt | null;
+  /** Why nothing was paid, e.g. "token_expired". */
   block_reason: string | null;
 };
-export type Account = { balance_cents: number; [key: string]: unknown };
+export type Account = {
+  balance_cents: number;
+  bills: { bill_id: string; payee: string; amount_cents: number; due_date: string | null; status: string }[];
+  recent_payments: { purchase_id: string; merchant_name: string; amount_cents: number; paid_on: string | null }[];
+};
+
+/* ------------------------------------------------------------------ */
+/* Not built yet on the server (M7, M8). Types are placeholders.       */
+/* ------------------------------------------------------------------ */
+
 export type AuditEntry = { ts: string; event: string; [key: string]: unknown };
 
 /** GET /letters/{id}/audio: the URL to give an <audio> element. Never autoplay. */
@@ -148,7 +169,11 @@ export function letterAudioUrl(id: string): string {
   return `/letters/${encodeURIComponent(id)}/audio`;
 }
 
-/** POST /proposals/{id}/confirm with the one-time token from the proposal. */
+/**
+ * POST /proposals/{id}/confirm with the one-time token from the proposal.
+ * Only the token is sent. The server ignores nothing else because it accepts
+ * nothing else: the amount and payee are the ones it stored itself.
+ */
 export function confirmProposal(id: string, token: string): Promise<ConfirmResult> {
   return postJson<ConfirmResult>(`/proposals/${encodeURIComponent(id)}/confirm`, { token });
 }

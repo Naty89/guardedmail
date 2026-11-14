@@ -93,6 +93,18 @@ def preprocess(image_bytes: bytes) -> bytes:
     return encoded.tobytes()
 
 
+def thumbnail(image_bytes: bytes, edge: int = 600) -> bytes:
+    """A small JPEG of the letter, shown beside the confirm question."""
+    try:
+        image = ImageOps.exif_transpose(Image.open(io.BytesIO(image_bytes))).convert("RGB")
+    except Exception as exc:
+        raise ReaderError("image_unreadable", type(exc).__name__) from None
+    image.thumbnail((edge, edge))
+    buffer = io.BytesIO()
+    image.save(buffer, "JPEG", quality=80)
+    return buffer.getvalue()
+
+
 # ------------------------------------------------------------ model caller
 
 

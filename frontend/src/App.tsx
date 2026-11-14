@@ -5,7 +5,7 @@ import { BackendStatus } from "@/components/BackendStatus";
 import { DemoTag } from "@/components/DemoTag";
 import { JudgePanel } from "@/components/JudgePanel";
 import { dirFor, loadLang, saveLang, t, type Lang } from "@/i18n";
-import type { Letter } from "@/lib/api";
+import type { Letter, Receipt } from "@/lib/api";
 import { isDebug } from "@/lib/debug";
 import type { LetterSource, Screen, ScreenProps } from "@/lib/screens";
 import { AuditScreen } from "@/screens/AuditScreen";
@@ -25,6 +25,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>("capture");
   const [source, setSource] = useState<LetterSource | null>(null);
   const [letter, setLetter] = useState<Letter | null>(null);
+  const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [debug] = useState(isDebug);
   const dir = dirFor(lang);
 
@@ -51,7 +52,15 @@ export default function App() {
     saveLang(next);
   }
 
-  const props: ScreenProps = { lang, go: setScreen, source, letter, setLetter };
+  const props: ScreenProps = {
+    lang,
+    go: setScreen,
+    source,
+    letter,
+    setLetter,
+    receipt,
+    setReceipt,
+  };
 
   return (
     <div lang={lang} dir={dir} className="flex min-h-dvh flex-col">
@@ -76,7 +85,8 @@ export default function App() {
           <CaptureScreen {...props} onLangChange={changeLang} onSourceChange={setSource} />
         )}
         {screen === "reading" && <ReadingScreen {...props} />}
-        {screen === "explanation" && <ExplanationScreen {...props} />}
+        {/* The confirm dialog opens on top of the explanation, which stays visible. */}
+        {(screen === "explanation" || screen === "confirm") && <ExplanationScreen {...props} />}
         {screen === "confirm" && <ConfirmScreen {...props} />}
         {screen === "receipt" && <ReceiptScreen {...props} />}
         {screen === "scam_blocked" && <ScamBlockedScreen {...props} />}

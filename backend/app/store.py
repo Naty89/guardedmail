@@ -86,6 +86,9 @@ class LetterRecord:
     intent: PaymentIntent | None       # set only when the proposal is "pay"
     expires_at: int | None             # token expiry (unix seconds)
     status: str = "proposed"           # proposed / paid / rejected
+    payee_name: str | None = None      # trusted merchant name, for "pay" only
+    receipt: dict | None = None        # set once paid
+    thumbnail_jpeg: bytes | None = None
     debug: dict = field(default_factory=dict)
 
 
@@ -114,9 +117,12 @@ class Store:
     def mark_paid(self, image_sha256: str) -> None:
         self._paid_images.add(image_sha256)
 
+    def paid_records(self) -> list[LetterRecord]:
+        return [r for r in self._by_letter.values()
+                if r.status == "paid" and r.intent is not None]
+
     def paid_total_cents(self) -> int:
-        return sum(r.intent.amount_cents for r in self._by_letter.values()
-                   if r.status == "paid" and r.intent is not None)
+        return sum(r.intent.amount_cents for r in self.paid_records())
 
     def reset(self) -> None:
         self.__init__()

@@ -179,8 +179,9 @@ def test_frontend_does_not_shadow_api_paths(client, dist):
     assert client.get("/health").json()["status"] == "ok"
     for path in ("/letters", "/proposals/abc", "/account", "/audit", "/health/x"):
         response = client.get(path)
-        # 405 is fine too: /letters exists but only accepts POST.
-        assert response.status_code in (404, 405), path
+        # Real routes answer for themselves (405 for POST-only /letters, 200 for
+        # /account); what matters is that none of them gets the frontend page.
+        assert response.status_code in (200, 404, 405), path
         assert "guarded app" not in response.text
     # Non-GET requests never get the frontend either.
     assert client.post("/some/page").status_code in (404, 405)

@@ -1,6 +1,6 @@
 /** The in-memory screen state machine. There is no router: App holds one Screen. */
 import type { Lang } from "@/i18n";
-import type { Letter } from "@/lib/api";
+import type { Letter, Receipt } from "@/lib/api";
 
 export type Screen =
   | "capture"
@@ -34,4 +34,7 @@ export type ScreenProps = {
   /** The result for the current letter, once the server has read it. */
   letter: Letter | null;
   setLetter: (letter: Letter | null) => void;
+  /** Set after a confirmed mock payment. */
+  receipt: Receipt | null;
+  setReceipt: (receipt: Receipt | null) => void;
 };
