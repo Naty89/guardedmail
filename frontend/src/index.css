@@ -5,7 +5,7 @@
  * -------------
  * Cream background, navy ink, cobalt for main actions and colour blocks, and a
  * sunny yellow accent for the pop. Hairline dividers, and a serif for headings
- * with a humanist sans for reading. Tailwind v4 is configured here in
+ * all in one clean sans. Tailwind v4 is configured here in
  * CSS (there is no tailwind.config.js).
  *
  * Every text/background pair below is at least 4.5:1. Outlines of buttons and
@@ -13,21 +13,13 @@
  * together with an icon and a word, never alone.
  */
 
-/* Fonts are served from /public so the app looks the same offline.
-   Both cover Latin only; other scripts fall back to the system fonts below.
-   Atkinson Hyperlegible Next was designed for low-vision readers: letters that
-   are easy to confuse (I l 1, O 0) are drawn differently. */
+/* One typeface for everything: Google Sans (open licence, OFL-1.1), served from
+   /public so the app looks the same offline. It covers Latin only; the other
+   eight scripts fall back to the system fonts listed below. */
 @font-face {
-  font-family: "Fraunces";
-  src: url("/fonts/fraunces-latin-wght-normal.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Atkinson Hyperlegible Next";
-  src: url("/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2");
-  font-weight: 200 800;
+  font-family: "Google Sans";
+  src: url("/fonts/google-sans-latin-wght-normal.woff2") format("woff2");
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
@@ -99,8 +91,8 @@
   --radius-xl: calc(var(--radius) + 0.25rem);
   --shadow-card: var(--shadow-card);
 
-  --font-serif-display:
-    "Fraunces", "Atkinson Hyperlegible Next", system-ui, "Noto Sans", "Noto Sans Devanagari",
+  --font-heading:
+    "Google Sans", system-ui, "Noto Sans", "Noto Sans Devanagari",
     "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic", "Noto Sans Ethiopic",
     "Noto Sans SC", sans-serif;
 }
@@ -117,9 +109,9 @@
     min-height: 100dvh;
     background: var(--background);
     color: var(--foreground);
-    /* Atkinson for Latin; system fonts cover the other eight scripts. */
+    /* Google Sans for Latin; system fonts cover the other eight scripts. */
     font-family:
-      "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+      "Google Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
       "Noto Sans Devanagari", "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic",
       "Noto Sans Ethiopic", "Noto Sans SC", sans-serif;
     /* Generous line height: Indic and Ethiopic scripts need the room. */
@@ -128,10 +120,10 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Headings use the serif. No letter-spacing anywhere: it breaks Arabic joining. */
+  /* Headings are the same face, set bold. No letter-spacing anywhere: it breaks Arabic joining. */
   h1,
   h2 {
-    font-family: var(--font-serif-display);
+    font-family: var(--font-heading);
     font-weight: 600;
     line-height: 1.25;
     text-wrap: balance;

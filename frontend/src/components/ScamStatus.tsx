@@ -30,7 +30,7 @@ export function ScamStatus({
       <p
         className={
           warning
-            ? "on-dark flex items-center gap-2.5 bg-danger px-5 py-3.5 font-serif-display text-xl font-semibold text-white"
+            ? "on-dark flex items-center gap-2.5 bg-danger px-5 py-3.5 font-heading text-xl font-semibold text-white"
             : "flex items-center gap-2.5 font-semibold text-muted-foreground"
         }
       >

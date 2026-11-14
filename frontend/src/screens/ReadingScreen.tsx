@@ -73,7 +73,7 @@ export function ReadingScreen({ lang, go, source, setLetter }: ScreenProps) {
                 className="size-10 animate-spin text-primary motion-reduce:animate-none"
                 aria-hidden="true"
               />
-              <span className="font-serif-display text-2xl font-semibold">{t(lang, step)}</span>
+              <span className="font-heading text-2xl font-semibold">{t(lang, step)}</span>
             </>
           )}
         </LiveRegion>

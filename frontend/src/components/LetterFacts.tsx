@@ -15,7 +15,7 @@ export function LetterFacts({ lang, letter }: { lang: Lang; letter: Letter }) {
   return (
     <dl className="m-0 overflow-hidden rounded-xl border border-hairline bg-background">
       <Fact label={t(lang, "who_sent_it")}>
-        <span className="font-serif-display text-xl">
+        <span className="font-heading text-xl">
           {sender ? <bdi>{sender}</bdi> : t(lang, "not_clear")}
         </span>
       </Fact>
@@ -23,14 +23,14 @@ export function LetterFacts({ lang, letter }: { lang: Lang; letter: Letter }) {
         <div className="grid grid-cols-[auto_minmax(0,1fr)] divide-x divide-hairline border-t border-hairline rtl:divide-x-reverse">
           {amount_cents !== null && (
             <Fact label={t(lang, "amount")}>
-              <span className="font-serif-display text-2xl">
+              <span className="font-heading text-2xl">
                 <Num>{formatCents(amount_cents)}</Num>
               </span>
             </Fact>
           )}
           {due_date !== null && (
             <Fact label={t(lang, "due_date")}>
-              <span className="font-serif-display text-lg">
+              <span className="font-heading text-lg">
                 <Num dir="auto">{formatDate(due_date, lang)}</Num>
               </span>
             </Fact>

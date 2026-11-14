@@ -66,12 +66,19 @@ export default function App() {
     <div lang={lang} dir={dir} className="flex min-h-dvh flex-col">
       <DemoTag lang={lang} />
 
-      <header className="mx-auto flex w-full max-w-xl items-center justify-between gap-3 px-5 pt-5">
-        <p className="flex items-center gap-2.5 text-xl font-semibold" lang="en" dir="ltr">
-          <span className="flex size-9 items-center justify-center rounded-full bg-accent text-ink shadow-[0_2px_6px_-2px_rgb(18_27_56/0.5)]">
-            <Mail className="size-[1.15rem]" aria-hidden="true" />
+      <header className="mx-auto flex w-full max-w-xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 pt-5">
+        {/* The wordmark: yellow mark, bold "Guarded", and "Mail" in a cobalt tag. */}
+        <p className="m-0 flex items-center gap-2.5" lang="en" dir="ltr" aria-label={t(lang, "app_name")}>
+          <span
+            aria-hidden="true"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-ink shadow-[0_3px_8px_-3px_rgb(18_27_56/0.55)]"
+          >
+            <Mail className="size-[1.35rem]" strokeWidth={2.25} />
           </span>
-          <span className="font-serif-display">{t(lang, "app_name")}</span>
+          <span aria-hidden="true" className="flex items-center gap-1.5 text-[1.5rem] leading-none font-bold">
+            <span className="text-ink">Guarded</span>
+            <span className="rounded-lg bg-primary px-2 py-0.5 text-white">Mail</span>
+          </span>
         </p>
         <BackendStatus lang={lang} />
       </header>

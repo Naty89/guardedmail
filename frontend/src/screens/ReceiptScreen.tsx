@@ -24,10 +24,10 @@ export function ReceiptScreen({ lang, go, receipt }: ScreenProps) {
           <span className="flex size-14 items-center justify-center rounded-full bg-ok-soft text-ok">
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </span>
-          <p className="m-0 font-serif-display text-2xl font-semibold text-ok">
+          <p className="m-0 font-heading text-2xl font-semibold text-ok">
             {t(lang, "payment_done")}
           </p>
-          <p className="m-0 font-serif-display text-5xl leading-none font-semibold">
+          <p className="m-0 font-heading text-5xl leading-none font-semibold">
             <Num>{formatCents(receipt.amount_cents)}</Num>
           </p>
         </div>

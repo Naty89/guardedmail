@@ -109,7 +109,7 @@ function ActionCard({
           <CalendarDays className="size-6 shrink-0 text-primary" aria-hidden="true" />
           {t(lang, "action_calendar_title")}
         </CardTitle>
-        <p className="m-0 font-serif-display text-2xl font-semibold">
+        <p className="m-0 font-heading text-2xl font-semibold">
           <Num dir="auto">{formatDate(proposal.due_date, lang)}</Num>
         </p>
         <p className="m-0 text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>

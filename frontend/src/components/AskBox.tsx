@@ -116,7 +116,7 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
         </Button>
       )}
 
-      <form onSubmit={submitTyped} className="flex gap-2">
+      <form onSubmit={submitTyped} className="flex flex-wrap gap-2">
         <input
           type="text"
           value={typed}
@@ -125,7 +125,7 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
           disabled={state !== "idle"}
           placeholder={t(lang, "ask_placeholder")}
           aria-label={t(lang, "ask_placeholder")}
-          className="min-h-12 min-w-0 grow rounded-xl border-[1.5px] border-control-border bg-background px-3.5 text-base"
+          className="min-h-12 min-w-[14rem] grow basis-56 rounded-xl border-[1.5px] border-control-border bg-background px-3.5 text-base"
         />
         <Button type="submit" disabled={state !== "idle" || !typed.trim()}>
           <Send className="rtl:-scale-x-100" aria-hidden="true" />
