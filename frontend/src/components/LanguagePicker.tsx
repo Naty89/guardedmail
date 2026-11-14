@@ -1,17 +1,16 @@
-import { Check, Languages } from "lucide-react";
+import { Check } from "lucide-react";
 
 import { LANGUAGES, dirFor, t, type Lang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-/** Nine buttons, each showing a language in its own script. */
+/** Nine pills, each showing a language in its own script. */
 export function LanguagePicker({ lang, onChange }: { lang: Lang; onChange: (lang: Lang) => void }) {
   return (
     <fieldset className="m-0 border-0 p-0">
-      <legend className="mb-2 flex items-center gap-2 p-0 font-semibold">
-        <Languages className="size-5 shrink-0 text-primary" aria-hidden="true" />
+      <legend className="mb-2.5 p-0 text-sm font-semibold text-muted-foreground">
         {t(lang, "choose_language")}
       </legend>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="flex flex-wrap gap-2">
         {LANGUAGES.map(({ code, name }) => {
           const selected = code === lang;
           return (
@@ -23,20 +22,14 @@ export function LanguagePicker({ lang, onChange }: { lang: Lang; onChange: (lang
               aria-pressed={selected}
               onClick={() => onChange(code)}
               className={cn(
-                "relative flex min-h-12 cursor-pointer items-center justify-center rounded-lg border-2 px-1 py-2 text-center text-[0.95rem] leading-snug transition-colors",
+                "inline-flex min-h-12 cursor-pointer items-center justify-center gap-1.5 rounded-full border-[1.5px] px-4 text-base leading-snug transition-colors",
                 selected
-                  ? "border-primary bg-primary font-bold text-primary-foreground"
-                  : "border-control-border bg-card font-medium hover:bg-secondary",
+                  ? "border-primary bg-primary font-semibold text-primary-foreground"
+                  : "border-control-border bg-surface font-medium hover:bg-primary-soft",
               )}
             >
               {/* The tick means selection is never shown by colour alone. */}
-              {selected && (
-                <Check
-                  className="absolute end-0.5 top-0.5 size-3.5"
-                  strokeWidth={3.5}
-                  aria-hidden="true"
-                />
-              )}
+              {selected && <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />}
               {name}
             </button>
           );

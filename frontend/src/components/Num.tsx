@@ -5,9 +5,18 @@ import { toWesternDigits } from "@/lib/format";
  * order inside right-to-left text, and always show Western digits 0-9.
  * Usage: <Num>{formatCents(8412)}</Num>
  */
-export function Num({ children, className }: { children: string | number; className?: string }) {
+export function Num({
+  children,
+  className,
+  dir = "ltr",
+}: {
+  children: string | number;
+  className?: string;
+  /** Use "auto" for dates that contain a month word, so Arabic reads right to left. */
+  dir?: "ltr" | "auto";
+}) {
   return (
-    <bdi dir="ltr" className={className}>
+    <bdi dir={dir} className={className}>
       {toWesternDigits(String(children))}
     </bdi>
   );

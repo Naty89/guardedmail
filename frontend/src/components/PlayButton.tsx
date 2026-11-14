@@ -115,7 +115,12 @@ export function PlayButton({
 
   const Icon = waiting ? Loader : playing ? Pause : Play;
   return (
-    <Button variant="outline" onClick={toggle} aria-pressed={playing} className="self-start">
+    <Button
+      variant={playing ? "default" : "outline"}
+      onClick={toggle}
+      aria-pressed={playing}
+      className="self-start rounded-full px-5"
+    >
       <Icon
         className={waiting ? "animate-spin motion-reduce:animate-none" : undefined}
         aria-hidden="true"

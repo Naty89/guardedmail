@@ -21,12 +21,12 @@ type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content> & {
 function DialogContent({ className, children, closeLabel, ...props }: DialogContentProps) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/60" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-foreground/55" />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] w-full max-w-xl flex-col gap-4 overflow-y-auto rounded-t-xl border bg-card p-5 text-card-foreground shadow-xl",
-          "sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-xl",
+          "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] w-full max-w-xl flex-col gap-4 overflow-y-auto rounded-t-2xl border border-hairline bg-card p-6 text-card-foreground shadow-xl",
+          "sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl",
           className,
         )}
         {...props}
@@ -46,7 +46,7 @@ function DialogContent({ className, children, closeLabel, ...props }: DialogCont
 function DialogTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
-      className={cn("pe-12 text-xl leading-snug font-semibold", className)}
+      className={cn("pe-12 text-2xl leading-snug font-semibold", className)}
       {...props}
     />
   );

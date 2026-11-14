@@ -364,6 +364,22 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [ ] Spoken answers use Gemini speech only while the 10 daily speech calls last, then the browser voice
 - [ ] Not available with `DEMO_OFFLINE=1` (answers are not cached)
 
+## Design system (restyle, 2026-11-14)
+
+- [x] Direction: calm and editorial, like stationery or a bank letterhead. Warm paper background, one teal accent, no gradients, hairline dividers instead of nested boxes, one dominant action per screen
+- [x] Type: Newsreader (serif) for headings and key figures, Public Sans for reading. Both Latin only; the other eight scripts fall back to the system Noto fonts. Files are self-hosted in `frontend/public/fonts` (open licence, 84 KB) so offline mode looks identical. No letter-spacing anywhere (it breaks Arabic joining)
+- [x] Tokens live in `frontend/src/index.css` (paper, ink, teal `#1b4f56`, status colours). Change colours there only
+- [x] Capture: language pills, one hero card with the single main button, samples as a list
+- [x] Explanation: statement-style summary box (sender, amount, due date), quiet scam row, tinted "next step" panel, ask box collapsed until opened
+- [x] Receipt styled as a receipt; Activity log as a timeline
+- [x] Measured at 360px and 412px on every screen: no horizontal scroll, no tap target under 48px, fonts load; every colour pair is at least 4.5:1 text and 3:1 outlines
+- [x] Arabic dates follow the language's own direction (`<Num dir="auto">`)
+- [ ] Looked at in headless Chrome only: needs a look on a real phone, and in Safari
+- [ ] No dark mode
+- [ ] Screens not re-screenshotted after the last two small tweaks (date column width, bottom link padding); checked by the measurements above only
+
+---
+
 ## Decisions log
 
 | Date | Decision | Why |
@@ -380,6 +396,7 @@ UNAUTHORISED PAYMENTS                0 / 14
 | 2026-11-14 | One money action per letter is keyed on the image hash | Re-uploading the same photo must not allow a second payment |
 | 2026-11-14 | Scam "model judgement" is the two extraction passes' signals, not a fourth call | Free-tier Gemini quota; each letter already costs 3 calls |
 | 2026-11-14 | Added scam reason IDs `payment_app`, `prize`, `impersonation`, `no_account_number`, `embedded_instruction` | The spec's signal list is wider than the reader's 7 signals |
+| 2026-11-14 | Fonts are files in `frontend/public/fonts`, not an npm package | No new dependency, and they work offline |
 | 2026-11-14 | Nessie base URL is `https://` | Plain `http` on port 80 refuses connections |
 | 2026-11-14 | Nessie ids treated as UUIDs with hyphens | That is what the live API returns |
 | 2026-11-14 | Merchant `category` sent as one string | Live API rejects a list with 400 |

@@ -1,4 +1,4 @@
-/* shadcn/ui Card (hand-added, trimmed to the parts we use). */
+/* shadcn/ui Card (hand-added, trimmed to the parts we use). Hairline edge, soft shadow. */
 import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
@@ -8,7 +8,7 @@ function Card({ className, ...props }: ComponentProps<"div">) {
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col gap-4 rounded-xl border bg-card p-5 text-card-foreground shadow-sm",
+        "flex flex-col gap-4 rounded-2xl border border-hairline bg-surface p-5 text-card-foreground shadow-card",
         className,
       )}
       {...props}

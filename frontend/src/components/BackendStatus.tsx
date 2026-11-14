@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type Status = "checking" | "connected" | "offline";
 const RECHECK_MS = 15000;
 
-/** Small "Connected / Offline" line. Always icon + word + colour together. */
+/** Small "Connected / Offline" pill. Always icon + word + colour together. */
 export function BackendStatus({ lang }: { lang: Lang }) {
   const [status, setStatus] = useState<Status>("checking");
 
@@ -32,9 +32,9 @@ export function BackendStatus({ lang }: { lang: Lang }) {
   }, []);
 
   const view = {
-    checking: { Icon: Loader, key: "checking_connection", style: "bg-muted text-muted-foreground" },
-    connected: { Icon: Wifi, key: "connected", style: "bg-ok-soft text-ok" },
-    offline: { Icon: WifiOff, key: "offline", style: "bg-danger-soft text-danger" },
+    checking: { Icon: Loader, key: "checking_connection", style: "text-muted-foreground" },
+    connected: { Icon: Wifi, key: "connected", style: "text-ok" },
+    offline: { Icon: WifiOff, key: "offline", style: "bg-danger-soft px-2.5 text-danger" },
   } as const;
   const { Icon, key, style } = view[status];
 
@@ -42,7 +42,7 @@ export function BackendStatus({ lang }: { lang: Lang }) {
     <p
       role="status"
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm leading-snug font-semibold",
+        "inline-flex items-center gap-1.5 rounded-full py-1 text-sm leading-snug font-semibold",
         style,
       )}
     >

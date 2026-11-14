@@ -87,7 +87,7 @@ export function AuditScreen({ lang, go, letter, receipt }: ScreenProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl leading-snug font-bold">{t(lang, "audit_log")}</h1>
+        <h1 className="text-[1.75rem] leading-tight">{t(lang, "audit_log")}</h1>
         <p className="mt-1 text-muted-foreground">{t(lang, "audit_intro")}</p>
       </div>
 
@@ -106,7 +106,7 @@ export function AuditScreen({ lang, go, letter, receipt }: ScreenProps) {
               {t(lang, "log_intact")}
             </p>
           ) : (
-            <p className="flex items-start gap-2 rounded-lg bg-danger-soft p-3 font-semibold text-danger">
+            <p className="flex items-start gap-2 rounded-xl bg-danger-soft p-3 font-semibold text-danger">
               <CircleX className="mt-0.5 size-6 shrink-0" aria-hidden="true" />
               {t(lang, "log_broken")}
             </p>
@@ -114,19 +114,24 @@ export function AuditScreen({ lang, go, letter, receipt }: ScreenProps) {
       </div>
 
       {log && (
-        <Card>
+        <Card className="px-5 pt-6 pb-2">
           {log.events.length === 0 ? (
-            <p className="text-muted-foreground">{t(lang, "log_empty")}</p>
+            <p className="m-0 pb-4 text-muted-foreground">{t(lang, "log_empty")}</p>
           ) : (
-            <ol className="flex flex-col gap-4">
+            <ol className="m-0 flex list-none flex-col p-0">
               {log.events.map((event) => {
                 const { icon: Icon, text } = describe(event, lang);
                 return (
-                  <li key={event.hash} className="flex items-start gap-3">
-                    <Icon className="mt-1 size-6 shrink-0 text-primary" aria-hidden="true" />
-                    <div>
-                      <p className="font-semibold">{text}</p>
-                      <p className="text-sm text-muted-foreground">
+                  <li
+                    key={event.hash}
+                    className="relative flex items-start gap-4 pb-6 before:absolute before:start-[1.0625rem] before:top-10 before:bottom-1 before:w-px before:bg-hairline last:before:hidden"
+                  >
+                    <span className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                      <Icon className="size-[1.1rem]" aria-hidden="true" />
+                    </span>
+                    <div className="pt-0.5">
+                      <p className="m-0 leading-snug font-semibold">{text}</p>
+                      <p className="m-0 text-sm text-muted-foreground">
                         <Num>{clock(event.ts)}</Num>
                       </p>
                     </div>
@@ -138,7 +143,7 @@ export function AuditScreen({ lang, go, letter, receipt }: ScreenProps) {
         </Card>
       )}
 
-      <Button variant="outline" onClick={back}>
+      <Button variant="ghost" onClick={back}>
         <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
         {t(lang, "back")}
       </Button>

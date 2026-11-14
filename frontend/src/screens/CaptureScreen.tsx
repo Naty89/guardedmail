@@ -1,4 +1,13 @@
-import { ArrowRight, Camera, CircleAlert, CircleCheck, Loader, TriangleAlert, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Camera,
+  ChevronRight,
+  CircleAlert,
+  CircleCheck,
+  Loader,
+  TriangleAlert,
+  Zap,
+} from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 
 import { LanguagePicker } from "@/components/LanguagePicker";
@@ -10,6 +19,7 @@ import { t, type Lang } from "@/i18n";
 import { downscaleImage } from "@/lib/downscale";
 import { formatBytes } from "@/lib/format";
 import type { LetterSource, SampleId, ScreenProps } from "@/lib/screens";
+import { cn } from "@/lib/utils";
 
 type Props = ScreenProps & {
   onLangChange: (lang: Lang) => void;
@@ -66,132 +76,155 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
   const preparing = photoState === "preparing";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-7">
       <LanguagePicker lang={lang} onChange={onLangChange} />
 
-      <div>
-        <h1 className="text-2xl leading-snug font-bold">{t(lang, "capture_title")}</h1>
-        <p className="mt-1 text-muted-foreground">{t(lang, "capture_intro")}</p>
-      </div>
+      <Card className="gap-5 p-6">
+        <div>
+          <h1 className="text-[1.75rem] leading-tight">{t(lang, "capture_title")}</h1>
+          <p className="mt-2 text-muted-foreground">{t(lang, "capture_intro")}</p>
+        </div>
 
-      {/* The real file input is hidden; the visible <button> opens it. */}
-      <input
-        ref={fileInput}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="sr-only"
-        tabIndex={-1}
-        aria-hidden="true"
-        onChange={handleFile}
-      />
+        {/* The real file input is hidden; the visible <button> opens it. */}
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden="true"
+          onChange={handleFile}
+        />
 
-      {/* One button that stays mounted (so focus is not lost) and changes label. */}
-      <Button
-        size={photo ? "default" : "lg"}
-        variant={photo ? "outline" : "default"}
-        disabled={preparing}
-        onClick={() => fileInput.current?.click()}
-      >
-        <Camera aria-hidden="true" />
-        {t(lang, photo ? "retake_photo" : "take_photo")}
-      </Button>
+        {/* Announces progress and results to screen readers. Always mounted. */}
+        <LiveRegion className="empty:hidden">
+          {preparing && (
+            <p className="flex items-center gap-2 font-semibold">
+              <Loader className="size-5 shrink-0 animate-spin" aria-hidden="true" />
+              {t(lang, "preparing_photo")}
+            </p>
+          )}
+          {photoState === "error" && (
+            <p className="flex items-start gap-2 rounded-xl bg-danger-soft p-3 font-semibold text-danger">
+              <CircleAlert className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+              {t(lang, "photo_error")}
+            </p>
+          )}
+          {photo && (
+            <p className="flex items-center gap-2 font-semibold text-ok">
+              <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
+              {t(lang, "photo_ready")}
+            </p>
+          )}
+          {sampleId && (
+            <p className="flex items-center gap-2 font-semibold text-ok">
+              <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
+              {t(lang, "sample_selected")}
+            </p>
+          )}
+        </LiveRegion>
 
-      {/* Announces progress and results to screen readers. Always mounted. */}
-      <LiveRegion className="empty:hidden">
-        {preparing && (
-          <p className="flex items-center gap-2 font-semibold">
-            <Loader className="size-5 shrink-0 animate-spin" aria-hidden="true" />
-            {t(lang, "preparing_photo")}
-          </p>
+        {photo && previewUrl && (
+          <div className="flex items-center gap-4 rounded-xl bg-muted p-3">
+            <img
+              src={previewUrl}
+              alt={t(lang, "photo_preview_alt")}
+              className="h-24 w-[4.5rem] shrink-0 rounded-md border border-hairline bg-surface object-cover object-top"
+            />
+            <p className="text-sm text-muted-foreground">
+              {t(lang, "photo_size")}: <Num>{formatBytes(photo.size)}</Num>
+            </p>
+          </div>
         )}
-        {photoState === "error" && (
-          <p className="flex items-start gap-2 rounded-lg bg-danger-soft p-3 font-semibold text-danger">
-            <CircleAlert className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-            {t(lang, "photo_error")}
-          </p>
-        )}
-        {photo && (
-          <p className="flex items-center gap-2 font-semibold text-ok">
-            <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
-            {t(lang, "photo_ready")}
-          </p>
-        )}
-        {sampleId && (
-          <p className="flex items-center gap-2 font-semibold text-ok">
-            <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
-            {t(lang, "sample_selected")}
-          </p>
-        )}
-      </LiveRegion>
 
-      {photo && previewUrl && (
-        <Card className="gap-3">
-          <img
-            src={previewUrl}
-            alt={t(lang, "photo_preview_alt")}
-            className="max-h-80 w-full rounded-lg border bg-muted object-contain"
-          />
-          <p className="text-sm text-muted-foreground">
-            {t(lang, "photo_size")}: <Num>{formatBytes(photo.size)}</Num>
-          </p>
-        </Card>
-      )}
+        {/* The next step is always the one dominant button. */}
+        {source ? (
+          <>
+            <Button size="lg" onClick={handleContinue}>
+              {t(lang, "continue")}
+              <ArrowRight className="rtl:rotate-180" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={preparing}
+              onClick={() => fileInput.current?.click()}
+            >
+              <Camera aria-hidden="true" />
+              {t(lang, "retake_photo")}
+            </Button>
+          </>
+        ) : (
+          <Button size="lg" disabled={preparing} onClick={() => fileInput.current?.click()}>
+            <Camera aria-hidden="true" />
+            {t(lang, "take_photo")}
+          </Button>
+        )}
+      </Card>
 
-      {source && (
-        <Button size="lg" onClick={handleContinue}>
-          {t(lang, "continue")}
-          <ArrowRight className="rtl:rotate-180" aria-hidden="true" />
-        </Button>
-      )}
-
-      <section aria-labelledby="samples-heading" className="flex flex-col gap-2">
-        <h2 id="samples-heading" className="font-semibold text-muted-foreground">
+      <section aria-labelledby="samples-heading">
+        <h2 id="samples-heading" className="mb-2.5 font-sans text-sm font-semibold text-muted-foreground">
           {t(lang, "or_try_sample")}
         </h2>
-        <SampleButton
-          selected={sampleId === "electric_bill"}
-          disabled={preparing}
-          onClick={() => chooseSample("electric_bill")}
-          icon={<Zap aria-hidden="true" />}
-          label={t(lang, "sample_bill")}
-        />
-        <SampleButton
-          selected={sampleId === "suspicious_letter"}
-          disabled={preparing}
-          onClick={() => chooseSample("suspicious_letter")}
-          icon={<TriangleAlert aria-hidden="true" />}
-          label={t(lang, "sample_suspicious")}
-        />
+        <ul className="m-0 flex list-none flex-col overflow-hidden rounded-2xl border border-hairline bg-surface p-0 shadow-card">
+          <SampleRow
+            selected={sampleId === "electric_bill"}
+            disabled={preparing}
+            onClick={() => chooseSample("electric_bill")}
+            icon={<Zap aria-hidden="true" />}
+            label={t(lang, "sample_bill")}
+          />
+          <SampleRow
+            selected={sampleId === "suspicious_letter"}
+            disabled={preparing}
+            onClick={() => chooseSample("suspicious_letter")}
+            icon={<TriangleAlert aria-hidden="true" />}
+            label={t(lang, "sample_suspicious")}
+            divider
+          />
+        </ul>
       </section>
     </div>
   );
 }
 
-function SampleButton({
+function SampleRow({
   selected,
   disabled,
   onClick,
   icon,
   label,
+  divider = false,
 }: {
   selected: boolean;
   disabled: boolean;
   onClick: () => void;
   icon: ReactNode;
   label: string;
+  divider?: boolean;
 }) {
   return (
-    <Button
-      variant="outline"
-      aria-pressed={selected}
-      disabled={disabled}
-      onClick={onClick}
-      className={selected ? "justify-start border-primary bg-secondary" : "justify-start"}
-    >
-      {icon}
-      <span className="grow text-start">{label}</span>
-      {selected && <CircleCheck className="text-primary" aria-hidden="true" />}
-    </Button>
+    <li className={cn(divider && "border-t border-hairline")}>
+      <button
+        type="button"
+        aria-pressed={selected}
+        disabled={disabled}
+        onClick={onClick}
+        className={cn(
+          "flex min-h-15 w-full cursor-pointer items-center gap-3 px-4 py-2 text-start font-medium transition-colors hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-60",
+          selected && "bg-primary-soft",
+        )}
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary [&_svg]:size-[1.1rem]">
+          {icon}
+        </span>
+        <span className="grow">{label}</span>
+        {selected ? (
+          <CircleCheck className="size-5 shrink-0 text-primary" aria-hidden="true" />
+        ) : (
+          <ChevronRight className="size-5 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
+        )}
+      </button>
+    </li>
   );
 }

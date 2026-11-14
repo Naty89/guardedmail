@@ -5,26 +5,37 @@ import { formatDate } from "@/lib/dates";
 import { formatCents } from "@/lib/format";
 
 /**
- * The key facts as the reader saw them: sender, amount, due date.
- * The sender name is text from the letter, so it is shown in <bdi> and is
- * never used for the payment itself.
+ * The key facts as the reader saw them: sender, amount, due date, laid out
+ * like the summary box on a statement. The sender name is text from the
+ * letter, so it is shown in <bdi> and is never used for the payment itself.
  */
 export function LetterFacts({ lang, letter }: { lang: Lang; letter: Letter }) {
   const { sender, amount_cents, due_date } = letter.summary;
+  const hasNumbers = amount_cents !== null || due_date !== null;
   return (
-    <dl className="grid grid-cols-1 gap-3">
+    <dl className="m-0 overflow-hidden rounded-xl border border-hairline bg-background">
       <Fact label={t(lang, "who_sent_it")}>
-        {sender ? <bdi>{sender}</bdi> : t(lang, "not_clear")}
+        <span className="font-serif-display text-xl">
+          {sender ? <bdi>{sender}</bdi> : t(lang, "not_clear")}
+        </span>
       </Fact>
-      {amount_cents !== null && (
-        <Fact label={t(lang, "amount")}>
-          <Num>{formatCents(amount_cents)}</Num>
-        </Fact>
-      )}
-      {due_date !== null && (
-        <Fact label={t(lang, "due_date")}>
-          <Num>{formatDate(due_date, lang)}</Num>
-        </Fact>
+      {hasNumbers && (
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] divide-x divide-hairline border-t border-hairline rtl:divide-x-reverse">
+          {amount_cents !== null && (
+            <Fact label={t(lang, "amount")}>
+              <span className="font-serif-display text-2xl">
+                <Num>{formatCents(amount_cents)}</Num>
+              </span>
+            </Fact>
+          )}
+          {due_date !== null && (
+            <Fact label={t(lang, "due_date")}>
+              <span className="font-serif-display text-lg">
+                <Num dir="auto">{formatDate(due_date, lang)}</Num>
+              </span>
+            </Fact>
+          )}
+        </div>
       )}
     </dl>
   );
@@ -32,9 +43,9 @@ export function LetterFacts({ lang, letter }: { lang: Lang; letter: Letter }) {
 
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-muted px-4 py-3">
+    <div className="px-4 py-3">
       <dt className="text-sm font-semibold text-muted-foreground">{label}</dt>
-      <dd className="text-xl font-bold">{children}</dd>
+      <dd className="m-0 mt-0.5 leading-snug font-semibold">{children}</dd>
     </div>
   );
 }

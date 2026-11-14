@@ -66,20 +66,21 @@ export default function App() {
     <div lang={lang} dir={dir} className="flex min-h-dvh flex-col">
       <DemoTag lang={lang} />
 
-      <header className="mx-auto flex w-full max-w-xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 pt-4">
-        <p className="flex items-center gap-2 text-xl font-bold" lang="en" dir="ltr">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Mail className="size-6" aria-hidden="true" />
+      <header className="mx-auto flex w-full max-w-xl items-center justify-between gap-3 px-5 pt-5">
+        <p className="flex items-center gap-2.5 text-xl font-semibold" lang="en" dir="ltr">
+          <span className="flex size-9 items-center justify-center rounded-full border-[1.5px] border-primary text-primary">
+            <Mail className="size-[1.15rem]" aria-hidden="true" />
           </span>
-          {t(lang, "app_name")}
+          <span className="font-serif-display">{t(lang, "app_name")}</span>
         </p>
         <BackendStatus lang={lang} />
       </header>
 
       <main
+        key={screen === "confirm" ? "explanation" : screen}
         ref={main}
         tabIndex={-1}
-        className="mx-auto w-full max-w-xl grow px-4 pt-6 pb-24 outline-none"
+        className="screen-in mx-auto w-full max-w-xl grow px-5 pt-7 pb-24 outline-none"
       >
         {screen === "capture" && (
           <CaptureScreen {...props} onLangChange={changeLang} onSourceChange={setSource} />

@@ -22,14 +22,14 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
   if (!letter) return null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl leading-snug font-bold">{t(lang, "explanation_title")}</h1>
+    <div className="flex flex-col gap-5">
+      <h1 className="text-[1.75rem] leading-tight">{t(lang, "explanation_title")}</h1>
 
       <ScamStatus lang={lang} scam={letter.scam} defaultOpen />
-      <p className="text-lg font-semibold">{t(lang, "scam_blocked_body")}</p>
+      <p className="m-0 text-lg font-semibold">{t(lang, "scam_blocked_body")}</p>
 
-      <Card>
-        <p lang={letter.language} className="text-lg leading-relaxed whitespace-pre-line">
+      <Card className="gap-5">
+        <p lang={letter.language} className="m-0 text-lg leading-relaxed whitespace-pre-line">
           {letter.explanation}
         </p>
         <PlayButton
@@ -43,14 +43,16 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
 
       <AskBox lang={lang} letter={letter} />
 
-      <Button variant="outline" onClick={() => go("audit")}>
-        <ListChecks aria-hidden="true" />
-        {t(lang, "audit_log")}
-      </Button>
-      <Button variant="outline" onClick={() => go("capture")}>
-        <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
-        {t(lang, "start_over")}
-      </Button>
+      <nav className="flex flex-wrap justify-between gap-x-2 border-t border-hairline pt-4">
+        <Button variant="ghost" className="px-2" onClick={() => go("audit")}>
+          <ListChecks aria-hidden="true" />
+          {t(lang, "audit_log")}
+        </Button>
+        <Button variant="ghost" className="px-2" onClick={() => go("capture")}>
+          <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
+          {t(lang, "start_over")}
+        </Button>
+      </nav>
     </div>
   );
 }

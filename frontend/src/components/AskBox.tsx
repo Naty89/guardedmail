@@ -1,9 +1,16 @@
-import { CircleAlert, Loader, MessageCircleQuestion, Mic, Send, Square } from "lucide-react";
+import {
+  ChevronDown,
+  CircleAlert,
+  Loader,
+  MessageCircleQuestion,
+  Mic,
+  Send,
+  Square,
+} from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { PlayButton } from "@/components/PlayButton";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
 import { t, type Lang, type StringKey } from "@/i18n";
 import { answerAudioUrl, ApiError, askLetter, type AskResult, type Letter } from "@/lib/api";
 import { canRecord, MAX_RECORD_SECONDS, startRecording, type Recording } from "@/lib/recordWav";
@@ -84,12 +91,18 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
 
   const busy = state === "thinking";
   return (
-    <Card>
-      <CardTitle className="flex items-center gap-2">
-        <MessageCircleQuestion className="size-6 shrink-0" aria-hidden="true" />
-        {t(lang, "ask_title")}
-      </CardTitle>
-
+    // Closed until opened, so the main screen stays calm. The content stays
+    // mounted while closed, so a recording or answer is never lost.
+    <details className="group rounded-2xl border border-hairline bg-surface shadow-card">
+      <summary className="flex min-h-15 cursor-pointer list-none items-center gap-3 px-5 py-3 font-semibold [&::-webkit-details-marker]:hidden">
+        <MessageCircleQuestion className="size-6 shrink-0 text-primary" aria-hidden="true" />
+        <span className="grow">{t(lang, "ask_title")}</span>
+        <ChevronDown
+          className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+          aria-hidden="true"
+        />
+      </summary>
+      <div className="flex flex-col gap-4 border-t border-hairline px-5 py-5">
       {micAvailable && (
         <Button
           size="lg"
@@ -112,7 +125,7 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
           disabled={state !== "idle"}
           placeholder={t(lang, "ask_placeholder")}
           aria-label={t(lang, "ask_placeholder")}
-          className="min-h-12 min-w-0 grow rounded-lg border bg-background px-3 text-base"
+          className="min-h-12 min-w-0 grow rounded-xl border-[1.5px] border-control-border bg-background px-3.5 text-base"
         />
         <Button type="submit" disabled={state !== "idle" || !typed.trim()}>
           <Send className="rtl:-scale-x-100" aria-hidden="true" />
@@ -138,13 +151,13 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
           </p>
         )}
         {problem && (
-          <p className="flex items-start gap-2 rounded-lg bg-danger-soft p-3 font-semibold text-danger">
+          <p className="flex items-start gap-2 rounded-xl bg-danger-soft p-3 font-semibold text-danger">
             <CircleAlert className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
             {t(lang, problem)}
           </p>
         )}
         {result && !busy && (
-          <div className="flex flex-col gap-2 rounded-lg bg-muted p-4">
+          <div className="flex flex-col gap-2 rounded-xl bg-muted p-4">
             <p className="text-sm font-semibold text-muted-foreground">{t(lang, "you_asked")}</p>
             <p>
               <bdi>{result.question}</bdi>
@@ -164,7 +177,8 @@ export function AskBox({ lang, letter }: { lang: Lang; letter: Letter }) {
         )}
       </div>
 
-      <p className="text-sm text-muted-foreground">{t(lang, "ask_note")}</p>
-    </Card>
+      <p className="m-0 text-sm text-muted-foreground">{t(lang, "ask_note")}</p>
+      </div>
+    </details>
   );
 }

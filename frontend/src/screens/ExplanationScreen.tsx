@@ -1,10 +1,10 @@
-import { ArrowLeft, ListChecks, CalendarDays, CircleHelp, Wallet } from "lucide-react";
+import { ArrowLeft, CalendarDays, CircleHelp, ListChecks, Wallet } from "lucide-react";
 import { useEffect } from "react";
 
 import { AskBox } from "@/components/AskBox";
 import { LetterFacts } from "@/components/LetterFacts";
-import { PlayButton } from "@/components/PlayButton";
 import { Num } from "@/components/Num";
+import { PlayButton } from "@/components/PlayButton";
 import { ScamStatus } from "@/components/ScamStatus";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -22,12 +22,12 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
   if (!letter) return null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl leading-snug font-bold">{t(lang, "explanation_title")}</h1>
+    <div className="flex flex-col gap-5">
+      <h1 className="text-[1.75rem] leading-tight">{t(lang, "explanation_title")}</h1>
 
-      <Card>
+      <Card className="gap-5">
         {/* The explanation is written in the letter's chosen language. */}
-        <p lang={letter.language} className="text-lg leading-relaxed whitespace-pre-line">
+        <p lang={letter.language} className="m-0 text-lg leading-relaxed whitespace-pre-line">
           {letter.explanation}
         </p>
         <PlayButton
@@ -45,14 +45,16 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
 
       <AskBox lang={lang} letter={letter} />
 
-      <Button variant="outline" onClick={() => go("audit")}>
-        <ListChecks aria-hidden="true" />
-        {t(lang, "audit_log")}
-      </Button>
-      <Button variant="outline" onClick={() => go("capture")}>
-        <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
-        {t(lang, "start_over")}
-      </Button>
+      <nav className="flex flex-wrap justify-between gap-x-2 border-t border-hairline pt-4">
+        <Button variant="ghost" className="px-2" onClick={() => go("audit")}>
+          <ListChecks aria-hidden="true" />
+          {t(lang, "audit_log")}
+        </Button>
+        <Button variant="ghost" className="px-2" onClick={() => go("capture")}>
+          <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
+          {t(lang, "start_over")}
+        </Button>
+      </nav>
     </div>
   );
 }
@@ -77,17 +79,17 @@ function ActionCard({
   if (proposal.action === "pay" && proposal.amount_cents !== null && proposal.payee_name) {
     const amount = formatCents(proposal.amount_cents);
     return (
-      <Card className="border-2 border-primary">
-        <CardTitle className="flex items-center gap-2">
+      <section className="flex flex-col gap-4 rounded-2xl border border-primary/25 bg-primary-soft p-5">
+        <CardTitle className="flex items-center gap-2.5 text-primary-ink">
           <Wallet className="size-6 shrink-0" aria-hidden="true" />
           {t(lang, "action_pay_title")}
         </CardTitle>
-        <p>
-          {t(lang, "pay_to")}: <bdi className="font-bold">{proposal.payee_name}</bdi>
+        <p className="m-0 text-primary-ink">
+          {t(lang, "pay_to")}: <bdi className="font-semibold">{proposal.payee_name}</bdi>
           {proposal.due_date && (
             <>
               <br />
-              {t(lang, "due_date")}: <Num>{formatDate(proposal.due_date, lang)}</Num>
+              {t(lang, "due_date")}: <Num dir="auto">{formatDate(proposal.due_date, lang)}</Num>
             </>
           )}
         </p>
@@ -95,21 +97,21 @@ function ActionCard({
         <Button size="lg" onClick={() => go("confirm")}>
           {t(lang, "pay_button", { amount })}
         </Button>
-      </Card>
+      </section>
     );
   }
 
   if (proposal.action === "calendar" && proposal.due_date) {
     return (
       <Card>
-        <CardTitle className="flex items-center gap-2">
-          <CalendarDays className="size-6 shrink-0" aria-hidden="true" />
+        <CardTitle className="flex items-center gap-2.5">
+          <CalendarDays className="size-6 shrink-0 text-primary" aria-hidden="true" />
           {t(lang, "action_calendar_title")}
         </CardTitle>
-        <p className="text-2xl font-bold">
-          <Num>{formatDate(proposal.due_date, lang)}</Num>
+        <p className="m-0 font-serif-display text-2xl font-semibold">
+          <Num dir="auto">{formatDate(proposal.due_date, lang)}</Num>
         </p>
-        <p className="text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
+        <p className="m-0 text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
       </Card>
     );
   }
@@ -118,8 +120,8 @@ function ActionCard({
     // The user just said "No, don't pay".
     return (
       <Card>
-        <CardTitle className="flex items-center gap-2">
-          <CircleHelp className="size-6 shrink-0" aria-hidden="true" />
+        <CardTitle className="flex items-center gap-2.5">
+          <CircleHelp className="size-6 shrink-0 text-primary" aria-hidden="true" />
           {t(lang, "nothing_paid")}
         </CardTitle>
       </Card>
@@ -128,12 +130,12 @@ function ActionCard({
 
   return (
     <Card>
-      <CardTitle className="flex items-center gap-2">
-        <CircleHelp className="size-6 shrink-0" aria-hidden="true" />
+      <CardTitle className="flex items-center gap-2.5">
+        <CircleHelp className="size-6 shrink-0 text-primary" aria-hidden="true" />
         {t(lang, "action_ask_title")}
       </CardTitle>
       {proposal.block_reason && proposal.block_reason !== "not_a_bill" && (
-        <p className="text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
+        <p className="m-0 text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
       )}
     </Card>
   );

@@ -56,22 +56,24 @@ export function ReadingScreen({ lang, go, source, setLetter }: ScreenProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <h1 className="text-2xl leading-snug font-bold">{t(lang, "reading")}</h1>
+      <Card className="items-center gap-4 px-6 py-12 text-center">
+        <h1 className="sr-only">{t(lang, "reading")}</h1>
         {/* Stays mounted; only its text changes, so screen readers announce each step. */}
-        <LiveRegion className="flex items-start gap-2 font-semibold">
+        <LiveRegion className="flex flex-col items-center gap-4">
           {error ? (
             <>
-              <CircleAlert className="mt-0.5 size-6 shrink-0 text-danger" aria-hidden="true" />
-              <span className="text-danger">{t(lang, error)}</span>
+              <span className="flex size-14 items-center justify-center rounded-full bg-danger-soft text-danger">
+                <CircleAlert className="size-8" aria-hidden="true" />
+              </span>
+              <span className="text-lg font-semibold text-danger">{t(lang, error)}</span>
             </>
           ) : (
             <>
               <Loader
-                className="mt-0.5 size-6 shrink-0 animate-spin motion-reduce:animate-none"
+                className="size-10 animate-spin text-primary motion-reduce:animate-none"
                 aria-hidden="true"
               />
-              <span>{t(lang, step)}</span>
+              <span className="font-serif-display text-2xl font-semibold">{t(lang, step)}</span>
             </>
           )}
         </LiveRegion>
@@ -83,7 +85,7 @@ export function ReadingScreen({ lang, go, source, setLetter }: ScreenProps) {
           {t(lang, "try_again")}
         </Button>
       )}
-      <Button variant="outline" onClick={() => go("capture")}>
+      <Button variant="ghost" onClick={() => go("capture")}>
         <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
         {t(lang, "back")}
       </Button>

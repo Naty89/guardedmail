@@ -1,45 +1,81 @@
 @import "tailwindcss";
 
 /*
- * Design tokens (shadcn/ui naming). Tailwind v4 is configured here in CSS,
- * there is no tailwind.config.js. Every text/background pair below has a
- * contrast ratio of at least 4.5:1.
+ * Design system
+ * -------------
+ * Warm paper background, one teal accent, hairline dividers, and a serif for
+ * headings with a humanist sans for reading. Tailwind v4 is configured here in
+ * CSS (there is no tailwind.config.js).
+ *
+ * Every text/background pair below is at least 4.5:1. Outlines of buttons and
+ * inputs (--control-border) are at least 3:1. Status colours are always used
+ * together with an icon and a word, never alone.
  */
+
+/* Fonts are served from /public so the app looks the same offline.
+   Both cover Latin only; other scripts fall back to the system fonts below. */
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/public-sans-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --radius: 0.875rem;
-  --background: #f6f4ee; /* warm paper */
-  --foreground: #1b2530;
-  --card: #ffffff;
-  --card-foreground: #1b2530;
-  --primary: #1d4f5c; /* deep teal */
+
+  --background: #f7f5ef; /* paper */
+  --surface: #ffffff;
+  --foreground: #19231f; /* ink */
+  --muted: #efece3;
+  --muted-foreground: #4b5651;
+  --hairline: #e4dfd2; /* dividers and card edges (decorative only) */
+  --control-border: #737b78; /* buttons and inputs, 3:1 or better */
+
+  --primary: #1b4f56; /* deep teal: the one accent */
+  --primary-hover: #153f45;
   --primary-foreground: #ffffff;
-  --secondary: #e7eef0;
-  --secondary-foreground: #163c46;
-  --muted: #ece9e1;
-  --muted-foreground: #4a5563;
-  --border: #cfcabd;
+  --primary-soft: #e6eff0; /* tint for the main action panel */
+  --primary-ink: #163c42;
+
   --ring: #0b6bcb;
-  /* Status colours: always used together with an icon and a word. */
+
   --ok: #17603a;
-  --ok-soft: #e3f3e9;
+  --ok-soft: #e4f2e9;
   --warn: #6b4500;
-  --warn-soft: #fdecc4;
+  --warn-soft: #fbeec8;
   --danger: #9c1f1c;
-  --danger-soft: #fde8e6;
+  --danger-soft: #fbe9e6;
+
+  --shadow-card: 0 1px 2px rgb(25 35 31 / 0.05), 0 10px 28px -14px rgb(25 35 31 / 0.18);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
+  --color-hairline: var(--hairline);
+  --color-border: var(--hairline);
+  --color-control-border: var(--control-border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-ink: var(--primary-ink);
+  --color-secondary: var(--primary-soft);
+  --color-secondary-foreground: var(--primary-ink);
   --color-ring: var(--ring);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
@@ -47,8 +83,15 @@
   --color-warn-soft: var(--warn-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 0.25rem);
+  --shadow-card: var(--shadow-card);
+
+  --font-serif-display:
+    "Newsreader", "Public Sans", system-ui, "Noto Sans", "Noto Sans Devanagari",
+    "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic", "Noto Sans Ethiopic",
+    "Noto Sans SC", sans-serif;
 }
 
 @layer base {
@@ -63,26 +106,28 @@
     min-height: 100dvh;
     background: var(--background);
     color: var(--foreground);
-    /* System fonts cover all nine scripts without downloading anything. */
+    /* Public Sans for Latin; system fonts cover the other eight scripts. */
     font-family:
-      system-ui,
-      -apple-system,
-      "Segoe UI",
-      Roboto,
-      "Noto Sans",
-      "Noto Sans Devanagari",
-      "Noto Sans Telugu",
-      "Noto Sans Tamil",
-      "Noto Sans Arabic",
-      "Noto Sans Ethiopic",
-      "Noto Sans SC",
-      sans-serif;
+      "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+      "Noto Sans Devanagari", "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic",
+      "Noto Sans Ethiopic", "Noto Sans SC", sans-serif;
     /* Generous line height: Indic and Ethiopic scripts need the room. */
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings use the serif. No letter-spacing anywhere: it breaks Arabic joining. */
+  h1,
+  h2 {
+    font-family: var(--font-serif-display);
+    font-weight: 600;
+    line-height: 1.25;
+    text-wrap: balance;
   }
 
   * {
-    border-color: var(--border);
+    border-color: var(--hairline);
   }
 
   /* One strong, consistent focus ring for keyboard users. */
@@ -103,11 +148,17 @@
   }
 }
 
-:root {
-  /* Outline of buttons and inputs: at least 3:1 against white and paper. */
-  --control-border: #767d88;
+/* Gentle entrance for each new screen (disabled by the reduced-motion rule above). */
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-
-@theme inline {
-  --color-control-border: var(--control-border);
+.screen-in {
+  animation: screen-in 0.28s ease-out both;
 }
