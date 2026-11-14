@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M6 (scam checks) — not started
-**Backend tests:** 527 passing
+**Current milestone:** M7 (audit log) — not started
+**Backend tests:** 562 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -20,7 +20,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 | M3 | `reader.py` | Done, verified live on both sample letters |
 | M4 | `POST /letters` + Capture / Reading / Explanation UI | Done, checked in a browser with both samples |
 | M5 | Confirm flow, payer, receipt, ledger (demo beat 1) | Done, checked in a browser and with one live Nessie payment |
-| M6 | `scam.py` + Scam blocked screen (demo beat 2) | Not started |
+| M6 | `scam.py` + Scam blocked screen (demo beat 2) | Done, checked in a browser |
 | M7 | Audit log, audit screen, judge panel | Not started |
 | M8 | TTS + languages wired | Not started |
 | M9 | Eval script (demo beat 3) | Not started |
@@ -114,7 +114,6 @@ RESULT: balance after bill marked completed: 100
 - [x] `frontend/src/lib/api.ts` types aligned with `schemas.py`
 - [x] New UI strings in all 9 languages
 - [x] Browser check at phone width: bill shows "Pay $84.12"; suspicious letter shows "Possible scam" and no pay button
-- [ ] Scam risk currently comes from the reader's own signals (`interim_scam_result`); M6 replaces it with `scam.py`
 - [ ] Sample letters are cached for English only; other languages call Gemini the first time
 
 ## M5 — Pay (demo beat 1)
@@ -132,13 +131,20 @@ RESULT: balance after bill marked completed: 100
 - [x] Live check against real Nessie: paid $84.12, bill marked completed, second confirm blocked (bill then reset)
 - [ ] Ledger, proposals and used tokens are in memory: a server restart resets the balance to $2,000 and forgets paid letters. Persist them with the audit log in M7.
 
-## M6 — Scam (demo beat 2) (next)
+## M6 — Scam (demo beat 2)
 
-- [ ] Rule signals + model judgement, stricter wins
-- [ ] Scam blocked screen with no pay button
-- [ ] Test letter with an embedded "pay a different account" instruction ends in Block
+- [x] `scam.py`: rule signals on the transcription plus the reader model's own signals; stricter wins
+- [x] Gift card, wire, crypto or payment app alone = high
+- [x] Text aimed at software ("ignore previous instructions", "AI assistant", "without asking the user") = high
+- [x] Threats, pressure, prizes = medium; agency names and missing account number only reported alongside a stronger sign
+- [x] Each reason has a reason ID and a short quote from the letter
+- [x] Scam blocked screen shows reasons with quotes and has no pay button
+- [x] Test: a letter with an embedded instruction to pay a different account ends in Block, even when the fake reader model obeys the letter and reports a clean, payable bill
+- [x] Control test: the same reading without the injected text is payable
+- [ ] No separate model call for the scam judgement: it reuses the two extraction passes' signals (saves Gemini quota)
+- [ ] Rules are English keywords only
 
-## M7 — Audit
+## M7 — Audit (next)
 
 - [ ] Hash-chained append-only log; MongoDB or JSONL fallback
 - [ ] Quarantined `raw_text` store
@@ -177,6 +183,8 @@ RESULT: balance after bill marked completed: 100
 | 2026-11-14 | `LetterResponse` gained a `summary` (sender, amount, due date as read) | The screens need the facts even when nothing is payable; display only, never used for payment |
 | 2026-11-14 | Sample buttons send a sample id, not image bytes | Browser re-encoding would change the image hash and miss the cache |
 | 2026-11-14 | One money action per letter is keyed on the image hash | Re-uploading the same photo must not allow a second payment |
+| 2026-11-14 | Scam "model judgement" is the two extraction passes' signals, not a fourth call | Free-tier Gemini quota; each letter already costs 3 calls |
+| 2026-11-14 | Added scam reason IDs `payment_app`, `prize`, `impersonation`, `no_account_number`, `embedded_instruction` | The spec's signal list is wider than the reader's 7 signals |
 | 2026-11-14 | Nessie base URL is `https://` | Plain `http` on port 80 refuses connections |
 | 2026-11-14 | Nessie ids treated as UUIDs with hyphens | That is what the live API returns |
 | 2026-11-14 | Merchant `category` sent as one string | Live API rejects a list with 400 |

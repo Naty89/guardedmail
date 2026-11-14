@@ -148,7 +148,8 @@ def test_scam_letter_with_embedded_instruction_is_flagged_not_payable():
     assert proposal.payee_name is None and proposal.expires_at is None
     assert proposal.block_reason is not None
     assert response.scam.risk == "high"
-    assert {r.reason_id for r in response.scam.reasons} == {"urgency", "gift_card"}
+    reasons = {r.reason_id for r in response.scam.reasons}
+    assert {"urgency", "gift_card", "embedded_instruction"} <= reasons
     assert store.STORE.by_proposal(proposal.id).intent is None
 
 

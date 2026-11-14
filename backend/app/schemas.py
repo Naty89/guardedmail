@@ -55,6 +55,11 @@ DocType = Literal["bill", "notice", "appointment", "government", "scam_suspect",
 ScamSignal = Literal[
     "urgency", "gift_card", "wire", "crypto", "threat", "mismatch_sender", "unknown_payee"
 ]
+# Reasons the scam check can give: the reader's signals plus rule-only ones.
+ScamReasonId = Literal[
+    "urgency", "gift_card", "wire", "crypto", "threat", "mismatch_sender", "unknown_payee",
+    "payment_app", "prize", "impersonation", "no_account_number", "embedded_instruction",
+]
 Confidence = Literal["low", "med", "high"]
 RiskLevel = Literal["low", "med", "high"]
 ProposalAction = Literal["pay", "calendar", "flag", "ask_user"]
@@ -188,7 +193,7 @@ class PaymentIntent(BaseModel):
 class ScamReason(BaseModel):
     """One scam signal plus a short quote from the letter that triggered it."""
 
-    reason_id: ScamSignal
+    reason_id: ScamReasonId
     quote: str = Field(max_length=MAX_QUOTE_CHARS)  # untrusted text, display only
 
 

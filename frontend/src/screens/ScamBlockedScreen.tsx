@@ -11,7 +11,6 @@ import type { ScreenProps } from "@/lib/screens";
 /**
  * Shown when the letter looks like a possible scam.
  * There is NO pay button on this screen, on purpose. Do not add one.
- * (M6 adds quotes from the letter to the reasons.)
  */
 export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
   useEffect(() => {

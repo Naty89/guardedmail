@@ -18,6 +18,7 @@ from app import policy
 from app.config import get_settings
 from app.controller import choose_action
 from app.nessie import NessieError, get_read_client
+from app.scam import assess as assess_scam
 from app.reader import (
     ModelCaller,
     ReaderError,
@@ -31,27 +32,10 @@ from app.schemas import (
     LetterResponse,
     LetterSummary,
     Proposal,
-    ReaderOutput,
-    ScamReason,
-    ScamResult,
 )
 from app.store import STORE, LetterRecord, load_cached_reading, save_cached_reading
 
-_HIGH_RISK_SIGNALS = {"gift_card", "wire", "crypto"}
 _merchant_cache: list[policy.TrustedMerchant] | None = None
-
-
-def interim_scam_result(first: ReaderOutput, second: ReaderOutput) -> ScamResult:
-    """Scam risk from the reader's own signals. M6 replaces this with scam.py."""
-    signals = list(dict.fromkeys(first.scam_signals + second.scam_signals))
-    suspect = "scam_suspect" in (first.doc_type, second.doc_type)
-    if suspect or _HIGH_RISK_SIGNALS & set(signals):
-        risk = "high"
-    elif signals:
-        risk = "med"
-    else:
-        risk = "low"
-    return ScamResult(risk=risk, reasons=[ScamReason(reason_id=s, quote="") for s in signals])
 
 
 async def get_trusted_merchants() -> list[policy.TrustedMerchant]:
@@ -128,7 +112,7 @@ async def process_letter(image_bytes: bytes, language: str, *,
 
     reading, from_cache = await _get_reading(image_bytes, language, caller)
     first, second = reading.first, reading.second
-    scam = interim_scam_result(first, second)
+    scam = assess_scam(first, second)
 
     merchants = await get_trusted_merchants()
     verdict = policy.decide(

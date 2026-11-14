@@ -74,7 +74,12 @@ export type ScamSignal =
   | "crypto"
   | "threat"
   | "mismatch_sender"
-  | "unknown_payee";
+  | "unknown_payee"
+  | "payment_app"
+  | "prize"
+  | "impersonation"
+  | "no_account_number"
+  | "embedded_instruction";
 
 export type ScamResult = {
   risk: "low" | "med" | "high";

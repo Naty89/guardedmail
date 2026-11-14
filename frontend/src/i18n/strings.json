@@ -75,7 +75,12 @@
     "payment_expired": "Too much time has passed. Nothing was paid. Please read the letter again.",
     "already_paid": "This letter was already paid. It cannot be paid again.",
     "letter_photo_alt": "Photo of the letter",
-    "nothing_paid": "Nothing was paid."
+    "nothing_paid": "Nothing was paid.",
+    "signal_payment_app": "It asks you to pay with a money app.",
+    "signal_prize": "It says you won a prize.",
+    "signal_impersonation": "It uses the name of a well-known office or company.",
+    "signal_no_account_number": "It has no account number.",
+    "signal_embedded_instruction": "It has hidden orders written for computer programs."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -150,7 +155,12 @@
     "payment_expired": "Pasó demasiado tiempo. No se pagó nada. Lea la carta otra vez.",
     "already_paid": "Esta carta ya se pagó. No se puede pagar otra vez.",
     "letter_photo_alt": "Foto de la carta",
-    "nothing_paid": "No se pagó nada."
+    "nothing_paid": "No se pagó nada.",
+    "signal_payment_app": "Le pide pagar con una aplicación de dinero.",
+    "signal_prize": "Dice que usted ganó un premio.",
+    "signal_impersonation": "Usa el nombre de una oficina o empresa conocida.",
+    "signal_no_account_number": "No tiene número de cuenta.",
+    "signal_embedded_instruction": "Tiene órdenes ocultas escritas para programas de computadora."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -225,7 +235,12 @@
     "payment_expired": "बहुत समय बीत गया। कुछ भी नहीं चुकाया गया। कृपया पत्र फिर से पढ़ें।",
     "already_paid": "इस पत्र का भुगतान पहले ही हो चुका है। दोबारा भुगतान नहीं हो सकता।",
     "letter_photo_alt": "पत्र की फ़ोटो",
-    "nothing_paid": "कुछ भी नहीं चुकाया गया।"
+    "nothing_paid": "कुछ भी नहीं चुकाया गया।",
+    "signal_payment_app": "यह पैसे भेजने वाले ऐप से भुगतान माँगता है।",
+    "signal_prize": "यह कहता है कि आपने इनाम जीता है।",
+    "signal_impersonation": "यह किसी जाने-माने दफ़्तर या कंपनी का नाम इस्तेमाल करता है।",
+    "signal_no_account_number": "इसमें कोई खाता संख्या नहीं है।",
+    "signal_embedded_instruction": "इसमें कंप्यूटर प्रोग्रामों के लिए छिपे हुए आदेश लिखे हैं।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -300,7 +315,12 @@
     "payment_expired": "చాలా సమయం గడిచింది. ఏమీ చెల్లించబడలేదు. దయచేసి లేఖను మళ్లీ చదవండి.",
     "already_paid": "ఈ లేఖకు ఇప్పటికే చెల్లించారు. మళ్లీ చెల్లించలేరు.",
     "letter_photo_alt": "లేఖ ఫోటో",
-    "nothing_paid": "ఏమీ చెల్లించబడలేదు."
+    "nothing_paid": "ఏమీ చెల్లించబడలేదు.",
+    "signal_payment_app": "ఇది మనీ యాప్ ద్వారా చెల్లించమని అడుగుతుంది.",
+    "signal_prize": "మీరు బహుమతి గెలిచారని చెబుతుంది.",
+    "signal_impersonation": "ఇది ప్రసిద్ధ కార్యాలయం లేదా సంస్థ పేరును వాడుతుంది.",
+    "signal_no_account_number": "ఇందులో ఖాతా సంఖ్య లేదు.",
+    "signal_embedded_instruction": "ఇందులో కంప్యూటర్ ప్రోగ్రామ్‌ల కోసం రాసిన దాచిన ఆదేశాలు ఉన్నాయి."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -375,7 +395,12 @@
     "payment_expired": "அதிக நேரம் கடந்துவிட்டது. எதுவும் செலுத்தப்படவில்லை. கடிதத்தை மீண்டும் படிக்கவும்.",
     "already_paid": "இந்தக் கடிதத்துக்கு ஏற்கனவே பணம் செலுத்தப்பட்டது. மீண்டும் செலுத்த முடியாது.",
     "letter_photo_alt": "கடிதத்தின் படம்",
-    "nothing_paid": "எதுவும் செலுத்தப்படவில்லை."
+    "nothing_paid": "எதுவும் செலுத்தப்படவில்லை.",
+    "signal_payment_app": "பணம் அனுப்பும் செயலி மூலம் செலுத்தச் சொல்கிறது.",
+    "signal_prize": "நீங்கள் பரிசு வென்றதாகச் சொல்கிறது.",
+    "signal_impersonation": "பிரபலமான அலுவலகம் அல்லது நிறுவனத்தின் பெயரைப் பயன்படுத்துகிறது.",
+    "signal_no_account_number": "இதில் கணக்கு எண் இல்லை.",
+    "signal_embedded_instruction": "கணினி நிரல்களுக்காக எழுதப்பட்ட மறைமுகக் கட்டளைகள் இதில் உள்ளன."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -450,7 +475,12 @@
     "payment_expired": "Passou tempo demais. Nada foi pago. Leia a carta de novo.",
     "already_paid": "Esta carta já foi paga. Não pode ser paga de novo.",
     "letter_photo_alt": "Foto da carta",
-    "nothing_paid": "Nada foi pago."
+    "nothing_paid": "Nada foi pago.",
+    "signal_payment_app": "Pede pagamento por um aplicativo de dinheiro.",
+    "signal_prize": "Diz que você ganhou um prêmio.",
+    "signal_impersonation": "Usa o nome de um órgão ou empresa conhecida.",
+    "signal_no_account_number": "Não tem número de conta.",
+    "signal_embedded_instruction": "Tem ordens escondidas escritas para programas de computador."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -525,7 +555,12 @@
     "payment_expired": "时间过长。没有扣款。请重新读取这封信。",
     "already_paid": "这封信已经付过款，不能再付。",
     "letter_photo_alt": "信件照片",
-    "nothing_paid": "没有扣款。"
+    "nothing_paid": "没有扣款。",
+    "signal_payment_app": "它要求用转账应用付款。",
+    "signal_prize": "它说您中奖了。",
+    "signal_impersonation": "它使用了知名机构或公司的名字。",
+    "signal_no_account_number": "信上没有账号。",
+    "signal_embedded_instruction": "信里藏有写给电脑程序的指令。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -600,7 +635,12 @@
     "payment_expired": "مرّ وقت طويل. لم يُدفع أي شيء. اقرأ الرسالة مرة أخرى.",
     "already_paid": "هذه الرسالة دُفعت من قبل. لا يمكن دفعها مرة أخرى.",
     "letter_photo_alt": "صورة الرسالة",
-    "nothing_paid": "لم يُدفع أي شيء."
+    "nothing_paid": "لم يُدفع أي شيء.",
+    "signal_payment_app": "تطلب الدفع عبر تطبيق لتحويل المال.",
+    "signal_prize": "تقول إنك ربحت جائزة.",
+    "signal_impersonation": "تستخدم اسم جهة أو شركة معروفة.",
+    "signal_no_account_number": "لا يوجد فيها رقم حساب.",
+    "signal_embedded_instruction": "فيها أوامر مخفية مكتوبة لبرامج الحاسوب."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -675,6 +715,11 @@
     "payment_expired": "ብዙ ጊዜ አልፏል። ምንም አልተከፈለም። እባክዎ ደብዳቤውን እንደገና ያንብቡ።",
     "already_paid": "ይህ ደብዳቤ አስቀድሞ ተከፍሏል። እንደገና ሊከፈል አይችልም።",
     "letter_photo_alt": "የደብዳቤው ፎቶ",
-    "nothing_paid": "ምንም አልተከፈለም።"
+    "nothing_paid": "ምንም አልተከፈለም።",
+    "signal_payment_app": "በገንዘብ መላኪያ መተግበሪያ እንዲከፍሉ ይጠይቃል።",
+    "signal_prize": "ሽልማት አሸንፈዋል ይላል።",
+    "signal_impersonation": "የታወቀ መሥሪያ ቤት ወይም ድርጅት ስም ይጠቀማል።",
+    "signal_no_account_number": "የሂሳብ ቁጥር የለውም።",
+    "signal_embedded_instruction": "ለኮምፒውተር ፕሮግራሞች የተጻፉ የተደበቁ ትዕዛዞች አሉት።"
   }
 }
