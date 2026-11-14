@@ -4,7 +4,7 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** all of M0–M9 built, plus voice questions (stretch)
+**Status:** all of M0–M9 built, plus voice questions. Not finished: see "What still needs to be done".
 **Backend tests:** 643 passing
 **Frontend build:** passing, no TypeScript errors
 
@@ -27,15 +27,168 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 ---
 
-## Blockers and open questions
+## What still needs to be done
 
-- [x] **Nessie API key.** In `.env`; demo data seeded.
-- [x] **Does a Nessie purchase change the balance?** No. See the result below. We show our own ledger.
-- [x] **Gemini API key.** In `.env`, working.
-- [ ] **Gemini free-tier limits.** The key is on the free tier. Daily caps seen: `gemini-3.8-flash` 20 requests, `gemini-3.8-flash-tts` **10 requests**. `gemini-3.5-flash-lite` has a per-minute cap plus occasional 503s. Each new letter costs 3 text calls and 1 speech call. `.env` sets `GEMINI_MODEL=gemini-3.5-flash-lite`. The two sample letters are fully cached, but a NEW photo during the demo will get speech only until the 10 daily speech calls run out, then the browser voice. Enable billing on the key before judging.
-- [ ] **`TOKEN_SECRET`.** Must be at least 16 characters or signing refuses to run; generate with `python -c "import secrets; print(secrets.token_hex(32))"`.
-- [ ] **Translations not reviewed by native speakers.** Amharic, Telugu and Tamil need it most.
-- [ ] **Nothing tested on a real phone.** Camera capture and photo rotation were only tried in desktop headless Chrome.
+Everything in the build order (M0–M9) is written, tested and committed, plus voice
+questions. **It is built, not finished.** What is left is mostly things only people
+can do: testing on real phones, with real voices and real paper, and fixing the
+Gemini quota. Work through section A before the demo.
+
+### A. Must do before the demo
+
+#### A1. Fix the Gemini quota (highest risk)
+- **Problem.** The key is on the free tier. Daily caps seen: `gemini-3.8-flash` 20
+  requests, `gemini-3.8-flash-tts` **10 requests**. `gemini-3.5-flash-lite` has a
+  per-minute cap and occasional 503s. A new letter costs 3 text calls and 1 speech
+  call; a question costs 1 text call and 1 speech call.
+- **What breaks.** The two sample letters are cached and safe. Anything new during
+  judging (a judge's own photo, a spoken question) can hit a 429. Speech stops after
+  10 uses a day and falls back to the browser voice, which many devices lack for
+  Telugu and Tamil.
+- **Do this.** Enable billing on the key at https://aistudio.google.com (or get a
+  second key from a teammate and swap `GEMINI_API_KEY` in `.env`).
+- **Then.** Optionally set `GEMINI_MODEL=gemini-3.8-flash` in `.env` again and run
+  `python -m scripts.try_reader` a few times. Keep the lite model if 3.8 is slower
+  than about 5 seconds or still returns 503s.
+- **Done when.** Five letters and five spoken questions in a row work with audio.
+
+#### A2. Test on a real phone over HTTPS
+Nothing has run on a phone yet. The camera and the microphone both need HTTPS.
+1. `cd frontend && npm run build`
+2. `cd backend && .venv/bin/uvicorn app.main:app --port 8000`
+3. In another terminal: `cloudflared tunnel --url http://localhost:8000`
+   (or `ngrok http 8000`), then open the `https://…` address on the phone.
+4. Check on one iPhone and one Android phone:
+   - [ ] "Take a photo" opens the rear camera
+   - [ ] A photo taken sideways arrives the right way up
+   - [ ] Upload finishes in a few seconds on mobile data
+   - [ ] Text is readable; no sideways scrolling; buttons are easy to tap
+   - [ ] Play starts the audio (iPhone Safari is the strictest about audio)
+   - [ ] The confirm dialog shows the thumbnail and both buttons without scrolling
+   - [ ] Arabic shows right to left
+
+#### A3. Try voice questions with a real microphone
+The automated browser test could only supply silence, so speaking into the app is
+**unproven**.
+- [ ] On a laptop (`localhost`): tap "Ask with your voice", allow the microphone,
+      ask "What happens if I don't pay?", tap "Stop and send". The card should show
+      your question as heard, then the answer.
+- [ ] Same on a phone over the tunnel (iPhone Safari records in a different format
+      than Chrome; the code converts both to WAV, but this path has never run).
+- [ ] Ask in Telugu and Tamil.
+- [ ] Say nothing: it should say it could not hear a question.
+- [ ] In a noisy room: check it does not answer a question you did not ask.
+- If recording fails on a device, the typed box still works; note which device.
+
+#### A4. Test with real photos of paper
+All 14 eval letters are drawn images. Real photos will read worse.
+1. Print `backend/fixtures/samples/*.jpg` and a few from `backend/fixtures/eval/`.
+2. Photograph each one badly on purpose: angled, in shade, slightly crumpled.
+3. Run each through the app, or `python -m scripts.try_reader path/to/photo.jpg`.
+4. Copy the photos into `backend/fixtures/eval/`, add an entry for each in
+   `labels.json` (same fields as the existing ones), and run
+   `python -m scripts.run_eval`.
+- **Watch for:** `readings_disagree` or `evidence_missing` on clear bills (reader too
+  strict or photo too poor), and any real bill flagged as a possible scam.
+- **Done when.** The eval table includes at least 5 real photos and still shows
+  0 unauthorised payments. Use that table in the pitch, not the drawn-only one.
+- Only invented letters. Never real mail.
+
+#### A5. Finish the cached audio
+- [ ] After the speech quota resets (or billing is on):
+      `cd backend && .venv/bin/python -m scripts.warm_fixtures`
+      Missing today: suspicious letter in Tamil and Portuguese.
+- [ ] If the explanation prompt changes again, run it with `--refresh-explanations`.
+
+#### A6. Rehearse the demo twice
+1. `cd backend && .venv/bin/python -m scripts.reset_demo` (bills back to pending,
+   audit log archived), then restart the server so the balance is $2,000.
+2. Beat 1: sample electric bill → Play → Pay → Yes → receipt shows $1,915.88.
+3. Beat 2: sample suspicious letter → "Possible scam", reasons with quotes, no pay
+   button. Open `?debug=1` → Judge panel → BLOCK with reason IDs.
+4. Beat 3: `python -m scripts.run_eval` in a terminal → the table.
+5. Show the Activity log and the "hash chain verified" line in the judge panel.
+- [ ] Rehearse once with Wi-Fi off and `DEMO_OFFLINE=1` in `.env`. In that mode the
+      two samples, cached audio, the mock bank and the local log work; new photos
+      and questions do not.
+- [ ] Decide who holds the phone and who runs the terminal.
+
+#### A7. Bring the README up to date
+`README.md` was written at M0. It still has correct setup and run commands but does
+not mention `scripts.warm_fixtures`, `scripts.reset_demo`, `scripts.run_eval`,
+`scripts.try_reader`, voice questions, or the `?debug=1` judge panel.
+
+### B. Should do if there is time
+
+#### B1. Native-speaker review of every translated text
+None of it has been checked by a native speaker. Amharic, Telugu and Tamil need it
+most; the cached Tamil explanation has spelling slips. Places to review:
+- [ ] `frontend/src/i18n/strings.json` (all buttons and messages, 9 languages)
+- [ ] `TEMPLATES` in `backend/app/reader.py` (fallback explanation sentences)
+- [ ] `FALLBACKS` in `backend/app/ask.py` (fallback answer sentence)
+- [ ] The cached sample explanations: read them in the app in each language
+- Check especially that no wording says a letter is safe, legitimate or verified.
+
+#### B2. Stop real uploads being cached inside the repo
+Reader results for **every** uploaded photo, including the transcription, are saved
+in `backend/fixtures/` next to the demo fixtures, and `git add -A` would commit
+them. Fine while only invented letters are used. Before anyone uploads anything
+else: write non-sample results to `backend/data/` (gitignored) instead.
+
+#### B3. MongoDB
+The spec asks for MongoDB Atlas. `MongoBackend` in `audit.py` is written but has
+**never run against a real cluster**.
+1. Create a free Atlas cluster, allow your IP, copy the connection string.
+2. Put it in `.env` as `MONGODB_URI=…`, restart, read a letter, pay it.
+3. Check `GET /audit` shows the events and `chain_ok: true`, then restart the server
+   and check the balance is still reduced.
+- Known gap: `scripts.reset_demo` archives the local file only; with MongoDB the
+  `audit` collection has to be cleared by hand to reset the balance.
+- If there is no time, the local file is a working fallback. Say so in the pitch.
+
+#### B4. Accessibility checks by a person
+Contrast ratios were calculated by hand, not measured.
+- [ ] Run Lighthouse or axe on each screen
+- [ ] Use the app once with VoiceOver (iPhone) or TalkBack (Android): the Reading
+      screen should announce its steps, the confirm dialog should land on "No"
+- [ ] Use it at 200% text size
+
+#### B5. Smaller checks
+- [ ] Judge panel against real Nessie: does "request id" show a value, or "not sent
+      by Nessie"? Only seen with the mock bank so far.
+- [ ] Scam rules are English keywords. A scam letter in Spanish is caught only if the
+      reader model flags it. Add Spanish keywords, or say so in the pitch.
+- [ ] The eval set is small (14) and its scams were written by the person who wrote
+      the rules. Ask a teammate to write three new scam letters without reading
+      `scam.py`, add them, and see whether they are caught.
+- [ ] No git remote is set. Create the GitHub repo and push. The cached audio adds
+      13 MB.
+
+### C. Known limits (accepted for the hackathon; be ready to explain)
+- **No login.** Anyone with the tunnel address can use the app, read the audit log
+  and make mock payments. Share the address only with judges.
+- **One server process.** Letters, open proposals and the audit chain lock live in
+  one process. Run a single uvicorn worker.
+- **Open proposals are lost on restart.** Paid ones and the balance are restored
+  from the audit log; an unpaid letter must be read again.
+- **Nessie does not change its balance.** Purchases stay "pending". The balance
+  shown is our own ledger.
+- **The quarantine file is plain text** on the laptop (`backend/data/`).
+- **Zero unauthorised payments is a result on our test set, not a guarantee.**
+  Never say the system is injection-proof.
+- **Leftover Nessie data** from testing: a few throwaway customers, accounts and
+  merchants, and one pending $84.12 purchase on the demo account. Harmless.
+
+### D. Stretch items from the spec that are not built
+- [ ] Calendar `.ics` export. The "calendar" action only shows the date for now.
+- [ ] Local extraction via Ollama as a privacy mode.
+
+### Settings checklist (`.env`)
+- [x] `NESSIE_API_KEY`, and the IDs written by `scripts.seed_nessie`
+- [x] `GEMINI_API_KEY` (free tier: see A1)
+- [x] `TOKEN_SECRET` (at least 16 characters, or signing refuses to run)
+- [x] `GEMINI_MODEL=gemini-3.5-flash-lite` (changed from the default because of quota)
+- [ ] `MONGODB_URI` (not set: see B3)
 
 ### Live Nessie check result
 ```
@@ -210,14 +363,6 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [ ] The microphone needs HTTPS on a phone (works on `localhost`); use the tunnel
 - [ ] Spoken answers use Gemini speech only while the 10 daily speech calls last, then the browser voice
 - [ ] Not available with `DEMO_OFFLINE=1` (answers are not cached)
-
-## Before the demo
-
-- [ ] `DEMO_OFFLINE=1` rehearsal with the network off
-- [ ] HTTPS tunnel tested from a real phone
-- [ ] Fixtures cached for every demo letter
-
----
 
 ## Decisions log
 
