@@ -1,0 +1,14 @@
+# Listed in the project spec
+fastapi
+pydantic>=2
+httpx
+motor
+rapidfuzz
+Pillow
+opencv-python-headless
+google-genai
+python-dotenv
+pytest
+# Implied by FastAPI: the server itself and multipart upload parsing
+uvicorn[standard]
+python-multipart

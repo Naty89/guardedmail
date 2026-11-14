@@ -1,0 +1,169 @@
+/**
+ * Backend client. The FastAPI server serves this app and the API from one
+ * origin, so every URL is relative ("/health"). No API keys live here.
+ *
+ * The types below mirror backend/app/schemas.py. Keep them in step by hand.
+ * Calls marked "not built yet" have their final URL but the server side
+ * arrives in a later milestone.
+ */
+import type { Lang } from "@/i18n";
+import type { LetterSource } from "@/lib/screens";
+
+export type Health = {
+  status: string;
+  demo_offline?: boolean;
+  nessie_configured?: boolean;
+  gemini_configured?: boolean;
+};
+
+export class ApiError extends Error {
+  status: number;
+  /** Machine-readable reason from the server, e.g. "image_unreadable". */
+  reason: string | null;
+  constructor(status: number, message: string, reason: string | null = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.reason = reason;
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, init);
+  if (!response.ok) {
+    // Our API answers errors as {"detail": {"error": "<reason id>"}}.
+    let reason: string | null = null;
+    try {
+      const body = await response.json();
+      if (typeof body?.detail?.error === "string") reason = body.detail.error;
+    } catch {
+      // Not JSON: leave the reason empty.
+    }
+    throw new ApiError(response.status, `${path} failed (${response.status})`, reason);
+  }
+  return (await response.json()) as T;
+}
+
+function postJson<T>(path: string, body?: unknown): Promise<T> {
+  return request<T>(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body ?? {}),
+  });
+}
+
+/** GET /health. Rejects if the backend is down or slower than `timeoutMs`. */
+export async function getHealth(timeoutMs = 4000): Promise<Health> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await request<Health>("/health", { signal: controller.signal });
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Letters (M4)                                                        */
+/* ------------------------------------------------------------------ */
+
+export type ScamSignal =
+  | "urgency"
+  | "gift_card"
+  | "wire"
+  | "crypto"
+  | "threat"
+  | "mismatch_sender"
+  | "unknown_payee";
+
+export type ScamResult = {
+  risk: "low" | "med" | "high";
+  reasons: { reason_id: ScamSignal; quote: string }[];
+};
+
+/** The single action the server proposes. Payment fields are set only for "pay". */
+export type Proposal = {
+  id: string;
+  action: "pay" | "calendar" | "flag" | "ask_user";
+  /** Trusted merchant name from the bank, never text from the letter. */
+  payee_name: string | null;
+  amount_cents: number | null;
+  due_date: string | null;
+  expires_at: string | null;
+  /** Sent back unchanged with the confirm call. */
+  token: string | null;
+  /** Why payment is not offered, e.g. "unknown_payee". */
+  block_reason: string | null;
+};
+
+/** What the reader saw. For display only; it never decides a payment. */
+export type LetterSummary = {
+  doc_type: string;
+  sender: string;
+  amount_cents: number | null;
+  due_date: string | null;
+};
+
+export type Letter = {
+  letter_id: string;
+  language: Lang;
+  explanation: string;
+  summary: LetterSummary;
+  scam: ScamResult;
+  proposal: Proposal;
+};
+
+/**
+ * POST /letters: multipart form with the language and either the downscaled
+ * photo or the id of a built-in sample letter.
+ */
+export function postLetter(source: LetterSource, language: Lang): Promise<Letter> {
+  const form = new FormData();
+  form.append("language", language);
+  if (source.kind === "photo") form.append("image", source.image, "letter.jpg");
+  else form.append("sample", source.sampleId);
+  return request<Letter>("/letters", { method: "POST", body: form });
+}
+
+/** GET /letters/{id} */
+export function getLetter(id: string): Promise<Letter> {
+  return request<Letter>(`/letters/${encodeURIComponent(id)}`);
+}
+
+/* ------------------------------------------------------------------ */
+/* Not built yet on the server (M5, M7, M8). Types are placeholders.   */
+/* ------------------------------------------------------------------ */
+
+export type Receipt = { nessie_id: string; new_balance_cents: number };
+export type ConfirmResult = {
+  status: "paid" | "blocked";
+  receipt: Receipt | null;
+  block_reason: string | null;
+};
+export type Account = { balance_cents: number; [key: string]: unknown };
+export type AuditEntry = { ts: string; event: string; [key: string]: unknown };
+
+/** GET /letters/{id}/audio: the URL to give an <audio> element. Never autoplay. */
+export function letterAudioUrl(id: string): string {
+  return `/letters/${encodeURIComponent(id)}/audio`;
+}
+
+/** POST /proposals/{id}/confirm with the one-time token from the proposal. */
+export function confirmProposal(id: string, token: string): Promise<ConfirmResult> {
+  return postJson<ConfirmResult>(`/proposals/${encodeURIComponent(id)}/confirm`, { token });
+}
+
+/** POST /proposals/{id}/reject */
+export function rejectProposal(id: string): Promise<{ status: string }> {
+  return postJson<{ status: string }>(`/proposals/${encodeURIComponent(id)}/reject`);
+}
+
+/** GET /account: the mock checking account. */
+export function getAccount(): Promise<Account> {
+  return request<Account>("/account");
+}
+
+/** GET /audit?letter_id= */
+export function getAudit(letterId: string): Promise<AuditEntry[]> {
+  return request<AuditEntry[]>(`/audit?letter_id=${encodeURIComponent(letterId)}`);
+}
