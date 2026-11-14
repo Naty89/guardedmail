@@ -240,6 +240,15 @@ class LetterResponse(BaseModel):
     proposal: Proposal
 
 
+class AskResponse(BaseModel):
+    """Response of POST /letters/{id}/ask. Both fields are for the screen only."""
+
+    answer_id: int
+    question: str  # what we heard (or what was typed)
+    answer: str
+    source: Literal["model", "regenerated", "fallback"]
+
+
 class ConfirmRequest(BaseModel):
     """Body of POST /proposals/{id}/confirm. Token only: no amount, no payee."""
 

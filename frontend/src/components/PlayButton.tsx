@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { t, VOICE_ENABLED, type Lang } from "@/i18n";
-import { letterAudioUrl } from "@/lib/api";
 
 // Voice codes for the browser's built-in speech, used when the server has no audio.
 const SPEECH_LOCALE: Partial<Record<Lang, string>> = {
@@ -18,19 +17,21 @@ const SPEECH_LOCALE: Partial<Record<Lang, string>> = {
 type Source = { kind: "loading" } | { kind: "audio"; url: string } | { kind: "browser" };
 
 /**
- * Play / Pause for the explanation. It never starts by itself.
+ * Play / Pause for a piece of text (the explanation or an answer). It never
+ * starts by itself.
  * The audio is fetched (not played) when the screen opens, so the tap can
  * start it straight away. If the server has no audio (204) the browser's own
  * voice reads the text. Shown only for languages with a tested voice.
  */
 export function PlayButton({
   lang,
-  letterId,
+  audioUrl,
   language,
   text,
 }: {
   lang: Lang;
-  letterId: string;
+  /** Where the server's audio for this text is (it may answer 204 = none). */
+  audioUrl: string;
   language: Lang;
   text: string;
 }) {
@@ -46,7 +47,7 @@ export function PlayButton({
     let cancelled = false;
     let url: string | null = null;
     setSource({ kind: "loading" });
-    fetch(letterAudioUrl(letterId))
+    fetch(audioUrl)
       .then(async (response) => {
         if (response.status !== 200) throw new Error("no audio");
         url = URL.createObjectURL(await response.blob());
@@ -60,7 +61,7 @@ export function PlayButton({
       window.speechSynthesis?.cancel();
       if (url) URL.revokeObjectURL(url);
     };
-  }, [letterId, enabled]);
+  }, [audioUrl, enabled]);
 
   function start(from: Source) {
     if (from.kind === "audio") {

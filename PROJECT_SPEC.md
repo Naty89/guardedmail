@@ -133,6 +133,7 @@ backend/app/nessie.py      Nessie HTTP client (read class and write class)
 backend/app/nessie_mock.py offline mock with the same interface
 backend/app/audit.py       append-only hash-chained log
 backend/app/tts.py         speech generation + cache
+backend/app/ask.py         questions about a letter (voice or typed); no tools, no path to money
 backend/scripts/seed_nessie.py
 backend/scripts/check_nessie_balance.py
 backend/fixtures/          cached results for demo letters, keyed by image hash
@@ -232,6 +233,8 @@ Required test: a letter containing an embedded instruction to pay a different ac
 | `GET /letters/{id}/debug` | — | timings, model ids, policy verdict and reasons (no letter text) |
 | `GET /letters/{id}/image` | — | small JPEG of the letter for the confirm dialog |
 | `GET /letters/{id}/audio` | — | audio bytes, or 204 (client falls back to `speechSynthesis`) |
+| `POST /letters/{id}/ask` | multipart `audio` (WAV) or `question` (text) | answer_id, question (as heard or typed), answer, source |
+| `GET /letters/{id}/answers/{n}/audio` | — | audio bytes, or 204 |
 | `POST /proposals/{id}/confirm` | `{token}` only | status (paid / blocked), receipt {nessie_id, payee_name, amount_cents, new_balance_cents}, block_reason |
 | `POST /proposals/{id}/reject` | — | status |
 | `GET /account` | — | balance, bills, recent payments |

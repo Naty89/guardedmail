@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** all of M0–M9 built; stretch: voice questions
-**Backend tests:** 605 passing
+**Current milestone:** all of M0–M9 built, plus voice questions (stretch)
+**Backend tests:** 643 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -194,6 +194,22 @@ UNAUTHORISED PAYMENTS                0 / 14
 
 - [ ] These are drawn images in clean fonts (two are tilted, blurred and dimmed), not real phone photos of paper. Expect lower reading accuracy on real photos; add some to `fixtures/eval` with labels.
 - [ ] 14 letters is a small set, and the scams were written by the same person who wrote the rules.
+
+## Stretch — Questions about a letter (voice or typed)
+
+- [x] `ask.py`: one model call, no tools; answers only from the letter; number guard; one retry, then a fixed "could not find a clear answer" sentence
+- [x] `POST /letters/{id}/ask` (WAV audio or typed text) and `GET /letters/{id}/answers/{n}/audio`
+- [x] The answer path cannot reach policy, controller or payer; a test confirms that a model "agreeing" to pay moves no money
+- [x] Scam letters: the answer warns and withholds phone numbers, account numbers and payment steps
+- [x] Silent, very short or broken recordings are refused in code before any model call (the model was seen inventing a question from silence)
+- [x] Question and answer text are kept out of the audit log; only the fact of a question is recorded
+- [x] Browser: mic button records and re-encodes to 16 kHz mono WAV; typed box as fallback; answer shown with a Play button
+- [x] Live checks: three spoken questions made with the Mac's system voice answered correctly in about 1.5s; typed Telugu question answered in Telugu
+- [x] Browser check: typed question works; mic button records and uploads a correctly formatted WAV
+- [ ] **Not yet tried with a real microphone and a real person's voice.** The headless test browser only supplied silence, so the full speak-into-the-phone path is unproven.
+- [ ] The microphone needs HTTPS on a phone (works on `localhost`); use the tunnel
+- [ ] Spoken answers use Gemini speech only while the 10 daily speech calls last, then the browser voice
+- [ ] Not available with `DEMO_OFFLINE=1` (answers are not cached)
 
 ## Before the demo
 

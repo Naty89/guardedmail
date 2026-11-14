@@ -5,6 +5,7 @@ import {
   CircleX,
   FileSearch,
   Loader,
+  MessageCircleQuestion,
   ShieldAlert,
   ShieldCheck,
   ThumbsDown,
@@ -47,6 +48,8 @@ function describe(event: AuditEvent, lang: Lang): { icon: LucideIcon; text: stri
           amount: formatCents(Number(data.amount_cents ?? 0)),
         }),
       };
+    case "question_asked":
+      return { icon: MessageCircleQuestion, text: t(lang, "ev_question_asked") };
     case "payment_blocked":
       return { icon: Ban, text: t(lang, "ev_payment_blocked") };
     default:

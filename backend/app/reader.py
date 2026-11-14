@@ -155,11 +155,14 @@ class GeminiCaller:
         return fallback_tries if skip_primary else [self._model] + fallback_tries
 
     async def generate(self, *, system: str, prompt: str, image_jpeg: bytes | None,
-                       json_schema: dict | None) -> tuple[str, str]:
+                       json_schema: dict | None,
+                       audio_wav: bytes | None = None) -> tuple[str, str]:
         types = self._types
         contents: list = []
         if image_jpeg is not None:
             contents.append(types.Part.from_bytes(data=image_jpeg, mime_type="image/jpeg"))
+        if audio_wav is not None:  # a spoken question (see ask.py)
+            contents.append(types.Part.from_bytes(data=audio_wav, mime_type="audio/wav"))
         contents.append(prompt)
         options: dict = {"system_instruction": system, "temperature": 0}
         if json_schema is not None:

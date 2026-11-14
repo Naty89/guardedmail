@@ -89,6 +89,7 @@ class LetterRecord:
     payee_name: str | None = None      # trusted merchant name, for "pay" only
     receipt: dict | None = None        # set once paid
     thumbnail_jpeg: bytes | None = None
+    answers: list[str] = field(default_factory=list)  # answers given by /ask, for read-aloud
     debug: dict = field(default_factory=dict)
 
 

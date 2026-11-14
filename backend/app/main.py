@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import audit, payer, tts
+from app import ask, audit, payer, tts
 from app.letters import (
     current_balance_cents,
     demo_account_id,
@@ -26,9 +26,10 @@ from app.letters import (
     restore_from_audit,
 )
 from app.nessie import NessieError, get_read_client
-from app.reader import MAX_UPLOAD_BYTES, ReaderError
+from app.reader import MAX_UPLOAD_BYTES, GeminiCaller, ReaderError
 from app.schemas import (
     AccountResponse,
+    AskResponse,
     AuditResponse,
     BillSummary,
     ConfirmRequest,
@@ -39,7 +40,7 @@ from app.schemas import (
     Receipt,
     RejectResponse,
 )
-from app.store import STORE, sample_image_bytes
+from app.store import STORE, load_cached_reading, sample_image_bytes
 
 FRONTEND_DIST: Path = REPO_ROOT / "frontend" / "dist"
 
@@ -136,6 +137,73 @@ async def get_letter_audio(letter_id: UUID) -> Response:
     if record is None:
         raise HTTPException(404, {"error": "letter_not_found"})
     audio_bytes = await tts.get_audio(record.response.explanation, record.response.language)
+    if audio_bytes is None:
+        return Response(status_code=204)
+    return Response(audio_bytes, media_type="audio/wav")
+
+
+def _ask_caller():
+    """The model caller for questions. Separate so tests can replace it."""
+    return GeminiCaller()
+
+
+@app.post("/letters/{letter_id}/ask")
+async def ask_about_letter(
+    letter_id: UUID,
+    audio: UploadFile | None = File(None),
+    question: str | None = Form(None),
+) -> AskResponse:
+    """Answer one spoken (WAV) or typed question about a letter, from the letter only.
+
+    The answer is text for the screen. Nothing here can propose or make a payment.
+    """
+    record = STORE.by_letter(letter_id)
+    if record is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    language = record.response.language
+    reading = load_cached_reading(record.image_sha256, language)
+    if reading is None:
+        raise HTTPException(503, {"error": "letter_text_unavailable"})
+
+    audio_wav = None
+    if question is None or not question.strip():
+        question = None
+        if audio is None:
+            raise HTTPException(400, {"error": "question_missing"})
+        audio_wav = await audio.read(ask.MAX_AUDIO_BYTES + 1)
+        if len(audio_wav) > ask.MAX_AUDIO_BYTES:
+            raise HTTPException(400, {"error": "audio_too_large"})
+        if not tts._looks_like_wav(audio_wav):
+            raise HTTPException(400, {"error": "audio_unreadable"})
+    if get_settings().demo_offline:
+        raise HTTPException(503, {"error": "offline"})
+
+    try:
+        heard, answer, source = await ask.answer_question(
+            _ask_caller(), reading.first, language,
+            audio_wav=audio_wav, question_text=question,
+            scam_warning=record.response.scam.risk != "low")
+    except ReaderError as exc:
+        status = 400 if exc.reason == "question_unclear" else 503
+        raise HTTPException(status, {"error": exc.reason}) from None
+
+    record.answers.append(answer)
+    answer_id = len(record.answers) - 1
+    # Only facts about the exchange are logged, not the words.
+    await audit.record("user", "question_asked", letter_id=letter_id,
+                       spoken=audio_wav is not None, answer_source=source,
+                       answer_id=answer_id)
+    tts.warm_up(answer, language)
+    return AskResponse(answer_id=answer_id, question=heard, answer=answer, source=source)
+
+
+@app.get("/letters/{letter_id}/answers/{answer_id}/audio")
+async def get_answer_audio(letter_id: UUID, answer_id: int) -> Response:
+    """An answer read aloud (WAV), or 204 so the browser uses its own voice."""
+    record = STORE.by_letter(letter_id)
+    if record is None or not 0 <= answer_id < len(record.answers):
+        raise HTTPException(404, {"error": "answer_not_found"})
+    audio_bytes = await tts.get_audio(record.answers[answer_id], record.response.language)
     if audio_bytes is None:
         return Response(status_code=204)
     return Response(audio_bytes, media_type="audio/wav")

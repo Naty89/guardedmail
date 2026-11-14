@@ -1,12 +1,14 @@
 import { ArrowLeft, ListChecks } from "lucide-react";
 import { useEffect } from "react";
 
+import { AskBox } from "@/components/AskBox";
 import { LetterFacts } from "@/components/LetterFacts";
 import { PlayButton } from "@/components/PlayButton";
 import { ScamStatus } from "@/components/ScamStatus";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { t } from "@/i18n";
+import { letterAudioUrl } from "@/lib/api";
 import type { ScreenProps } from "@/lib/screens";
 
 /**
@@ -32,12 +34,14 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
         </p>
         <PlayButton
           lang={lang}
-          letterId={letter.letter_id}
+          audioUrl={letterAudioUrl(letter.letter_id)}
           language={letter.language}
           text={letter.explanation}
         />
         <LetterFacts lang={lang} letter={letter} />
       </Card>
+
+      <AskBox lang={lang} letter={letter} />
 
       <Button variant="outline" onClick={() => go("audit")}>
         <ListChecks aria-hidden="true" />

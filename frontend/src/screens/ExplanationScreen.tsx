@@ -1,6 +1,7 @@
 import { ArrowLeft, ListChecks, CalendarDays, CircleHelp, Wallet } from "lucide-react";
 import { useEffect } from "react";
 
+import { AskBox } from "@/components/AskBox";
 import { LetterFacts } from "@/components/LetterFacts";
 import { PlayButton } from "@/components/PlayButton";
 import { Num } from "@/components/Num";
@@ -8,7 +9,7 @@ import { ScamStatus } from "@/components/ScamStatus";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { t, type Lang, type StringKey } from "@/i18n";
-import type { Proposal } from "@/lib/api";
+import { letterAudioUrl, type Proposal } from "@/lib/api";
 import { formatDate } from "@/lib/dates";
 import { formatCents } from "@/lib/format";
 import type { Screen, ScreenProps } from "@/lib/screens";
@@ -31,7 +32,7 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
         </p>
         <PlayButton
           lang={lang}
-          letterId={letter.letter_id}
+          audioUrl={letterAudioUrl(letter.letter_id)}
           language={letter.language}
           text={letter.explanation}
         />
@@ -41,6 +42,8 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
       <ScamStatus lang={lang} scam={letter.scam} />
 
       <ActionCard lang={lang} proposal={letter.proposal} go={go} />
+
+      <AskBox lang={lang} letter={letter} />
 
       <Button variant="outline" onClick={() => go("audit")}>
         <ListChecks aria-hidden="true" />

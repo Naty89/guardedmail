@@ -218,3 +218,34 @@ export function rejectProposal(id: string): Promise<{ status: string }> {
 export function getAccount(): Promise<Account> {
   return request<Account>("/account");
 }
+
+/* ------------------------------------------------------------------ */
+/* Questions about a letter                                            */
+/* ------------------------------------------------------------------ */
+
+export type AskResult = {
+  answer_id: number;
+  /** What the server heard, or what was typed. */
+  question: string;
+  answer: string;
+  source: "model" | "regenerated" | "fallback";
+};
+
+/**
+ * POST /letters/{id}/ask with a spoken question (WAV) or a typed one.
+ * The answer is text for the screen. Asking can never start a payment.
+ */
+export function askLetter(id: string, question: Blob | string): Promise<AskResult> {
+  const form = new FormData();
+  if (typeof question === "string") form.append("question", question);
+  else form.append("audio", question, "question.wav");
+  return request<AskResult>(`/letters/${encodeURIComponent(id)}/ask`, {
+    method: "POST",
+    body: form,
+  });
+}
+
+/** GET /letters/{id}/answers/{n}/audio: an answer read aloud, or 204. */
+export function answerAudioUrl(id: string, answerId: number): string {
+  return `/letters/${encodeURIComponent(id)}/answers/${answerId}/audio`;
+}
