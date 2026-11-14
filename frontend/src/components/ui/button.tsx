@@ -11,7 +11,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[0_1px_0_rgb(255_255_255/0.12)_inset,0_2px_6px_-2px_rgb(27_79_86/0.55)] hover:bg-primary-hover",
+          "bg-primary text-primary-foreground shadow-[0_1px_0_rgb(255_255_255/0.16)_inset,0_3px_8px_-3px_rgb(29_78_216/0.6)] hover:bg-primary-hover",
+        // Sunny yellow with dark ink text. Use on cobalt blocks, or for one hero action.
+        accent:
+          "bg-accent text-ink shadow-[0_1px_0_rgb(255_255_255/0.4)_inset,0_3px_8px_-3px_rgb(18_27_56/0.45)] hover:brightness-95",
+        // Quiet button on a cobalt block.
+        light: "text-white hover:bg-white/12",
         secondary: "bg-primary-soft text-primary-ink hover:bg-primary-soft/70",
         outline:
           "border-[1.5px] border-control-border bg-surface text-foreground hover:bg-primary-soft",

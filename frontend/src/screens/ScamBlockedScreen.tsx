@@ -43,7 +43,7 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
 
       <AskBox lang={lang} letter={letter} />
 
-      <nav className="flex flex-wrap justify-between gap-x-2 border-t border-hairline pt-4">
+      <nav className="flex flex-wrap justify-center gap-x-4 border-t border-hairline pt-4">
         <Button variant="ghost" className="px-2" onClick={() => go("audit")}>
           <ListChecks aria-hidden="true" />
           {t(lang, "audit_log")}

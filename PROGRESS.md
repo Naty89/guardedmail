@@ -366,9 +366,9 @@ UNAUTHORISED PAYMENTS                0 / 14
 
 ## Design system (restyle, 2026-11-14)
 
-- [x] Direction: calm and editorial, like stationery or a bank letterhead. Warm paper background, one teal accent, no gradients, hairline dividers instead of nested boxes, one dominant action per screen
+- [x] Direction: calm and editorial, with colour where it counts. Cream background, navy ink, cobalt blue (`#1d4ed8`) for main actions and colour blocks, sunny yellow (`#ffc933`, always with dark ink text) as the pop, no gradients, hairline dividers, one dominant action per screen
 - [x] Type: Newsreader (serif) for headings and key figures, Public Sans for reading. Both Latin only; the other eight scripts fall back to the system Noto fonts. Files are self-hosted in `frontend/public/fonts` (open licence, 84 KB) so offline mode looks identical. No letter-spacing anywhere (it breaks Arabic joining)
-- [x] Tokens live in `frontend/src/index.css` (paper, ink, teal `#1b4f56`, status colours). Change colours there only
+- [x] Tokens live in `frontend/src/index.css` (cream, navy, cobalt, yellow, status colours). Change colours there only. Colour blocks: Capture hero card, pay panel, scam warning header, dark demo-bank strip
 - [x] Capture: language pills, one hero card with the single main button, samples as a list
 - [x] Explanation: statement-style summary box (sender, amount, due date), quiet scam row, tinted "next step" panel, ask box collapsed until opened
 - [x] Receipt styled as a receipt; Activity log as a timeline
@@ -376,7 +376,7 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [x] Arabic dates follow the language's own direction (`<Num dir="auto">`)
 - [ ] Looked at in headless Chrome only: needs a look on a real phone, and in Safari
 - [ ] No dark mode
-- [ ] Screens not re-screenshotted after the last two small tweaks (date column width, bottom link padding); checked by the measurements above only
+- [x] Palette changed from teal to cobalt + yellow on request ("more pop"); all pairs re-checked: text at least 5.4:1, outlines at least 4.3:1, yellow focus ring on blue 4.4:1
 
 ---
 

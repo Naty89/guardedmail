@@ -45,7 +45,7 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
 
       <AskBox lang={lang} letter={letter} />
 
-      <nav className="flex flex-wrap justify-between gap-x-2 border-t border-hairline pt-4">
+      <nav className="flex flex-wrap justify-center gap-x-4 border-t border-hairline pt-4">
         <Button variant="ghost" className="px-2" onClick={() => go("audit")}>
           <ListChecks aria-hidden="true" />
           {t(lang, "audit_log")}
@@ -79,13 +79,14 @@ function ActionCard({
   if (proposal.action === "pay" && proposal.amount_cents !== null && proposal.payee_name) {
     const amount = formatCents(proposal.amount_cents);
     return (
-      <section className="flex flex-col gap-4 rounded-2xl border border-primary/25 bg-primary-soft p-5">
-        <CardTitle className="flex items-center gap-2.5 text-primary-ink">
-          <Wallet className="size-6 shrink-0" aria-hidden="true" />
+      <section className="on-dark relative flex flex-col gap-4 overflow-hidden rounded-2xl bg-primary p-5 text-white shadow-card">
+        <span aria-hidden="true" className="pointer-events-none absolute -end-8 -top-8 size-24 rounded-full bg-accent" />
+        <CardTitle className="relative flex items-center gap-2.5 pe-14">
+          <Wallet className="size-6 shrink-0 text-accent" aria-hidden="true" />
           {t(lang, "action_pay_title")}
         </CardTitle>
-        <p className="m-0 text-primary-ink">
-          {t(lang, "pay_to")}: <bdi className="font-semibold">{proposal.payee_name}</bdi>
+        <p className="m-0 text-on-primary-muted">
+          {t(lang, "pay_to")}: <bdi className="font-semibold text-white">{proposal.payee_name}</bdi>
           {proposal.due_date && (
             <>
               <br />
@@ -94,7 +95,7 @@ function ActionCard({
           )}
         </p>
         {/* Opens the confirm dialog. Nothing is paid until the user says yes there. */}
-        <Button size="lg" onClick={() => go("confirm")}>
+        <Button size="lg" variant="accent" onClick={() => go("confirm")}>
           {t(lang, "pay_button", { amount })}
         </Button>
       </section>

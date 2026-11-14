@@ -79,10 +79,12 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
     <div className="flex flex-col gap-7">
       <LanguagePicker lang={lang} onChange={onLangChange} />
 
-      <Card className="gap-5 p-6">
-        <div>
+      <Card className="on-dark relative gap-5 overflow-hidden border-transparent bg-primary p-6 text-white">
+        {/* Decorative shapes only. */}
+        <span aria-hidden="true" className="pointer-events-none absolute -end-9 -top-9 size-28 rounded-full bg-accent" />
+        <div className="relative">
           <h1 className="text-[1.75rem] leading-tight">{t(lang, "capture_title")}</h1>
-          <p className="mt-2 text-muted-foreground">{t(lang, "capture_intro")}</p>
+          <p className="mt-2 text-on-primary-muted">{t(lang, "capture_intro")}</p>
         </div>
 
         {/* The real file input is hidden; the visible <button> opens it. */}
@@ -112,27 +114,27 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
             </p>
           )}
           {photo && (
-            <p className="flex items-center gap-2 font-semibold text-ok">
-              <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
+            <p className="flex items-center gap-2 font-semibold text-white">
+              <CircleCheck className="size-5 shrink-0 text-accent" aria-hidden="true" />
               {t(lang, "photo_ready")}
             </p>
           )}
           {sampleId && (
-            <p className="flex items-center gap-2 font-semibold text-ok">
-              <CircleCheck className="size-5 shrink-0" aria-hidden="true" />
+            <p className="flex items-center gap-2 font-semibold text-white">
+              <CircleCheck className="size-5 shrink-0 text-accent" aria-hidden="true" />
               {t(lang, "sample_selected")}
             </p>
           )}
         </LiveRegion>
 
         {photo && previewUrl && (
-          <div className="flex items-center gap-4 rounded-xl bg-muted p-3">
+          <div className="flex items-center gap-4 rounded-xl bg-white/12 p-3">
             <img
               src={previewUrl}
               alt={t(lang, "photo_preview_alt")}
               className="h-24 w-[4.5rem] shrink-0 rounded-md border border-hairline bg-surface object-cover object-top"
             />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-on-primary-muted">
               {t(lang, "photo_size")}: <Num>{formatBytes(photo.size)}</Num>
             </p>
           </div>
@@ -141,12 +143,12 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
         {/* The next step is always the one dominant button. */}
         {source ? (
           <>
-            <Button size="lg" onClick={handleContinue}>
+            <Button size="lg" variant="accent" onClick={handleContinue}>
               {t(lang, "continue")}
               <ArrowRight className="rtl:rotate-180" aria-hidden="true" />
             </Button>
             <Button
-              variant="ghost"
+              variant="light"
               disabled={preparing}
               onClick={() => fileInput.current?.click()}
             >
@@ -155,7 +157,12 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
             </Button>
           </>
         ) : (
-          <Button size="lg" disabled={preparing} onClick={() => fileInput.current?.click()}>
+          <Button
+            size="lg"
+            variant="accent"
+            disabled={preparing}
+            onClick={() => fileInput.current?.click()}
+          >
             <Camera aria-hidden="true" />
             {t(lang, "take_photo")}
           </Button>
@@ -215,7 +222,7 @@ function SampleRow({
           selected && "bg-primary-soft",
         )}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary [&_svg]:size-[1.1rem]">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-ink [&_svg]:size-[1.1rem]">
           {icon}
         </span>
         <span className="grow">{label}</span>

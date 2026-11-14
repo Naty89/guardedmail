@@ -22,14 +22,15 @@ export function ScamStatus({
     <div
       className={
         warning
-          ? "rounded-2xl border border-danger/40 bg-danger-soft px-5 py-4"
+          ? "overflow-hidden rounded-2xl border border-danger/40 bg-danger-soft shadow-card"
           : "rounded-2xl border border-hairline bg-surface px-5 py-3.5"
       }
     >
+      {/* A solid red header for a warning; a quiet row when nothing was found. */}
       <p
         className={
           warning
-            ? "flex items-center gap-2.5 font-serif-display text-xl font-semibold text-danger"
+            ? "on-dark flex items-center gap-2.5 bg-danger px-5 py-3.5 font-serif-display text-xl font-semibold text-white"
             : "flex items-center gap-2.5 font-semibold text-muted-foreground"
         }
       >
@@ -42,7 +43,7 @@ export function ScamStatus({
       </p>
 
       {scam.reasons.length > 0 && (
-        <details open={defaultOpen} className="mt-1">
+        <details open={defaultOpen} className={warning ? "px-5 pb-2" : "mt-1"}>
           <summary className="flex min-h-12 cursor-pointer items-center font-semibold underline underline-offset-4">
             {t(lang, "why")}
           </summary>

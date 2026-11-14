@@ -19,7 +19,7 @@ export function ReceiptScreen({ lang, go, receipt }: ScreenProps) {
     <div className="flex flex-col gap-5">
       <h1 className="sr-only">{t(lang, "receipt")}</h1>
 
-      <Card className="items-center gap-0 p-0 text-center">
+      <Card className="items-center gap-0 border-t-[6px] border-t-accent p-0 text-center">
         <div className="flex w-full flex-col items-center gap-3 px-6 pt-8 pb-6">
           <span className="flex size-14 items-center justify-center rounded-full bg-ok-soft text-ok">
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
@@ -45,12 +45,12 @@ export function ReceiptScreen({ lang, go, receipt }: ScreenProps) {
         </dl>
 
         <p className="m-0 w-full border-t border-hairline px-6 py-3 text-center text-xs text-muted-foreground">
-          {t(lang, "reference")}:{" "}
+          <span className="block">{t(lang, "reference")}</span>
           <Num className="font-mono break-all">{receipt.nessie_id}</Num>
         </p>
       </Card>
 
-      <nav className="flex flex-wrap justify-between gap-x-2 border-t border-hairline pt-4">
+      <nav className="flex flex-wrap justify-center gap-x-4 border-t border-hairline pt-4">
         <Button variant="ghost" className="px-2" onClick={() => go("audit")}>
           <ListChecks aria-hidden="true" />
           {t(lang, "audit_log")}

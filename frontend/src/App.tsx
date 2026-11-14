@@ -68,7 +68,7 @@ export default function App() {
 
       <header className="mx-auto flex w-full max-w-xl items-center justify-between gap-3 px-5 pt-5">
         <p className="flex items-center gap-2.5 text-xl font-semibold" lang="en" dir="ltr">
-          <span className="flex size-9 items-center justify-center rounded-full border-[1.5px] border-primary text-primary">
+          <span className="flex size-9 items-center justify-center rounded-full bg-accent text-ink shadow-[0_2px_6px_-2px_rgb(18_27_56/0.5)]">
             <Mail className="size-[1.15rem]" aria-hidden="true" />
           </span>
           <span className="font-serif-display">{t(lang, "app_name")}</span>
