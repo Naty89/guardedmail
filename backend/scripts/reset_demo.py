@@ -2,14 +2,19 @@
 
 Run:  cd backend && .venv/bin/python -m scripts.reset_demo
 
-Sets every bill on the demo account back to "pending". Our own ledger (the
-balance the app shows) lives in the server's memory, so restart the server as
-well to return the balance to the seed amount.
+1. Sets every bill on the demo account back to "pending".
+2. Moves the local audit log aside (renamed with a timestamp, never deleted),
+   because the app rebuilds its ledger from that log on startup.
+
+Restart the server afterwards: the balance returns to the seed amount.
+(With MONGODB_URI set, the audit log lives in MongoDB and is not touched here.)
 """
 
 import asyncio
 import sys
+from datetime import datetime
 
+from app import audit
 from app.letters import demo_account_id
 from app.nessie import NessieError, get_write_client
 
@@ -32,6 +37,13 @@ async def reset() -> int:
         return 1
     finally:
         await client.aclose()
+    for name in (audit.AUDIT_FILE, audit.QUARANTINE_FILE):
+        path = audit.DATA_DIR / name
+        if path.is_file():
+            stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            archived = path.with_name(f"{path.stem}.{stamp}{path.suffix}")
+            path.rename(archived)
+            print(f"  archived {name} -> {archived.name}")
     print("Done. Restart the server to reset the balance shown in the app.")
     return 0
 

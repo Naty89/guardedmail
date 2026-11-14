@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, CircleHelp, Wallet } from "lucide-react";
+import { ArrowLeft, ListChecks, CalendarDays, CircleHelp, Wallet } from "lucide-react";
 import { useEffect } from "react";
 
 import { LetterFacts } from "@/components/LetterFacts";
@@ -35,6 +35,10 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
 
       <ActionCard lang={lang} proposal={letter.proposal} go={go} />
 
+      <Button variant="outline" onClick={() => go("audit")}>
+        <ListChecks aria-hidden="true" />
+        {t(lang, "audit_log")}
+      </Button>
       <Button variant="outline" onClick={() => go("capture")}>
         <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
         {t(lang, "start_over")}

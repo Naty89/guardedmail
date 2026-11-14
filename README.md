@@ -104,7 +104,7 @@ Then confirm the account and its balance:
 - [x] M4 - POST /letters end to end; Capture / Reading / Explanation screens
 - [x] M5 - Confirm flow, payer.py, receipt, ledger (demo beat 1)
 - [x] M6 - scam.py and the Scam blocked screen (demo beat 2)
-- [ ] M7 - audit.py, audit screen, judge panel
+- [x] M7 - audit.py, audit screen, judge panel
 - [ ] M8 - tts.py with audio cache; language picker wired; Telugu and Tamil tested
 - [ ] M9 - Eval script and results table (demo beat 3)
 

@@ -235,7 +235,7 @@ Required test: a letter containing an embedded instruction to pay a different ac
 | `POST /proposals/{id}/confirm` | `{token}` only | status (paid / blocked), receipt {nessie_id, payee_name, amount_cents, new_balance_cents}, block_reason |
 | `POST /proposals/{id}/reject` | — | status |
 | `GET /account` | — | balance, bills, recent payments |
-| `GET /audit?letter_id=` | — | events |
+| `GET /audit?letter_id=` | — | events (oldest first), chain_ok |
 
 Routes are unprefixed (no `/api`). When adding a new top-level route prefix, add it to `API_PREFIXES` in `main.py` so unknown paths under it stay JSON 404s instead of returning the frontend.
 

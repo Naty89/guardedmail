@@ -164,10 +164,37 @@ export type Account = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Not built yet on the server (M7, M8). Types are placeholders.       */
+/* Audit log and judge panel (M7)                                      */
 /* ------------------------------------------------------------------ */
 
-export type AuditEntry = { ts: string; event: string; [key: string]: unknown };
+export type AuditEvent = {
+  seq: number;
+  ts: string;
+  letter_id: string | null;
+  proposal_id: string | null;
+  actor: "reader" | "policy" | "user" | "payer";
+  event: string;
+  prev_hash: string;
+  hash: string;
+  data: Record<string, unknown>;
+};
+/** `chain_ok` is false if any event in the whole log was changed or removed. */
+export type AuditLog = { events: AuditEvent[]; chain_ok: boolean };
+
+/** GET /audit?letter_id= */
+export function getAudit(letterId?: string): Promise<AuditLog> {
+  const query = letterId ? `?letter_id=${encodeURIComponent(letterId)}` : "";
+  return request<AuditLog>(`/audit${query}`);
+}
+
+/** GET /letters/{id}/debug: timings and the policy verdict, for the judge panel. */
+export function getLetterDebug(id: string): Promise<Record<string, unknown>> {
+  return request<Record<string, unknown>>(`/letters/${encodeURIComponent(id)}/debug`);
+}
+
+/* ------------------------------------------------------------------ */
+/* Not built yet on the server (M8).                                   */
+/* ------------------------------------------------------------------ */
 
 /** GET /letters/{id}/audio: the URL to give an <audio> element. Never autoplay. */
 export function letterAudioUrl(id: string): string {
@@ -191,9 +218,4 @@ export function rejectProposal(id: string): Promise<{ status: string }> {
 /** GET /account: the mock checking account. */
 export function getAccount(): Promise<Account> {
   return request<Account>("/account");
-}
-
-/** GET /audit?letter_id= */
-export function getAudit(letterId: string): Promise<AuditEntry[]> {
-  return request<AuditEntry[]>(`/audit?letter_id=${encodeURIComponent(letterId)}`);
 }

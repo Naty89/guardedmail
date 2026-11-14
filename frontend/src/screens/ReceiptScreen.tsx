@@ -1,4 +1,4 @@
-import { ArrowLeft, CircleCheck } from "lucide-react";
+import { ArrowLeft, ListChecks, CircleCheck } from "lucide-react";
 import { useEffect } from "react";
 
 import { Num } from "@/components/Num";
@@ -40,6 +40,10 @@ export function ReceiptScreen({ lang, go, receipt }: ScreenProps) {
         </p>
       </Card>
 
+      <Button variant="outline" onClick={() => go("audit")}>
+        <ListChecks aria-hidden="true" />
+        {t(lang, "audit_log")}
+      </Button>
       <Button variant="outline" onClick={() => go("capture")}>
         <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
         {t(lang, "start_over")}

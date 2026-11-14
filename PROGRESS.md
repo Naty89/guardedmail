@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M7 (audit log) — not started
-**Backend tests:** 562 passing
+**Current milestone:** M8 (voice and languages) — not started
+**Backend tests:** 581 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -21,7 +21,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 | M4 | `POST /letters` + Capture / Reading / Explanation UI | Done, checked in a browser with both samples |
 | M5 | Confirm flow, payer, receipt, ledger (demo beat 1) | Done, checked in a browser and with one live Nessie payment |
 | M6 | `scam.py` + Scam blocked screen (demo beat 2) | Done, checked in a browser |
-| M7 | Audit log, audit screen, judge panel | Not started |
+| M7 | Audit log, audit screen, judge panel | Done with the local file; MongoDB path untested |
 | M8 | TTS + languages wired | Not started |
 | M9 | Eval script (demo beat 3) | Not started |
 
@@ -86,7 +86,7 @@ RESULT: balance after bill marked completed: 100
 - [x] Tests: disagreeing passes, unknown payee, scam signal, over cap, over balance, bad date, expired token, reused token, tampered token
 - [x] Tests: arbitrary text in `raw_text` or `payee_candidate` cannot produce an Allow for an unknown merchant (fixed list plus 3,000 random strings)
 - [x] Test: `policy.py` never reads `raw_text` and imports no model or network code
-- [ ] Single-use token record is in memory only; persist it in M7
+- [x] Used tokens are restored from the audit log on startup (M7)
 
 ## M3 — Reader
 
@@ -129,7 +129,7 @@ RESULT: balance after bill marked completed: 100
 - [x] Receipt screen
 - [x] `scripts/reset_demo.py` sets the demo bills back to pending
 - [x] Live check against real Nessie: paid $84.12, bill marked completed, second confirm blocked (bill then reset)
-- [ ] Ledger, proposals and used tokens are in memory: a server restart resets the balance to $2,000 and forgets paid letters. Persist them with the audit log in M7.
+- [x] Ledger, paid letters and used tokens survive a restart (rebuilt from the audit log, M7). Open proposals do not: after a restart, read the letter again.
 
 ## M6 — Scam (demo beat 2)
 
@@ -144,13 +144,21 @@ RESULT: balance after bill marked completed: 100
 - [ ] No separate model call for the scam judgement: it reuses the two extraction passes' signals (saves Gemini quota)
 - [ ] Rules are English keywords only
 
-## M7 — Audit (next)
+## M7 — Audit
 
-- [ ] Hash-chained append-only log; MongoDB or JSONL fallback
-- [ ] Quarantined `raw_text` store
-- [ ] `GET /audit`, Audit screen, judge panel filled in
+- [x] `audit.py`: append-only log; each event carries `prev_hash` and `hash`; `verify_chain` finds the first altered, removed or reordered event
+- [x] Local JSONL storage in `backend/data/` (gitignored)
+- [x] Events: `letter_read`, `read_failed`, `scam_checked`, `policy_decided`, `confirm_requested`, `proposal_rejected`, `payment_executed`, `payment_blocked`
+- [x] Transcriptions go to a separate quarantine file; the log refuses any event containing `raw_text`
+- [x] `GET /audit?letter_id=` returns events plus `chain_ok`
+- [x] On startup the ledger, paid letters and used tokens are rebuilt from the log (a restart no longer resets the balance)
+- [x] Activity log screen in plain words, in all 9 languages, reachable from Explanation, Scam blocked and Receipt
+- [x] Judge panel (`?debug=1`): step timings, model ids, policy verdict and reason IDs, bank calls, audit events with hash links
+- [x] `scripts/reset_demo.py` now also archives the local audit log
+- [ ] MongoDB backend is written but has never been run against a real cluster (no `MONGODB_URI` set)
+- [ ] Nessie request ID: shown if Nessie sends an `x-request-id` header; not yet seen whether it does
 
-## M8 — Voice and languages
+## M8 — Voice and languages (next)
 
 - [ ] `tts.py` with audio cache; `GET /letters/{id}/audio`
 - [ ] Play/pause, `speechSynthesis` fallback on 204

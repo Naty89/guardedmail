@@ -99,6 +99,7 @@ class Store:
         self._by_letter: dict[UUID, LetterRecord] = {}
         self._by_proposal: dict[UUID, LetterRecord] = {}
         self._paid_images: set[str] = set()
+        self._payments: list[dict] = []
 
     def add(self, record: LetterRecord) -> None:
         self._by_letter[record.response.letter_id] = record
@@ -114,15 +115,16 @@ class Store:
         """True if this exact letter image already had a payment (one per letter)."""
         return image_sha256 in self._paid_images
 
-    def mark_paid(self, image_sha256: str) -> None:
+    def record_payment(self, image_sha256: str, payment: dict) -> None:
+        """Remember an executed payment: {nessie_id, payee_name, amount_cents, paid_on}."""
         self._paid_images.add(image_sha256)
+        self._payments.append(payment)
 
-    def paid_records(self) -> list[LetterRecord]:
-        return [r for r in self._by_letter.values()
-                if r.status == "paid" and r.intent is not None]
+    def payments(self) -> list[dict]:
+        return list(self._payments)
 
     def paid_total_cents(self) -> int:
-        return sum(r.intent.amount_cents for r in self.paid_records())
+        return sum(payment["amount_cents"] for payment in self._payments)
 
     def reset(self) -> None:
         self.__init__()

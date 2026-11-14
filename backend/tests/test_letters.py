@@ -185,7 +185,9 @@ def test_amount_over_our_ledger_balance_blocks(monkeypatch):
 
 def test_already_paid_image_cannot_be_paid_again():
     image = photo()
-    store.STORE.mark_paid(letters.image_sha256(image))
+    store.STORE.record_payment(letters.image_sha256(image), {
+        "nessie_id": "x", "payee_name": "Pioneer Valley Electric",
+        "amount_cents": 100, "paid_on": "2026-11-14"})
     response, _ = process(image=image)
     assert response.proposal.action != "pay"
     assert response.proposal.block_reason.value == "already_paid"

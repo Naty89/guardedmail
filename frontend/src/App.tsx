@@ -93,7 +93,7 @@ export default function App() {
         {screen === "audit" && <AuditScreen {...props} />}
       </main>
 
-      {debug && <JudgePanel lang={lang} screen={screen} go={setScreen} />}
+      {debug && <JudgePanel lang={lang} screen={screen} go={setScreen} letter={letter} />}
     </div>
   );
 }

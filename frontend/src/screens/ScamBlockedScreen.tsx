@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ListChecks } from "lucide-react";
 import { useEffect } from "react";
 
 import { LetterFacts } from "@/components/LetterFacts";
@@ -32,6 +32,10 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
         <LetterFacts lang={lang} letter={letter} />
       </Card>
 
+      <Button variant="outline" onClick={() => go("audit")}>
+        <ListChecks aria-hidden="true" />
+        {t(lang, "audit_log")}
+      </Button>
       <Button variant="outline" onClick={() => go("capture")}>
         <ArrowLeft className="rtl:rotate-180" aria-hidden="true" />
         {t(lang, "start_over")}

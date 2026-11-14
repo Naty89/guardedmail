@@ -8,6 +8,7 @@ are added in.
 
 from pathlib import Path
 
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -17,12 +18,18 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import payer
-from app.letters import current_balance_cents, demo_account_id, process_letter
+from app import audit, payer
+from app.letters import (
+    current_balance_cents,
+    demo_account_id,
+    process_letter,
+    restore_from_audit,
+)
 from app.nessie import NessieError, get_read_client
 from app.reader import MAX_UPLOAD_BYTES, ReaderError
 from app.schemas import (
     AccountResponse,
+    AuditResponse,
     BillSummary,
     ConfirmRequest,
     ConfirmResponse,
@@ -40,7 +47,14 @@ FRONTEND_DIST: Path = REPO_ROOT / "frontend" / "dist"
 # never answered with the frontend. Add new API prefixes here.
 API_PREFIXES = ("/health", "/letters", "/proposals", "/account", "/audit")
 
-app = FastAPI(title="Guarded Mail Agent")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """On startup, rebuild the ledger from the audit log."""
+    await restore_from_audit()
+    yield
+
+
+app = FastAPI(title="Guarded Mail Agent", lifespan=lifespan)
 
 
 @app.get("/health")
@@ -120,18 +134,28 @@ async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmRe
     Amount and payee come from the intent this server stored earlier.
     """
     record = STORE.by_proposal(proposal_id)
+    letter_id = record.response.letter_id if record else None
+
+    async def blocked(reason: ReasonId, **extra) -> ConfirmResponse:
+        await audit.record("payer", "payment_blocked", letter_id=letter_id,
+                           proposal_id=proposal_id, reason=reason.value, **extra)
+        return ConfirmResponse(status="blocked", block_reason=reason)
+
+    await audit.record("user", "confirm_requested", letter_id=letter_id,
+                       proposal_id=proposal_id)
     if record is None or record.intent is None or record.expires_at is None:
-        return ConfirmResponse(status="blocked", block_reason=ReasonId.PROPOSAL_NOT_FOUND)
+        return await blocked(ReasonId.PROPOSAL_NOT_FOUND)
     if record.status == "rejected":
-        return ConfirmResponse(status="blocked", block_reason=ReasonId.PROPOSAL_REJECTED)
+        return await blocked(ReasonId.PROPOSAL_REJECTED)
     if record.status != "paid" and STORE.is_paid(record.image_sha256):
-        return ConfirmResponse(status="blocked", block_reason=ReasonId.ALREADY_PAID)
+        return await blocked(ReasonId.ALREADY_PAID)
 
     settings = get_settings()
+    now = datetime.now(timezone.utc)
     result = await payer.pay(
         record.intent, body.token,
         expires_at=record.expires_at,
-        now=datetime.now(timezone.utc),
+        now=now,
         secret=settings.token_secret,
         account_id=demo_account_id(),
         balance_cents=current_balance_cents(),
@@ -139,28 +163,39 @@ async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmRe
     if result.steps:  # keep the steps of the attempt that reached the bank
         record.debug["payer_steps"] = list(result.steps)
     if not result.paid:
-        return ConfirmResponse(status="blocked", block_reason=result.reason)
+        return await blocked(result.reason, tool_calls=list(result.steps))
 
     record.status = "paid"
-    STORE.mark_paid(record.image_sha256)
-    record.receipt = Receipt(
+    STORE.record_payment(record.image_sha256, {
+        "nessie_id": result.nessie_id, "payee_name": record.payee_name or "",
+        "amount_cents": record.intent.amount_cents, "paid_on": now.date().isoformat(),
+    })
+    receipt = Receipt(
         nessie_id=result.nessie_id,
         payee_name=record.payee_name or "",
         amount_cents=record.intent.amount_cents,
         new_balance_cents=current_balance_cents(),  # our ledger, after this payment
-    ).model_dump()
-    record.debug["paid_at"] = datetime.now(timezone.utc).isoformat()
-    return ConfirmResponse(status="paid", receipt=Receipt(**record.receipt))
+    )
+    record.receipt = receipt.model_dump()
+    await audit.record(
+        "payer", "payment_executed", letter_id=letter_id, proposal_id=proposal_id,
+        image_sha256=record.image_sha256, merchant_id=record.intent.merchant_id,
+        payee_name=receipt.payee_name, amount_cents=receipt.amount_cents,
+        nessie_id=receipt.nessie_id, new_balance_cents=receipt.new_balance_cents,
+        bill_marked=result.bill_marked, tool_calls=list(result.steps))
+    return ConfirmResponse(status="paid", receipt=receipt)
 
 
 @app.post("/proposals/{proposal_id}/reject")
-def reject_proposal(proposal_id: UUID) -> RejectResponse:
+async def reject_proposal(proposal_id: UUID) -> RejectResponse:
     """The user said no. The proposal can no longer be confirmed."""
     record = STORE.by_proposal(proposal_id)
     if record is None:
         raise HTTPException(404, {"error": "proposal_not_found"})
     if record.status == "proposed":
         record.status = "rejected"
+        await audit.record("user", "proposal_rejected",
+                           letter_id=record.response.letter_id, proposal_id=proposal_id)
     return RejectResponse()
 
 
@@ -183,14 +218,24 @@ async def get_account() -> AccountResponse:
     finally:
         await client.aclose()
     payments = [
-        PaymentSummary(
-            purchase_id=record.receipt["nessie_id"], merchant_name=record.payee_name or "",
-            amount_cents=record.intent.amount_cents,
-            paid_on=(record.debug.get("paid_at") or "")[:10] or None)
-        for record in STORE.paid_records() if record.receipt
+        PaymentSummary(purchase_id=payment["nessie_id"], merchant_name=payment["payee_name"],
+                       amount_cents=payment["amount_cents"],
+                       paid_on=payment.get("paid_on") or None)
+        for payment in STORE.payments()
     ]
     return AccountResponse(balance_cents=current_balance_cents(), bills=bills,
                            recent_payments=payments)
+
+
+@app.get("/audit")
+async def get_audit(letter_id: UUID | None = None) -> AuditResponse:
+    """Audit events (for one letter if `letter_id` is given), oldest first.
+
+    `chain_ok` is the result of re-checking every hash in the whole log.
+    """
+    log = audit.get_log()
+    chain_ok, _ = await log.chain_ok()
+    return AuditResponse(events=await log.events(letter_id), chain_ok=chain_ok)
 
 
 # Later milestones add their routes here.

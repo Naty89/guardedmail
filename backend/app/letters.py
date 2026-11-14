@@ -14,7 +14,7 @@ import time
 from datetime import date, datetime, timezone
 from uuid import UUID, uuid4
 
-from app import policy
+from app import audit, policy
 from app.config import get_settings
 from app.controller import choose_action
 from app.nessie import NessieError, get_read_client
@@ -66,6 +66,35 @@ async def get_trusted_merchants() -> list[policy.TrustedMerchant]:
     return found
 
 
+async def restore_from_audit() -> int:
+    """Rebuild the ledger after a restart by replaying the audit log.
+
+    Brings back: executed payments (so the balance is right), which letters were
+    already paid, and which proposals already used their token.
+    Returns the number of payments restored.
+    """
+    from app import payer  # local import: letters must not depend on payer at import time
+
+    restored = 0
+    try:
+        events = await audit.get_log().events()
+    except Exception:
+        return 0
+    for event in events:
+        if event.get("actor") == "payer" and event.get("event") == "payment_executed":
+            data = event.get("data", {})
+            STORE.record_payment(str(data.get("image_sha256", "")), {
+                "nessie_id": str(data.get("nessie_id", "")),
+                "payee_name": str(data.get("payee_name", "")),
+                "amount_cents": int(data.get("amount_cents", 0)),
+                "paid_on": str(event.get("ts", ""))[:10],
+            })
+            if event.get("proposal_id"):
+                payer.USED_TOKENS.mark_used(UUID(event["proposal_id"]))
+            restored += 1
+    return restored
+
+
 def reset_merchant_cache() -> None:
     global _merchant_cache
     _merchant_cache = None
@@ -110,9 +139,31 @@ async def process_letter(image_bytes: bytes, language: str, *,
     now = now or datetime.now(timezone.utc)
     letter_id: UUID = uuid4()
 
-    reading, from_cache = await _get_reading(image_bytes, language, caller)
+    try:
+        reading, from_cache = await _get_reading(image_bytes, language, caller)
+    except ReaderError as exc:
+        await audit.record("reader", "read_failed", letter_id=letter_id,
+                           image_sha256=image_sha256(image_bytes), error=exc.reason,
+                           language=language)
+        raise
     first, second = reading.first, reading.second
+    await audit.record(
+        "reader", "letter_read", letter_id=letter_id,
+        image_sha256=reading.image_sha256, language=language,
+        first=first.without_raw_text(), second=second.without_raw_text(),
+        evidence_ok=reading.evidence_ok, model_ids=list(reading.model_ids),
+        explanation_source=reading.explanation_source,
+        latency_ms=reading.latency_ms, from_cache=from_cache)
+    # Transcriptions go to the quarantine store only.
+    try:
+        await audit.get_log().quarantine_raw_text(
+            letter_id, reading.image_sha256, [first.raw_text, second.raw_text])
+    except Exception:
+        pass  # storage trouble must not stop the user
+
     scam = assess_scam(first, second)
+    await audit.record("reader", "scam_checked", letter_id=letter_id, risk=scam.risk,
+                       reason_ids=[reason.reason_id for reason in scam.reasons])
 
     merchants = await get_trusted_merchants()
     verdict = policy.decide(
@@ -148,6 +199,15 @@ async def process_letter(image_bytes: bytes, language: str, *,
             due_date=agreed_due if action == "calendar" else None,
             block_reason=verdict.reason,
         )
+
+    await audit.record(
+        "policy", "policy_decided", letter_id=letter_id, proposal_id=proposal.id,
+        allowed=verdict.allowed, rule_ids=[reason.value for reason in verdict.reasons],
+        merchant_id=verdict.merchant.merchant_id if verdict.merchant else None,
+        merchant_name=verdict.merchant.name if verdict.merchant else None,
+        match_score=verdict.match_score, controller_action=action,
+        amount_cents=intent.amount_cents if intent else None,
+        expires_at=expires_at, balance_cents=current_balance_cents())
 
     response = LetterResponse(
         letter_id=letter_id, language=language, explanation=reading.explanation,

@@ -301,6 +301,7 @@ class AccountResponse(BaseModel):
 class AuditEvent(BaseModel):
     """One entry in the hash-chained audit log (loose for now)."""
 
+    seq: int = 0
     ts: datetime
     letter_id: str | None = None
     proposal_id: str | None = None
@@ -315,3 +316,4 @@ class AuditResponse(BaseModel):
     """Response of GET /audit."""
 
     events: list[AuditEvent] = []
+    chain_ok: bool = True  # every hash in the whole log was re-checked and matched
