@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Riverbend Family Clinic",
+    "amount_cents": 12000,
+    "currency": "USD",
+    "due_date": "2026-12-15",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic\n27 Riverbend Way, Hadley, MA 01035\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: RFC-208841\n\nLab work on November 9, 2026\nInsurance paid: $310.00\nYour share: $120.00\n\nTOTAL AMOUNT DUE: $120.00\n\nPAYMENT DUE DATE: December 15, 2026"
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Riverbend Family Clinic",
+    "amount_cents": 12000,
+    "currency": "USD",
+    "due_date": "2026-12-15",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic 27 Riverbend Way, Hadley, MA 01035 STATEMENT Customer: Demo User Account number: RFC-208841 Lab work on November 9, 2026 Insurance paid: $310.00 Your share: $120.00 TOTAL AMOUNT DUE: $120.00 PAYMENT DUE DATE: December 15, 2026"
+  },
+  "evidence_ok": true,
+  "explanation": "Riverbend Family Clinic sent this letter. They want payment for lab work done on November 9, 2026. You need to pay $120.00 by December 15, 2026. The letter does not say what happens next if you do not pay.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

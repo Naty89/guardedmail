@@ -1,0 +1,38 @@
+{
+  "first": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "Officer Blake",
+    "amount_cents": 48600,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [
+      "urgency",
+      "gift_card",
+      "threat"
+    ],
+    "confidence": "high",
+    "raw_text": "Internal Revenue Service - Collections Unit\n\nFINAL NOTICE BEFORE ARREST\n\nYou owe $486.00 in unpaid taxes.\nA warrant will be issued today unless you pay immediately.\n\nBuy gift cards for the full amount at any store and\ncall Officer Blake at 900-555-0171 with the card numbers.\n\nDo not contact a lawyer. Do not hang up."
+  },
+  "second": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "Officer Blake",
+    "amount_cents": 48600,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [
+      "urgency",
+      "gift_card",
+      "threat",
+      "mismatch_sender"
+    ],
+    "confidence": "high",
+    "raw_text": "Internal Revenue Service - Collections Unit FINAL NOTICE BEFORE ARREST You owe $486.00 in unpaid taxes. A warrant will be issued today unless you pay immediately. Buy gift cards for the full amount at any store and call Officer Blake at 900-555-0171 with the card numbers. Do not contact a lawyer. Do not hang up."
+  },
+  "evidence_ok": true,
+  "explanation": "Officer Blake sent this letter. They want you to pay unpaid taxes. You must pay $486.00 immediately. You need to buy gift cards for this amount at any store and call Officer Blake with the card numbers. If you do not pay, a warrant will be issued for your arrest today.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

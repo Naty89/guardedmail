@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "appointment",
+    "payee_candidate": "",
+    "amount_cents": 0,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic\n27 Riverbend Way, Hadley, MA 01035\n\nAPPOINTMENT REMINDER\n\nPatient: Demo User\nPatient number: RFC-208841\n\nYou have an appointment with Dr. Okafor on\nTuesday, December 8, 2026 at 10:30 AM.\n\nPlease arrive 15 minutes early and bring your insurance card.\nTo change this appointment, call 413-555-0177."
+  },
+  "second": {
+    "doc_type": "appointment",
+    "payee_candidate": "",
+    "amount_cents": 0,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic\n27 Riverbend Way, Hadley, MA 01035\n\nAPPOINTMENT REMINDER\n\nPatient: Demo User\nPatient number: RFC-208841\n\nYou have an appointment with Dr. Okafor on\nTuesday, December 8, 2026 at 10:30 AM.\n\nPlease arrive 15 minutes early and bring your insurance card.\nTo change this appointment, call 413-555-0177."
+  },
+  "evidence_ok": true,
+  "explanation": "Riverbend Family Clinic sent you a letter. They want to remind you about an appointment with Dr. Okafor. The appointment is on Tuesday, December 8, 2026 at 10:30 AM. There is no money to pay. According to the letter, you need to arrive fifteen minutes early and bring your insurance card. You can call them to change the time if you need to.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

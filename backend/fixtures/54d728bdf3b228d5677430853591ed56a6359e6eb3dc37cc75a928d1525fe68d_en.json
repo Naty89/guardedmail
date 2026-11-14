@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Pioneer Valley Electric",
+    "amount_cents": 6137,
+    "currency": "USD",
+    "due_date": "2026-12-10",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric\n400 Mill River Road, Northampton, MA 01060\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: 4471-220-918\n\nElectricity used: 371 kWh\nDelivery and supply charges: $57.94\nTaxes and fees: $3.43\n\nTOTAL AMOUNT DUE: $61.37\nPAYMENT DUE DATE: December 10, 2026\n\nQuestions about this bill? Call 413-555-0142."
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Pioneer Valley Electric",
+    "amount_cents": 6137,
+    "currency": "USD",
+    "due_date": "2026-12-10",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric\n400 Mill River Road, Northampton, MA 01060\nSTATEMENT\nCustomer: Demo User\nAccount number: 4471-220-918\nElectricity used: 371 kWh\nDelivery and supply charges: $57.94\nTaxes and fees: $3.43\nTOTAL AMOUNT DUE: $61.37\nPAYMENT DUE DATE: December 10, 2026\nQuestions about this bill? Call 413-555-0142."
+  },
+  "evidence_ok": true,
+  "explanation": "Pioneer Valley Electric sent this letter. They want you to pay your electricity bill for your account number 4471-220-918. The total amount is $61.37. You must pay this by December 10, 2026. The letter does not say what happens next if you do not pay.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

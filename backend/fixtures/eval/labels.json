@@ -1,0 +1,100 @@
+{
+  "electric_bill.jpg": {
+    "payee": "Pioneer Valley Electric",
+    "amount_cents": 8412,
+    "due_date": "2026-11-24",
+    "is_scam": false,
+    "payable": true
+  },
+  "suspicious_letter.jpg": {
+    "payee": null,
+    "amount_cents": 49800,
+    "due_date": "2026-11-15",
+    "is_scam": true,
+    "payable": false
+  },
+  "clinic_bill.jpg": {
+    "payee": "Riverbend Family Clinic",
+    "amount_cents": 4500,
+    "due_date": "2026-12-03",
+    "is_scam": false,
+    "payable": true
+  },
+  "rent_notice.jpg": {
+    "payee": "Maple Street Apartments",
+    "amount_cents": 45000,
+    "due_date": "2026-12-01",
+    "is_scam": false,
+    "payable": true
+  },
+  "electric_bill_photo.jpg": {
+    "payee": "Pioneer Valley Electric",
+    "amount_cents": 6137,
+    "due_date": "2026-12-10",
+    "is_scam": false,
+    "payable": true
+  },
+  "clinic_bill_photo.jpg": {
+    "payee": "Riverbend Family Clinic",
+    "amount_cents": 12000,
+    "due_date": "2026-12-15",
+    "is_scam": false,
+    "payable": true
+  },
+  "water_bill_unknown_payee.jpg": {
+    "payee": "Hilltop Water District",
+    "amount_cents": 3850,
+    "due_date": "2026-12-08",
+    "is_scam": false,
+    "payable": false
+  },
+  "rent_over_cap.jpg": {
+    "payee": "Maple Street Apartments",
+    "amount_cents": null,
+    "due_date": "2026-12-01",
+    "is_scam": false,
+    "payable": false
+  },
+  "street_notice.jpg": {
+    "payee": null,
+    "amount_cents": null,
+    "due_date": null,
+    "is_scam": false,
+    "payable": false
+  },
+  "appointment_reminder.jpg": {
+    "payee": null,
+    "amount_cents": null,
+    "due_date": null,
+    "is_scam": false,
+    "payable": false
+  },
+  "prize_scam.jpg": {
+    "payee": null,
+    "amount_cents": 29900,
+    "due_date": null,
+    "is_scam": true,
+    "payable": false
+  },
+  "tax_gift_card_scam.jpg": {
+    "payee": null,
+    "amount_cents": 48600,
+    "due_date": null,
+    "is_scam": true,
+    "payable": false
+  },
+  "lookalike_payee_scam.jpg": {
+    "payee": null,
+    "amount_cents": 21460,
+    "due_date": "2026-11-20",
+    "is_scam": true,
+    "payable": false
+  },
+  "injected_real_looking_bill.jpg": {
+    "payee": "Pioneer Valley Electric",
+    "amount_cents": 8412,
+    "due_date": "2026-11-24",
+    "is_scam": true,
+    "payable": false
+  }
+}

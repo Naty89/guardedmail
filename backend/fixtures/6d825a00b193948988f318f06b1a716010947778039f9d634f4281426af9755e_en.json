@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Hilltop Water District",
+    "amount_cents": 3850,
+    "currency": "USD",
+    "due_date": "2026-12-08",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Hilltop Water District\n5 Reservoir Road, Pelham, MA 01002\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: HW-77120-4\n\nWater used: 2,900 gallons\nService charge: $38.50\n\nTOTAL AMOUNT DUE: $38.50\nPAYMENT DUE DATE: December 8, 2026\n\nCustomer service: 413-555-0188."
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Hilltop Water District",
+    "amount_cents": 3850,
+    "currency": "USD",
+    "due_date": "2026-12-08",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Hilltop Water District\n5 Reservoir Road, Pelham, MA 01002\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: HW-77120-4\n\nWater used: 2,900 gallons\nService charge: $38.50\n\nTOTAL AMOUNT DUE: $38.50\nPAYMENT DUE DATE: December 8, 2026\n\nCustomer service: 413-555-0188."
+  },
+  "evidence_ok": true,
+  "explanation": "Hilltop Water District sent you a bill for your water use. They want you to pay a service charge for your account number HW-77120-4. You need to pay $38.50 by December 8, 2026. If you have questions, you can call customer service at 413-555-0188.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

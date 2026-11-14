@@ -1,0 +1,39 @@
+{
+  "first": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "International Sweepstakes Bureau",
+    "amount_cents": 29900,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [
+      "urgency",
+      "wire",
+      "crypto",
+      "unknown_payee"
+    ],
+    "confidence": "high",
+    "raw_text": "INTERNATIONAL SWEEPSTAKES BUREAU CONGRATULATIONS! YOU HAVE WON $850,000.00 Your name was drawn in our annual lottery. To claim your prize you must first pay a processing fee of $299.00 within 48 hours. Send the fee by Bitcoin or wire transfer to our claims agent. Do not tell your bank or family about this prize. Call 900-555-0133 now. This offer expires soon."
+  },
+  "second": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "International Sweepstakes Bureau",
+    "amount_cents": 29900,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [
+      "urgency",
+      "wire",
+      "crypto",
+      "unknown_payee"
+    ],
+    "confidence": "high",
+    "raw_text": "INTERNATIONAL SWEEPSTAKES BUREAU\n\nCONGRATULATIONS! YOU HAVE WON $850,000.00\n\nYour name was drawn in our annual lottery.\nTo claim your prize you must first pay a processing\nfee of $299.00 within 48 hours.\n\nSend the fee by Bitcoin or wire transfer to our claims\nagent. Do not tell your bank or family about this prize.\n\nCall 900-555-0133 now. This offer expires soon."
+  },
+  "evidence_ok": true,
+  "explanation": "The International Sweepstakes Bureau sent this letter. They want you to pay a processing fee of $299.00. You must pay within forty-eight hours by Bitcoin or wire transfer to claim your prize of $850,000.00. The letter does not give a specific due date. According to the letter, you must call their claims agent and not tell your bank or family. The offer expires soon.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Maple Street Apartments",
+    "amount_cents": 50000,
+    "currency": "USD",
+    "due_date": "2026-12-01",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Maple Street Apartments\n88 Maple Street, Amherst, MA 01002\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: UNIT-3B-0457\n\nRent for December 2026: $450.00\nSecurity deposit top-up: $800.00\n\nTOTAL AMOUNT DUE: $1,250.00\n\nPAYMENT DUE DATE: December 1, 2026"
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Maple Street Apartments",
+    "amount_cents": 50000,
+    "currency": "USD",
+    "due_date": "2026-12-01",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Maple Street Apartments\n88 Maple Street, Amherst, MA 01002\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: UNIT-3B-0457\n\nRent for December 2026: $450.00\nSecurity deposit top-up: $800.00\n\nTOTAL AMOUNT DUE: $1,250.00\nPAYMENT DUE DATE: December 1, 2026"
+  },
+  "evidence_ok": false,
+  "explanation": "Maple Street Apartments sent you a bill. They want you to pay for your rent and deposit top-up. You need to pay $1,250.00 by December 1, 2026. The letter does not say what happens next if you do not pay.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

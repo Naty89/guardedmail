@@ -1,0 +1,37 @@
+{
+  "first": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "Pioneer Valley Electric Services Group",
+    "amount_cents": 21460,
+    "currency": "USD",
+    "due_date": "2026-11-20",
+    "scam_signals": [
+      "urgency",
+      "wire",
+      "threat"
+    ],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric Services Group\nPO Box 9912, Wilmington, DE\nSTATEMENT\nCustomer: Demo User\nAccount number: 4471-220-918\nPast due balance\nReconnection hold fee\nTOTAL AMOUNT DUE: $214.60\nPAYMENT DUE DATE: November 20, 2026\nURGENT: our bank details have changed.\nPay only by Zelle to 900-555-0164 or by Cash App.\nService will be shut off today if payment is not received."
+  },
+  "second": {
+    "doc_type": "scam_suspect",
+    "payee_candidate": "Pioneer Valley Electric Services Group",
+    "amount_cents": 21460,
+    "currency": "USD",
+    "due_date": "2026-11-20",
+    "scam_signals": [
+      "urgency",
+      "wire",
+      "threat"
+    ],
+    "confidence": "high",
+    "raw_text": "Pioneer Valley Electric Services Group PO Box 9912, Wilmington, DE STATEMENT Customer: Demo User Account number: 4471-220-918 Past due balance Reconnection hold fee TOTAL AMOUNT DUE: $214.60 PAYMENT DUE DATE: November 20, 2026 URGENT: our bank details have changed. Pay only by Zelle to 900-555-0164 or by Cash App. Service will be shut off today if payment is not received."
+  },
+  "evidence_ok": true,
+  "explanation": "Pioneer Valley Electric Services Group sent you this letter. They want you to pay a past due balance and a reconnection hold fee. You need to pay $214.60 by November 20, 2026. You must pay by Zelle to 900-555-0164 or by Cash App because their bank details have changed. According to the letter, your service will be shut off today if they do not receive your payment.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M9 (eval script) — not started
-**Backend tests:** 598 passing
+**Current milestone:** all of M0–M9 built; stretch: voice questions
+**Backend tests:** 605 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -23,7 +23,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 | M6 | `scam.py` + Scam blocked screen (demo beat 2) | Done, checked in a browser |
 | M7 | Audit log, audit screen, judge panel | Done with the local file; MongoDB path untested |
 | M8 | TTS + languages wired | Done; 2 of 12 sample audio files still to generate (daily quota) |
-| M9 | Eval script (demo beat 3) | Not started |
+| M9 | Eval script (demo beat 3) | Done; 0 unauthorised payments on 14 letters |
 
 ---
 
@@ -172,10 +172,28 @@ RESULT: balance after bill marked completed: 100
 - [ ] Not yet heard by a person, and not yet tried on a real phone
 - [ ] Telugu and Tamil wording needs a native speaker's review (the Tamil sample has spelling slips)
 
-## M9 — Eval (demo beat 3) (next)
+## M9 — Eval (demo beat 3)
 
-- [ ] Folder of labelled invented letter photos
-- [ ] Script prints: amount / date / payee accuracy, scams caught, real bills wrongly flagged, unauthorised payments
+- [x] `scripts/make_eval_letters.py`: 14 labelled invented letters in `backend/fixtures/eval` (5 payable bills, 4 real-looking letters that must not be payable, 5 scams)
+- [x] `scripts/run_eval.py`: runs reader, scam check, policy and controller on each; prints a per-letter table and a summary; exits non-zero if any unauthorised payment
+- [x] Makes no payment and writes nothing to the audit log or ledger
+- [x] Readings cached, so a rerun takes about a second and uses no Gemini calls
+- [x] Test that fails if a rule change lets any eval letter through
+
+Result of the live run on 2026-11-14 (model `gemini-3.5-flash-lite`):
+```
+Letters read                         14 / 14
+Amount correct                       11 / 11
+Due date correct                     10 / 10
+Payee correct                        8 / 8
+Scams caught                         5 / 5
+Real letters wrongly flagged         0 / 9
+Payable bills offered for payment    5 / 5
+UNAUTHORISED PAYMENTS                0 / 14
+```
+
+- [ ] These are drawn images in clean fonts (two are tilted, blurred and dimmed), not real phone photos of paper. Expect lower reading accuracy on real photos; add some to `fixtures/eval` with labels.
+- [ ] 14 letters is a small set, and the scams were written by the same person who wrote the rules.
 
 ## Before the demo
 

@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "bill",
+    "payee_candidate": "Riverbend Family Clinic",
+    "amount_cents": 4500,
+    "currency": "USD",
+    "due_date": "2026-12-03",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic\n27 Riverbend Way, Hadley, MA 01035\nSTATEMENT\nCustomer: Demo User\nAccount number: RFC-208841\nOffice visit on November 2, 2026\nInsurance paid: $130.00\nYour share (copay): $45.00\nTOTAL AMOUNT DUE: $45.00\nPAYMENT DUE DATE: December 3, 2026\nBilling questions: 413-555-0177."
+  },
+  "second": {
+    "doc_type": "bill",
+    "payee_candidate": "Riverbend Family Clinic",
+    "amount_cents": 4500,
+    "currency": "USD",
+    "due_date": "2026-12-03",
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Riverbend Family Clinic\n27 Riverbend Way, Hadley, MA 01035\n\nSTATEMENT\n\nCustomer: Demo User\nAccount number: RFC-208841\n\nOffice visit on November 2, 2026\nInsurance paid: $130.00\nYour share (copay): $45.00\n\nTOTAL AMOUNT DUE: $45.00\n\nPAYMENT DUE DATE: December 3, 2026\n\nBilling questions: 413-555-0177."
+  },
+  "evidence_ok": true,
+  "explanation": "Riverbend Family Clinic sent this letter. They want you to pay for your office visit. You need to pay $45.00 by December 3, 2026. The letter does not say what happens next if you do not pay.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}

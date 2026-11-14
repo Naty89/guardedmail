@@ -106,7 +106,7 @@ Then confirm the account and its balance:
 - [x] M6 - scam.py and the Scam blocked screen (demo beat 2)
 - [x] M7 - audit.py, audit screen, judge panel
 - [x] M8 - tts.py with audio cache; language picker wired; Telugu and Tamil tested
-- [ ] M9 - Eval script and results table (demo beat 3)
+- [x] M9 - Eval script and results table (demo beat 3)
 
 ## Project layout
 

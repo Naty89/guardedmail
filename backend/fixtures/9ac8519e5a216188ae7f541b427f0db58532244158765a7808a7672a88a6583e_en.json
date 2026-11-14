@@ -1,0 +1,29 @@
+{
+  "first": {
+    "doc_type": "government",
+    "payee_candidate": "",
+    "amount_cents": 0,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Town of Amherst - Public Works\n4 Boltwood Avenue, Amherst, MA\n\nNOTICE TO RESIDENTS\n\nJuniper Lane will be repaved during the week of\nDecember 7, 2026. Please do not park on the street\nbetween 7 AM and 5 PM on those days.\n\nThere is no charge to residents. No action is needed.\n\nQuestions: call Public Works at 413-555-0120."
+  },
+  "second": {
+    "doc_type": "government",
+    "payee_candidate": "",
+    "amount_cents": 0,
+    "currency": "USD",
+    "due_date": null,
+    "scam_signals": [],
+    "confidence": "high",
+    "raw_text": "Town of Amherst - Public Works 4 Boltwood Avenue, Amherst, MA NOTICE TO RESIDENTS Juniper Lane will be repaved during the week of December 7, 2026. Please do not park on the street between 7 AM and 5 PM on those days. There is no charge to residents. No action is needed. Questions: call Public Works at 413-555-0120."
+  },
+  "evidence_ok": true,
+  "explanation": "The Town of Amherst Public Works sent this letter. They want you to move your car off Juniper Lane. Do not park on the street between 7 AM and 5 PM during the week of December 7, 2026. There is no money to pay. Next, workers will repave the street that week. You do not need to do anything else.",
+  "explanation_source": "model",
+  "model_ids": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+  ]
+}
