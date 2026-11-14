@@ -14,18 +14,20 @@
  */
 
 /* Fonts are served from /public so the app looks the same offline.
-   Both cover Latin only; other scripts fall back to the system fonts below. */
+   Both cover Latin only; other scripts fall back to the system fonts below.
+   Atkinson Hyperlegible Next was designed for low-vision readers: letters that
+   are easy to confuse (I l 1, O 0) are drawn differently. */
 @font-face {
-  font-family: "Newsreader";
-  src: url("/fonts/newsreader-latin-wght-normal.woff2") format("woff2");
-  font-weight: 200 800;
+  font-family: "Fraunces";
+  src: url("/fonts/fraunces-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Public Sans";
-  src: url("/fonts/public-sans-latin-wght-normal.woff2") format("woff2");
-  font-weight: 100 900;
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
@@ -98,7 +100,7 @@
   --shadow-card: var(--shadow-card);
 
   --font-serif-display:
-    "Newsreader", "Public Sans", system-ui, "Noto Sans", "Noto Sans Devanagari",
+    "Fraunces", "Atkinson Hyperlegible Next", system-ui, "Noto Sans", "Noto Sans Devanagari",
     "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic", "Noto Sans Ethiopic",
     "Noto Sans SC", sans-serif;
 }
@@ -115,9 +117,9 @@
     min-height: 100dvh;
     background: var(--background);
     color: var(--foreground);
-    /* Public Sans for Latin; system fonts cover the other eight scripts. */
+    /* Atkinson for Latin; system fonts cover the other eight scripts. */
     font-family:
-      "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+      "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
       "Noto Sans Devanagari", "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Arabic",
       "Noto Sans Ethiopic", "Noto Sans SC", sans-serif;
     /* Generous line height: Indic and Ethiopic scripts need the room. */

@@ -367,7 +367,7 @@ UNAUTHORISED PAYMENTS                0 / 14
 ## Design system (restyle, 2026-11-14)
 
 - [x] Direction: calm and editorial, with colour where it counts. Cream background, navy ink, cobalt blue (`#1d4ed8`) for main actions and colour blocks, sunny yellow (`#ffc933`, always with dark ink text) as the pop, no gradients, hairline dividers, one dominant action per screen
-- [x] Type: Newsreader (serif) for headings and key figures, Public Sans for reading. Both Latin only; the other eight scripts fall back to the system Noto fonts. Files are self-hosted in `frontend/public/fonts` (open licence, 84 KB) so offline mode looks identical. No letter-spacing anywhere (it breaks Arabic joining)
+- [x] Type: Fraunces (warm serif) for headings and key figures, Atkinson Hyperlegible Next for reading. Atkinson was designed by the Braille Institute for low-vision readers (look-alike characters such as I, l, 1 and 0, O are drawn differently), which fits our users. Both are Latin only; the other eight scripts fall back to the system Noto fonts. Files are self-hosted in `frontend/public/fonts` (open licence, 71 KB) so offline mode looks identical. No letter-spacing anywhere (it breaks Arabic joining). Changed from Newsreader + Public Sans on request
 - [x] Tokens live in `frontend/src/index.css` (cream, navy, cobalt, yellow, status colours). Change colours there only. Colour blocks: Capture hero card, pay panel, scam warning header, dark demo-bank strip
 - [x] Capture: language pills, one hero card with the single main button, samples as a list
 - [x] Explanation: statement-style summary box (sender, amount, due date), quiet scam row, tinted "next step" panel, ask box collapsed until opened
