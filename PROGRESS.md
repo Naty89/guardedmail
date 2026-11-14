@@ -4,8 +4,8 @@ Update this file whenever something is finished, blocked, or newly discovered.
 What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
-**Current milestone:** M8 (voice and languages) — not started
-**Backend tests:** 581 passing
+**Current milestone:** M8 (voice and languages) — code written, live checks not finished
+**Backend tests:** 598 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -158,11 +158,17 @@ RESULT: balance after bill marked completed: 100
 - [ ] MongoDB backend is written but has never been run against a real cluster (no `MONGODB_URI` set)
 - [ ] Nessie request ID: shown if Nessie sends an `x-request-id` header; not yet seen whether it does
 
-## M8 — Voice and languages (next)
+## M8 — Voice and languages (in progress)
 
-- [ ] `tts.py` with audio cache; `GET /letters/{id}/audio`
-- [ ] Play/pause, `speechSynthesis` fallback on 204
-- [ ] Telugu and Tamil tested end to end
+- [x] `tts.py`: Gemini speech with a disk cache in `backend/fixtures/audio`; needs API version `v1alpha` (the default rejects `speech_config`); returns WAV
+- [x] `GET /letters/{id}/audio`: WAV, or 204 so the browser voice is used
+- [x] Audio generation starts in the background when a letter is read
+- [x] Play/pause button on the Explanation and Scam blocked screens (no autoplay; hidden for zh, ar, am)
+- [x] Live check: English speech generated (5.3s for 17s of audio)
+- [ ] Play button not yet tried in a browser or on a phone
+- [ ] Telugu and Tamil speech not yet heard: the one Telugu attempt got a 503 from Gemini
+- [ ] Telugu and Tamil end-to-end test (explanation + audio)
+- [ ] Free-tier quota for the speech model is unknown
 
 ## M9 — Eval (demo beat 3)
 

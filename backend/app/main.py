@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import audit, payer
+from app import audit, payer, tts
 from app.letters import (
     current_balance_cents,
     demo_account_id,
@@ -92,7 +92,10 @@ async def post_letter(
     else:
         raise HTTPException(400, {"error": "image_missing"})
     try:
-        return await process_letter(image_bytes, language)
+        response = await process_letter(image_bytes, language)
+        # Start making the read-aloud audio now, so Play is quick. Never awaited here.
+        tts.warm_up(response.explanation, response.language)
+        return response
     except ReaderError as exc:
         status = 400 if exc.reason in _USER_FIXABLE else 503
         # Only the reason id goes to the client, never model or letter text.
@@ -124,6 +127,18 @@ def get_letter_image(letter_id: UUID) -> Response:
     if record is None or record.thumbnail_jpeg is None:
         raise HTTPException(404, {"error": "letter_not_found"})
     return Response(record.thumbnail_jpeg, media_type="image/jpeg")
+
+
+@app.get("/letters/{letter_id}/audio")
+async def get_letter_audio(letter_id: UUID) -> Response:
+    """The explanation read aloud (WAV), or 204 so the browser uses its own voice."""
+    record = STORE.by_letter(letter_id)
+    if record is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    audio_bytes = await tts.get_audio(record.response.explanation, record.response.language)
+    if audio_bytes is None:
+        return Response(status_code=204)
+    return Response(audio_bytes, media_type="audio/wav")
 
 
 @app.post("/proposals/{proposal_id}/confirm")

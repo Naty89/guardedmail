@@ -2,6 +2,7 @@ import { ArrowLeft, ListChecks } from "lucide-react";
 import { useEffect } from "react";
 
 import { LetterFacts } from "@/components/LetterFacts";
+import { PlayButton } from "@/components/PlayButton";
 import { ScamStatus } from "@/components/ScamStatus";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,6 +30,12 @@ export function ScamBlockedScreen({ lang, go, letter }: ScreenProps) {
         <p lang={letter.language} className="text-lg leading-relaxed whitespace-pre-line">
           {letter.explanation}
         </p>
+        <PlayButton
+          lang={lang}
+          letterId={letter.letter_id}
+          language={letter.language}
+          text={letter.explanation}
+        />
         <LetterFacts lang={lang} letter={letter} />
       </Card>
 

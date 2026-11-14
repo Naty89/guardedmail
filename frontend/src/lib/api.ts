@@ -192,11 +192,10 @@ export function getLetterDebug(id: string): Promise<Record<string, unknown>> {
   return request<Record<string, unknown>>(`/letters/${encodeURIComponent(id)}/debug`);
 }
 
-/* ------------------------------------------------------------------ */
-/* Not built yet on the server (M8).                                   */
-/* ------------------------------------------------------------------ */
-
-/** GET /letters/{id}/audio: the URL to give an <audio> element. Never autoplay. */
+/**
+ * GET /letters/{id}/audio: the explanation read aloud (WAV), or 204 when the
+ * server has no audio and the browser's own voice should be used. Never autoplay.
+ */
 export function letterAudioUrl(id: string): string {
   return `/letters/${encodeURIComponent(id)}/audio`;
 }

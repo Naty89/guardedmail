@@ -2,6 +2,7 @@ import { ArrowLeft, ListChecks, CalendarDays, CircleHelp, Wallet } from "lucide-
 import { useEffect } from "react";
 
 import { LetterFacts } from "@/components/LetterFacts";
+import { PlayButton } from "@/components/PlayButton";
 import { Num } from "@/components/Num";
 import { ScamStatus } from "@/components/ScamStatus";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,12 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
         <p lang={letter.language} className="text-lg leading-relaxed whitespace-pre-line">
           {letter.explanation}
         </p>
+        <PlayButton
+          lang={lang}
+          letterId={letter.letter_id}
+          language={letter.language}
+          text={letter.explanation}
+        />
         <LetterFacts lang={lang} letter={letter} />
       </Card>
 
