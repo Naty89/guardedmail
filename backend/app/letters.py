@@ -23,7 +23,8 @@ from app.reader import (
     ModelCaller,
     ReaderError,
     ReaderResult,
-    image_sha256,
+    as_pages,
+    pages_sha256,
     read_letter,
     thumbnail,
 )
@@ -121,38 +122,39 @@ def current_balance_cents() -> int:
     return get_settings().seed_balance_cents - STORE.paid_total_cents()
 
 
-async def _get_reading(image_bytes: bytes, language: str,
+async def _get_reading(pages: list[bytes], language: str,
                        caller: ModelCaller | None) -> tuple[ReaderResult, bool]:
     """Return (reader result, came_from_cache)."""
-    sha = image_sha256(image_bytes)
+    sha = pages_sha256(pages)
     cached = load_cached_reading(sha, language)
     if cached is not None:
         return cached, True
     if get_settings().demo_offline and caller is None:
         raise ReaderError("offline_no_fixture")
-    result = await read_letter(image_bytes, language, caller)
+    result = await read_letter(pages, language, caller)
     save_cached_reading(result, language)
     return result, False
 
 
-async def process_letter(image_bytes: bytes, language: str, *,
+async def process_letter(image_bytes: "bytes | list[bytes]", language: str, *,
                          caller: ModelCaller | None = None,
                          today: date | None = None,
                          now: datetime | None = None) -> LetterResponse:
-    """Run the whole pipeline for one uploaded letter and store the result."""
+    """Run the whole pipeline for one uploaded letter (one photo or up to 4 pages)."""
     if language not in LANGUAGES:
         raise ReaderError("language_not_supported")
     started = time.monotonic()
     letter_id: UUID = uuid4()
+    pages = as_pages(image_bytes)
 
     try:
-        reading, from_cache = await _get_reading(image_bytes, language, caller)
+        reading, from_cache = await _get_reading(pages, language, caller)
     except ReaderError as exc:
         await audit.record("reader", "read_failed", letter_id=letter_id,
-                           image_sha256=image_sha256(image_bytes), error=exc.reason,
-                           language=language)
+                           image_sha256=pages_sha256(pages), error=exc.reason,
+                           language=language, pages=len(pages))
         raise
-    thumb = thumbnail(image_bytes)
+    thumb = thumbnail(pages[0])   # the first page stands for the letter
     save_thumbnail(reading.image_sha256, thumb)   # so the letter can be reopened later
     return await finish_letter(
         letter_id=letter_id, reading=reading, from_cache=from_cache, language=language,

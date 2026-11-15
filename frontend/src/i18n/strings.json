@@ -131,7 +131,13 @@
     "status_open": "Waiting for you",
     "status_info": "No payment needed",
     "opening": "Opening…",
-    "history_open_error": "We could not open this letter again. Please read it again with a photo."
+    "history_open_error": "We could not open this letter again. Please read it again with a photo.",
+    "add_page": "Add another page",
+    "page_n": "Page {n}",
+    "remove_page": "Remove page {n}",
+    "pages_hint": "More than one page? Add each page, in order.",
+    "pages_ready": "{n} pages are ready",
+    "max_pages": "That is the most pages: {n}."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -263,7 +269,13 @@
     "status_open": "Esperando su respuesta",
     "status_info": "No requiere pago",
     "opening": "Abriendo…",
-    "history_open_error": "No pudimos abrir esta carta otra vez. Léala de nuevo con una foto."
+    "history_open_error": "No pudimos abrir esta carta otra vez. Léala de nuevo con una foto.",
+    "add_page": "Añadir otra página",
+    "page_n": "Página {n}",
+    "remove_page": "Quitar la página {n}",
+    "pages_hint": "¿Tiene más de una página? Añada cada página, en orden.",
+    "pages_ready": "{n} páginas listas",
+    "max_pages": "Ese es el máximo de páginas: {n}."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -395,7 +407,13 @@
     "status_open": "आपके जवाब का इंतज़ार",
     "status_info": "भुगतान की ज़रूरत नहीं",
     "opening": "खोल रहे हैं…",
-    "history_open_error": "हम यह पत्र फिर से नहीं खोल सके। कृपया फ़ोटो से इसे फिर पढ़ें।"
+    "history_open_error": "हम यह पत्र फिर से नहीं खोल सके। कृपया फ़ोटो से इसे फिर पढ़ें।",
+    "add_page": "एक और पन्ना जोड़ें",
+    "page_n": "पन्ना {n}",
+    "remove_page": "पन्ना {n} हटाएँ",
+    "pages_hint": "एक से ज़्यादा पन्ने हैं? हर पन्ना क्रम से जोड़ें।",
+    "pages_ready": "{n} पन्ने तैयार हैं",
+    "max_pages": "यह अधिकतम पन्ने हैं: {n}।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -527,7 +545,13 @@
     "status_open": "మీ నిర్ణయం కోసం ఎదురుచూస్తోంది",
     "status_info": "చెల్లింపు అవసరం లేదు",
     "opening": "తెరుస్తున్నాము…",
-    "history_open_error": "ఈ లేఖను మళ్లీ తెరవలేకపోయాము. దయచేసి ఫోటోతో మళ్లీ చదవండి."
+    "history_open_error": "ఈ లేఖను మళ్లీ తెరవలేకపోయాము. దయచేసి ఫోటోతో మళ్లీ చదవండి.",
+    "add_page": "మరో పేజీ జోడించండి",
+    "page_n": "పేజీ {n}",
+    "remove_page": "పేజీ {n} తొలగించండి",
+    "pages_hint": "ఒకటి కంటే ఎక్కువ పేజీలా? ప్రతి పేజీని క్రమంలో జోడించండి.",
+    "pages_ready": "{n} పేజీలు సిద్ధంగా ఉన్నాయి",
+    "max_pages": "ఇదే గరిష్ట పేజీలు: {n}."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -659,7 +683,13 @@
     "status_open": "உங்கள் முடிவுக்காகக் காத்திருக்கிறது",
     "status_info": "பணம் செலுத்த வேண்டியதில்லை",
     "opening": "திறக்கிறது…",
-    "history_open_error": "இந்தக் கடிதத்தை மீண்டும் திறக்க முடியவில்லை. படம் எடுத்து மீண்டும் படிக்கவும்."
+    "history_open_error": "இந்தக் கடிதத்தை மீண்டும் திறக்க முடியவில்லை. படம் எடுத்து மீண்டும் படிக்கவும்.",
+    "add_page": "இன்னொரு பக்கத்தைச் சேர்க்கவும்",
+    "page_n": "பக்கம் {n}",
+    "remove_page": "பக்கம் {n} ஐ நீக்கவும்",
+    "pages_hint": "ஒன்றுக்கு மேற்பட்ட பக்கங்களா? ஒவ்வொரு பக்கத்தையும் வரிசையாகச் சேர்க்கவும்.",
+    "pages_ready": "{n} பக்கங்கள் தயார்",
+    "max_pages": "இதுவே அதிகபட்ச பக்கங்கள்: {n}."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -791,7 +821,13 @@
     "status_open": "Aguardando você",
     "status_info": "Sem pagamento",
     "opening": "Abrindo…",
-    "history_open_error": "Não conseguimos abrir esta carta de novo. Leia-a outra vez com uma foto."
+    "history_open_error": "Não conseguimos abrir esta carta de novo. Leia-a outra vez com uma foto.",
+    "add_page": "Adicionar outra página",
+    "page_n": "Página {n}",
+    "remove_page": "Remover a página {n}",
+    "pages_hint": "Mais de uma página? Adicione cada página, em ordem.",
+    "pages_ready": "{n} páginas prontas",
+    "max_pages": "Esse é o máximo de páginas: {n}."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -923,7 +959,13 @@
     "status_open": "等待您决定",
     "status_info": "无需付款",
     "opening": "正在打开…",
-    "history_open_error": "我们无法再次打开这封信。请用照片重新读取。"
+    "history_open_error": "我们无法再次打开这封信。请用照片重新读取。",
+    "add_page": "添加另一页",
+    "page_n": "第 {n} 页",
+    "remove_page": "删除第 {n} 页",
+    "pages_hint": "有多页吗？请按顺序添加每一页。",
+    "pages_ready": "{n} 页已就绪",
+    "max_pages": "已达到页数上限：{n}。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -1055,7 +1097,13 @@
     "status_open": "بانتظار قرارك",
     "status_info": "لا حاجة للدفع",
     "opening": "جارٍ الفتح…",
-    "history_open_error": "لم نتمكن من فتح هذه الرسالة مرة أخرى. اقرأها مجددًا بصورة."
+    "history_open_error": "لم نتمكن من فتح هذه الرسالة مرة أخرى. اقرأها مجددًا بصورة.",
+    "add_page": "أضف صفحة أخرى",
+    "page_n": "الصفحة {n}",
+    "remove_page": "احذف الصفحة {n}",
+    "pages_hint": "أكثر من صفحة؟ أضف كل صفحة بالترتيب.",
+    "pages_ready": "{n} صفحات جاهزة",
+    "max_pages": "هذا أقصى عدد من الصفحات: {n}."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1187,6 +1235,12 @@
     "status_open": "የእርስዎን ውሳኔ በመጠበቅ ላይ",
     "status_info": "ክፍያ አያስፈልግም",
     "opening": "በመክፈት ላይ…",
-    "history_open_error": "ይህን ደብዳቤ እንደገና መክፈት አልቻልንም። እባክዎ በፎቶ እንደገና ያንብቡ።"
+    "history_open_error": "ይህን ደብዳቤ እንደገና መክፈት አልቻልንም። እባክዎ በፎቶ እንደገና ያንብቡ።",
+    "add_page": "ሌላ ገጽ ጨምር",
+    "page_n": "ገጽ {n}",
+    "remove_page": "ገጽ {n} አስወግድ",
+    "pages_hint": "ከአንድ በላይ ገጽ አለ? እያንዳንዱን ገጽ በቅደም ተከተል ጨምር።",
+    "pages_ready": "{n} ገጾች ዝግጁ ናቸው",
+    "max_pages": "ይህ ከፍተኛው የገጽ ብዛት ነው፦ {n}።"
   }
 }

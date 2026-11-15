@@ -27,7 +27,7 @@ from app.letters import (
     restore_from_audit,
 )
 from app.nessie import NessieError, get_read_client
-from app.reader import MAX_UPLOAD_BYTES, GeminiCaller, ReaderError
+from app.reader import MAX_PAGES, MAX_UPLOAD_BYTES, GeminiCaller, ReaderError
 from app.schemas import (
     AccountResponse,
     AskResponse,
@@ -76,24 +76,31 @@ def health() -> dict:
 # Reader failures the user can fix by taking another photo -> 400.
 # Everything else means our side could not read it right now -> 503.
 _USER_FIXABLE = {"image_empty", "image_too_large", "image_unreadable",
-                 "language_not_supported"}
+                 "language_not_supported", "too_many_pages"}
 
 
 @app.post("/letters")
 async def post_letter(
     language: str = Form(...),
-    image: UploadFile | None = File(None),
+    image: list[UploadFile] | None = File(None),
     sample: str | None = Form(None),
 ) -> LetterResponse:
-    """Read a letter photo (or a built-in sample) and propose one action."""
+    """Read a letter and propose one action.
+
+    Send a built-in `sample`, or one `image` field per page (up to 4, in order).
+    """
     if sample is not None:
-        image_bytes = sample_image_bytes(sample)
-        if image_bytes is None:
+        sample_bytes = sample_image_bytes(sample)
+        if sample_bytes is None:
             raise HTTPException(400, {"error": "unknown_sample"})
-    elif image is not None:
-        image_bytes = await image.read(MAX_UPLOAD_BYTES + 1)
+        pages = [sample_bytes]
+    elif image:
+        if len(image) > MAX_PAGES:
+            raise HTTPException(400, {"error": "too_many_pages"})
+        pages = [await page.read(MAX_UPLOAD_BYTES + 1) for page in image]
     else:
         raise HTTPException(400, {"error": "image_missing"})
+    image_bytes = pages[0] if len(pages) == 1 else pages
     try:
         response = await process_letter(image_bytes, language)
         # Start making the read-aloud audio now, so Play is quick. Never awaited here.

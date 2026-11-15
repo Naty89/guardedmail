@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from app import config, letters, scam, store
+from app import config, letters, reader, scam, store
 from app.nessie_mock import MOCK_ACCOUNT_ID, MockNessieWrite, MockStore
 from app.schemas import ReaderOutput
 
@@ -260,7 +260,7 @@ def test_cached_sample_letters_get_the_expected_verdicts():
     fixtures = Path(store.__file__).resolve().parents[1] / "fixtures"
     expected = {"electric_bill": "low", "suspicious_letter": "high"}
     for sample_id, risk in expected.items():
-        sha = letters.image_sha256(store.sample_image_bytes(sample_id))
+        sha = reader.image_sha256(store.sample_image_bytes(sample_id))
         cached = store.load_cached_reading(sha, "en", fixtures)
         if cached is None:
             pytest.skip(f"no cached reading for {sample_id}")

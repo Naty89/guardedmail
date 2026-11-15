@@ -133,6 +133,8 @@ backend/app/nessie.py      Nessie HTTP client (read class and write class)
 backend/app/nessie_mock.py offline mock with the same interface
 backend/app/audit.py       append-only hash-chained log
 backend/app/tts.py         speech generation + cache
+backend/app/calendar_export.py  .ics file for a letter's due date
+backend/app/history.py     letter history rebuilt from the audit log
 backend/app/ask.py         questions about a letter (voice or typed); no tools, no path to money
 backend/scripts/seed_nessie.py
 backend/scripts/check_nessie_balance.py
@@ -228,9 +230,12 @@ Required test: a letter containing an embedded instruction to pay a different ac
 | Method and path | Input | Output |
 |---|---|---|
 | `GET /health` | — | status, demo_offline, nessie_configured, gemini_configured |
-| `POST /letters` | multipart `language` + `image` (or `sample` = `electric_bill` / `suspicious_letter`) | letter_id, explanation, summary {doc_type, sender, amount_cents, due_date}, scam {risk, reasons[]}, proposal {id, action, payee_name, amount_cents, due_date, expires_at, token} |
+| `POST /letters` | multipart `language` + one `image` field per page (1 to 4, in order), or `sample` = `electric_bill` / `suspicious_letter` | letter_id, explanation, summary {doc_type, sender, amount_cents, due_date}, scam {risk, reasons[]}, proposal {id, action, payee_name, amount_cents, due_date, expires_at, token} |
 | `GET /letters/{id}` | — | cached result |
 | `GET /letters/{id}/debug` | — | timings, model ids, policy verdict and reasons (no letter text) |
+| `GET /letters/{id}/calendar.ics` | — | due date as a calendar event with 2 reminders; 409 for scam letters or no agreed date |
+| `GET /history` | — | letters read so far, newest first, rebuilt from the audit log |
+| `POST /history/{id}/open` | — | reopen an old letter as a fresh result (new proposal and token if payable) |
 | `GET /letters/{id}/image` | — | small JPEG of the letter for the confirm dialog |
 | `GET /letters/{id}/audio` | — | audio bytes, or 204 (client falls back to `speechSynthesis`) |
 | `POST /letters/{id}/ask` | multipart `audio` (WAV) or `question` (text) | answer_id, question (as heard or typed), answer, source |

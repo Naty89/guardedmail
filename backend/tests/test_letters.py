@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
-from app import config, letters, policy, store
+from app import config, letters, policy, reader, store
 from app.controller import choose_action
 from app.main import app
 from app.nessie_mock import MockStore
@@ -185,7 +185,7 @@ def test_amount_over_our_ledger_balance_blocks(monkeypatch):
 
 def test_already_paid_image_cannot_be_paid_again():
     image = photo()
-    store.STORE.record_payment(letters.image_sha256(image), {
+    store.STORE.record_payment(reader.image_sha256(image), {
         "nessie_id": "x", "payee_name": "Pioneer Valley Electric",
         "amount_cents": 100, "paid_on": "2026-11-14"})
     response, _ = process(image=image)

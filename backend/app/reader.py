@@ -34,6 +34,7 @@ from pydantic import ValidationError
 from app.schemas import LANGUAGES, ReaderOutput
 
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024
+MAX_PAGES = 4  # photos of one letter
 MAX_PIXELS = 50_000_000
 LONG_EDGE_PX = 1600
 JPEG_QUALITY = 85
@@ -57,6 +58,25 @@ class ReaderError(Exception):
 def image_sha256(image_bytes: bytes) -> str:
     """Hash of the uploaded bytes. Used as the cache key and in the audit log."""
     return hashlib.sha256(image_bytes).hexdigest()
+
+
+def pages_sha256(pages: list[bytes]) -> str:
+    """Cache key for a whole letter. One page keeps its plain image hash, so
+    everything cached before multi-page support still matches. Several pages
+    are hashed together, in order (page order matters)."""
+    if len(pages) == 1:
+        return image_sha256(pages[0])
+    return hashlib.sha256("|".join(image_sha256(page) for page in pages).encode()).hexdigest()
+
+
+def as_pages(images: "bytes | list[bytes]") -> list[bytes]:
+    """Accept one image or a list of pages, and check the count."""
+    pages = [images] if isinstance(images, (bytes, bytearray)) else list(images)
+    if not pages:
+        raise ReaderError("image_empty")
+    if len(pages) > MAX_PAGES:
+        raise ReaderError("too_many_pages", f"at most {MAX_PAGES}")
+    return pages
 
 
 def preprocess(image_bytes: bytes) -> bytes:
@@ -113,7 +133,12 @@ class ModelCaller(Protocol):
 
     async def generate(self, *, system: str, prompt: str, image_jpeg: bytes | None,
                        json_schema: dict | None) -> tuple[str, str]:
-        """Return (response text, id of the model that answered)."""
+        """Return (response text, id of the model that answered).
+
+        For a letter with several pages the caller is also given
+        `extra_images=[page 2, page 3, ...]` (a keyword that is left out for a
+        single page, so simple callers do not need to know about it).
+        """
 
 
 class GeminiCaller:
@@ -156,11 +181,14 @@ class GeminiCaller:
 
     async def generate(self, *, system: str, prompt: str, image_jpeg: bytes | None,
                        json_schema: dict | None,
-                       audio_wav: bytes | None = None) -> tuple[str, str]:
+                       audio_wav: bytes | None = None,
+                       extra_images: list[bytes] | None = None) -> tuple[str, str]:
         types = self._types
         contents: list = []
         if image_jpeg is not None:
             contents.append(types.Part.from_bytes(data=image_jpeg, mime_type="image/jpeg"))
+        for page in extra_images or []:  # pages 2, 3, 4 of the same letter, in order
+            contents.append(types.Part.from_bytes(data=page, mime_type="image/jpeg"))
         if audio_wav is not None:  # a spoken question (see ask.py)
             contents.append(types.Part.from_bytes(data=audio_wav, mime_type="audio/wav"))
         contents.append(prompt)
@@ -255,11 +283,22 @@ EXTRACTION_PROMPT_B = (
     "deadline, and report them in the fields below." + _FIELD_RULES)
 
 
-async def _extract_once(caller: ModelCaller, image_jpeg: bytes, prompt: str
+def pages_note(count: int) -> str:
+    """Extra instruction for a letter photographed in several pieces."""
+    if count == 1:
+        return ""
+    return (f"\n\nThis letter was photographed in {count} pages, attached in order "
+            "(page 1 first). Read all of them as ONE letter. The amount due, the due "
+            "date and the payee may each be on a different page. Transcribe every page "
+            "in order in raw_text.")
+
+
+async def _extract_once(caller: ModelCaller, pages: list[bytes], prompt: str
                         ) -> tuple[ReaderOutput, str]:
+    options = {"extra_images": pages[1:]} if len(pages) > 1 else {}
     text, model_id = await caller.generate(
-        system=EXTRACTION_SYSTEM, prompt=prompt, image_jpeg=image_jpeg,
-        json_schema=EXTRACTION_SCHEMA)
+        system=EXTRACTION_SYSTEM, prompt=prompt + pages_note(len(pages)),
+        image_jpeg=pages[0], json_schema=EXTRACTION_SCHEMA, **options)
     try:
         return ReaderOutput.model_validate_json(text), model_id
     except ValidationError as exc:
@@ -466,19 +505,24 @@ class ReaderResult:
     latency_ms: int
 
 
-async def read_letter(image_bytes: bytes, language: str,
+async def read_letter(images: "bytes | list[bytes]", language: str,
                       caller: ModelCaller | None = None) -> ReaderResult:
-    """Run the whole reader pipeline on one uploaded photo."""
+    """Run the whole reader pipeline on one letter: one photo, or up to 4 pages.
+
+    All pages go into each of the two extraction calls, so the two readings are
+    still independent and must still agree exactly on amount and due date.
+    """
     if language not in LANGUAGES:
         raise ReaderError("language_not_supported")
     started = time.monotonic()
-    sha = image_sha256(image_bytes)
-    jpeg = preprocess(image_bytes)
+    pages = as_pages(images)
+    sha = pages_sha256(pages)
+    jpegs = [preprocess(page) for page in pages]
     caller = caller or GeminiCaller()
 
     (first, model_a), (second, model_b) = await asyncio.gather(
-        _extract_once(caller, jpeg, EXTRACTION_PROMPT_A),
-        _extract_once(caller, jpeg, EXTRACTION_PROMPT_B),
+        _extract_once(caller, jpegs, EXTRACTION_PROMPT_A),
+        _extract_once(caller, jpegs, EXTRACTION_PROMPT_B),
     )
     evidence = evidence_ok(first) and evidence_ok(second)
     explanation, source = await explain(caller, first, language)

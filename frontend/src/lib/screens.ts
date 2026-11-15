@@ -26,7 +26,12 @@ export const SCREENS: readonly Screen[] = [
 export type SampleId = "electric_bill" | "suspicious_letter";
 
 /** What the user picked on the Capture screen. */
-export type LetterSource = { kind: "photo"; image: Blob } | { kind: "sample"; sampleId: SampleId };
+/** The most pages one letter can have (the server enforces the same limit). */
+export const MAX_PAGES = 4;
+
+export type LetterSource =
+  | { kind: "photo"; images: Blob[] } // one Blob per page, in order
+  | { kind: "sample"; sampleId: SampleId };
 
 /** Props every screen receives from App. */
 export type ScreenProps = {

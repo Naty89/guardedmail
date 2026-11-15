@@ -5,7 +5,7 @@ What to build and how: [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
 **Last updated:** 2026-11-14
 **Status:** all of M0–M9 built, plus voice questions. Not finished: see "What still needs to be done".
-**Backend tests:** 643 passing
+**Backend tests:** 712 passing
 **Frontend build:** passing, no TypeScript errors
 
 ---
@@ -374,7 +374,10 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [x] **Fixed the "real uploads are cached inside the repo" problem:** new reader results go to `backend/data/readings` and small letter pictures to `backend/data/thumbs` (both git-ignored); the committed `fixtures` are still read, and the warm-up and eval scripts still write there on purpose
 - [ ] History is shared by everyone using this server (there is no login), and the letter pictures are stored on this laptop in `backend/data/thumbs`. Fine for invented letters only
 - [ ] A letter whose saved reading was deleted shows "We could not open this letter again"
-- [ ] Multi-page letters (not started)
+- [x] **Multi-page letters:** photograph up to 4 pages of one letter (rows with remove buttons, "Add another page", cap at 4). All pages go into each of the two extraction calls in order, so the amount, due date and payee can be on different pages. The two-reading agreement, evidence check, scam check and every payment rule are unchanged. A one-page letter keeps its old cache key (cached demo letters still work); several pages hash together in order. Reopening from history works. Live check with real Gemini on a bill split in two (company on page 1, amount and date on page 2): both readings agree and policy allows it, in either page order; page 2 alone is blocked as `unknown_payee`
+- [ ] Multi-page not tried with real photos of real paper pages, only with a drawn bill split in two
+- [ ] More pages mean more image data per Gemini call, so a 4-page letter is slower and uses more of the free-tier quota
+- [ ] The history and confirm dialog show page 1 only
 
 ---
 

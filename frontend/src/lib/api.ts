@@ -120,12 +120,13 @@ export type Letter = {
 
 /**
  * POST /letters: multipart form with the language and either the downscaled
- * photo or the id of a built-in sample letter.
+ * page photos (up to 4, in order) or the id of a built-in sample letter.
  */
 export function postLetter(source: LetterSource, language: Lang): Promise<Letter> {
   const form = new FormData();
   form.append("language", language);
-  if (source.kind === "photo") form.append("image", source.image, "letter.jpg");
+  // One "image" field per page, in order.
+  if (source.kind === "photo") source.images.forEach((page, i) => form.append("image", page, `page${i + 1}.jpg`));
   else form.append("sample", source.sampleId);
   return request<Letter>("/letters", { method: "POST", body: form });
 }
