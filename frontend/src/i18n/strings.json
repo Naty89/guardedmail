@@ -106,7 +106,12 @@
     "answer": "Answer",
     "ask_note": "Answers come only from this letter. Asking never pays anything.",
     "ask_unclear": "We could not hear a question. Please try again.",
-    "ev_question_asked": "You asked a question about the letter."
+    "ev_question_asked": "You asked a question about the letter.",
+    "install_title": "Put this app on your home screen",
+    "install_ios": "Tap the Share button, then “Add to Home Screen”.",
+    "install_android": "It opens full screen, like any other app.",
+    "install_button": "Install the app",
+    "not_now": "Not now"
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -213,7 +218,12 @@
     "answer": "Respuesta",
     "ask_note": "Las respuestas salen solo de esta carta. Preguntar nunca paga nada.",
     "ask_unclear": "No pudimos oír una pregunta. Inténtelo de nuevo.",
-    "ev_question_asked": "Usted hizo una pregunta sobre la carta."
+    "ev_question_asked": "Usted hizo una pregunta sobre la carta.",
+    "install_title": "Ponga esta aplicación en su pantalla de inicio",
+    "install_ios": "Toque el botón Compartir y luego «Añadir a pantalla de inicio».",
+    "install_android": "Se abre a pantalla completa, como cualquier otra aplicación.",
+    "install_button": "Instalar la aplicación",
+    "not_now": "Ahora no"
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -320,7 +330,12 @@
     "answer": "जवाब",
     "ask_note": "जवाब सिर्फ़ इस पत्र से आते हैं। पूछने से कभी कोई भुगतान नहीं होता।",
     "ask_unclear": "हमें कोई सवाल सुनाई नहीं दिया। कृपया फिर से कोशिश करें।",
-    "ev_question_asked": "आपने पत्र के बारे में एक सवाल पूछा।"
+    "ev_question_asked": "आपने पत्र के बारे में एक सवाल पूछा।",
+    "install_title": "इस ऐप को अपनी होम स्क्रीन पर रखें",
+    "install_ios": "शेयर बटन दबाएँ, फिर “होम स्क्रीन में जोड़ें” चुनें।",
+    "install_android": "यह किसी भी दूसरे ऐप की तरह पूरी स्क्रीन पर खुलता है।",
+    "install_button": "ऐप इंस्टॉल करें",
+    "not_now": "अभी नहीं"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -427,7 +442,12 @@
     "answer": "సమాధానం",
     "ask_note": "సమాధానాలు ఈ లేఖ నుండి మాత్రమే వస్తాయి. అడగడం వల్ల ఎప్పుడూ ఏమీ చెల్లించబడదు.",
     "ask_unclear": "మాకు ప్రశ్న వినిపించలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
-    "ev_question_asked": "మీరు లేఖ గురించి ఒక ప్రశ్న అడిగారు."
+    "ev_question_asked": "మీరు లేఖ గురించి ఒక ప్రశ్న అడిగారు.",
+    "install_title": "ఈ యాప్‌ను మీ హోమ్ స్క్రీన్‌పై ఉంచండి",
+    "install_ios": "షేర్ బటన్‌ను నొక్కి, ఆపై “హోమ్ స్క్రీన్‌కు జోడించు” ఎంచుకోండి.",
+    "install_android": "ఇది ఇతర యాప్‌ల లాగే పూర్తి స్క్రీన్‌లో తెరుచుకుంటుంది.",
+    "install_button": "యాప్‌ను ఇన్‌స్టాల్ చేయండి",
+    "not_now": "ఇప్పుడు వద్దు"
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -534,7 +554,12 @@
     "answer": "பதில்",
     "ask_note": "பதில்கள் இந்தக் கடிதத்திலிருந்து மட்டுமே வருகின்றன. கேட்பதால் எதுவும் செலுத்தப்படாது.",
     "ask_unclear": "கேள்வி எதுவும் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.",
-    "ev_question_asked": "கடிதம் பற்றி நீங்கள் ஒரு கேள்வி கேட்டீர்கள்."
+    "ev_question_asked": "கடிதம் பற்றி நீங்கள் ஒரு கேள்வி கேட்டீர்கள்.",
+    "install_title": "இந்தச் செயலியை உங்கள் முகப்புத் திரையில் வைக்கவும்",
+    "install_ios": "பகிர் பொத்தானைத் தட்டி, பின்னர் “முகப்புத் திரையில் சேர்” என்பதைத் தேர்ந்தெடுக்கவும்.",
+    "install_android": "மற்ற செயலிகளைப் போலவே இது முழுத் திரையில் திறக்கும்.",
+    "install_button": "செயலியை நிறுவவும்",
+    "not_now": "இப்போது வேண்டாம்"
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -641,7 +666,12 @@
     "answer": "Resposta",
     "ask_note": "As respostas vêm só desta carta. Perguntar nunca paga nada.",
     "ask_unclear": "Não conseguimos ouvir uma pergunta. Tente de novo.",
-    "ev_question_asked": "Você fez uma pergunta sobre a carta."
+    "ev_question_asked": "Você fez uma pergunta sobre a carta.",
+    "install_title": "Coloque este aplicativo na tela inicial",
+    "install_ios": "Toque no botão Compartilhar e depois em “Adicionar à Tela de Início”.",
+    "install_android": "Ele abre em tela cheia, como qualquer outro aplicativo.",
+    "install_button": "Instalar o aplicativo",
+    "not_now": "Agora não"
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -748,7 +778,12 @@
     "answer": "回答",
     "ask_note": "回答只来自这封信。提问不会产生任何付款。",
     "ask_unclear": "我们没有听到问题。请再试一次。",
-    "ev_question_asked": "您就这封信提了一个问题。"
+    "ev_question_asked": "您就这封信提了一个问题。",
+    "install_title": "把这个应用添加到主屏幕",
+    "install_ios": "点按“分享”按钮，然后选择“添加到主屏幕”。",
+    "install_android": "它像其他应用一样全屏打开。",
+    "install_button": "安装应用",
+    "not_now": "暂不"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -855,7 +890,12 @@
     "answer": "الإجابة",
     "ask_note": "الإجابات تأتي من هذه الرسالة فقط. السؤال لا يدفع أي شيء.",
     "ask_unclear": "لم نسمع سؤالًا. حاول مرة أخرى.",
-    "ev_question_asked": "سألتَ سؤالًا عن الرسالة."
+    "ev_question_asked": "سألتَ سؤالًا عن الرسالة.",
+    "install_title": "أضف هذا التطبيق إلى شاشتك الرئيسية",
+    "install_ios": "اضغط على زر المشاركة، ثم «إضافة إلى الشاشة الرئيسية».",
+    "install_android": "يُفتح بملء الشاشة مثل أي تطبيق آخر.",
+    "install_button": "ثبّت التطبيق",
+    "not_now": "ليس الآن"
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -962,6 +1002,11 @@
     "answer": "መልስ",
     "ask_note": "መልሶቹ ከዚህ ደብዳቤ ብቻ ናቸው። መጠየቅ ምንም አያስከፍልም።",
     "ask_unclear": "ጥያቄ አልሰማንም። እባክዎ እንደገና ይሞክሩ።",
-    "ev_question_asked": "ስለ ደብዳቤው ጥያቄ ጠይቀዋል።"
+    "ev_question_asked": "ስለ ደብዳቤው ጥያቄ ጠይቀዋል።",
+    "install_title": "ይህን መተግበሪያ በመነሻ ማያዎ ላይ ያስቀምጡ",
+    "install_ios": "የማጋራት ቁልፉን ይንኩ፣ ከዚያ “ወደ መነሻ ማያ ገጽ አክል” ይምረጡ።",
+    "install_android": "ልክ እንደ ሌሎች መተግበሪያዎች ሙሉ ማያ ገጽ ይከፈታል።",
+    "install_button": "መተግበሪያውን ይጫኑ",
+    "not_now": "አሁን አይደለም"
   }
 }

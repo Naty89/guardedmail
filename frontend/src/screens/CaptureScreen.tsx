@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 
+import { InstallHint } from "@/components/InstallHint";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { LiveRegion } from "@/components/LiveRegion";
 import { Num } from "@/components/Num";
@@ -191,6 +192,8 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
           />
         </ul>
       </section>
+
+      <InstallHint lang={lang} />
     </div>
   );
 }
