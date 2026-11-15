@@ -218,10 +218,14 @@ async def ask_about_letter(
         raise HTTPException(503, {"error": "offline"})
 
     try:
+        scam = record.response.scam
         heard, answer, source = await ask.answer_question(
             _ask_caller(), reading.first, language,
             audio_wav=audio_wav, question_text=question,
-            scam_warning=record.response.scam.risk != "low")
+            scam_warning=scam.risk != "low",
+            # The check's own reason ids, so "why is this a scam?" gets a real
+            # answer. The untrusted quotes stay out of the model call.
+            scam_reasons=[reason.reason_id for reason in scam.reasons])
     except ReaderError as exc:
         status = 400 if exc.reason == "question_unclear" else 503
         raise HTTPException(status, {"error": exc.reason}) from None

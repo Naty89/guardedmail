@@ -6,6 +6,7 @@ motor
 rapidfuzz
 Pillow
 opencv-python-headless
+pypdfium2
 google-genai
 python-dotenv
 pytest

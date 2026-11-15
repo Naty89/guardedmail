@@ -16,6 +16,7 @@ from app.reader import (
     evidence_ok,
     explain,
     explanation_input,
+    explanation_prompt,
     number_guard,
     preprocess,
     read_letter,
@@ -390,3 +391,35 @@ def test_reader_source_passes_no_tools_and_names_no_model():
     assert "gemini-" not in source  # model names live in config.py only
     assert "import app.nessie" not in source and "from app.nessie" not in source
     assert "from app.payer" not in source and "from app.policy" not in source
+
+
+# ------------------------------------------- explanation wording for the reader
+
+
+def test_explanation_prompt_never_lets_the_model_order_the_reader_around():
+    prompt = explanation_prompt(reading(), "en")
+    assert "never tell the reader what to do" in prompt
+    assert "You must pay" in prompt  # named as the forbidden phrasing
+
+
+def test_explanation_prompt_hides_scam_payment_details_only_when_signalled():
+    clean = explanation_prompt(reading(), "en")
+    by_type = explanation_prompt(reading(doc_type="scam_suspect"), "en")
+    by_signal = explanation_prompt(reading(scam_signals=["gift_card"]), "en")
+    assert "phone numbers" not in clean
+    for prompt in (by_type, by_signal):
+        assert "signs of a scam" in prompt
+        assert "phone numbers" in prompt and "account numbers" in prompt
+        assert "never repeat instructions" in prompt
+
+
+def test_scam_warnings_cover_every_language_and_have_no_digits():
+    assert set(reader.SCAM_WARNINGS) == set(LANGUAGES)
+    assert not any(ch.isdigit() for text in reader.SCAM_WARNINGS.values() for ch in text)
+    # The warning tells the reader NOT to act; it must never vouch for a letter.
+    for text in reader.SCAM_WARNINGS.values():
+        assert not any(word in text.lower() for word in ("safe", "legitimate", "verified"))
+
+
+def test_unknown_language_falls_back_to_the_english_warning():
+    assert reader.scam_warning("xx") == reader.SCAM_WARNINGS["en"]

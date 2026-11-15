@@ -126,7 +126,12 @@ export function postLetter(source: LetterSource, language: Lang): Promise<Letter
   const form = new FormData();
   form.append("language", language);
   // One "image" field per page, in order.
-  if (source.kind === "photo") source.images.forEach((page, i) => form.append("image", page, `page${i + 1}.jpg`));
+  if (source.kind === "photo")
+    source.images.forEach((page, i) => {
+      // The server detects a PDF by its content, but the name should match too.
+      const ext = page.type === "application/pdf" ? "pdf" : "jpg";
+      form.append("image", page, `page${i + 1}.${ext}`);
+    });
   else form.append("sample", source.sampleId);
   return request<Letter>("/letters", { method: "POST", body: form });
 }

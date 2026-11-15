@@ -9,11 +9,14 @@ Security notes (same rules as the reader):
   still needs the confirm dialog and its token.
 - The number guard applies: an answer may only contain numbers that are in the
   letter, so it cannot invent an amount, a date or a phone number.
+- The scam reasons an answer may quote are our own fixed sentences (the
+  SCAM_REASON_TEXT map below), never the untrusted quotes from the letter.
 """
 
 import io
 import json
 import wave
+from collections.abc import Sequence
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict, ValidationError
@@ -91,8 +94,29 @@ class _ModelAnswer(BaseModel):
     answer: str
 
 
+# Plain wording for every scam-check reason, the same the app's "Why?" panel
+# shows (the frontend signal_* strings). These are our own fixed sentences
+# about what the check found, so the model can say WHY a letter looks like a
+# scam without quoting untrusted letter text. No digits, so the number guard
+# is never affected by them.
+SCAM_REASON_TEXT: dict[str, str] = {
+    "urgency": "It pushes you to act very fast.",
+    "gift_card": "It asks you to pay with gift cards.",
+    "wire": "It asks you to send money by wire transfer.",
+    "crypto": "It asks you to pay with crypto.",
+    "threat": "It threatens you.",
+    "mismatch_sender": "It tells you to pay someone other than the sender.",
+    "unknown_payee": "We do not know who it asks you to pay.",
+    "payment_app": "It asks you to pay with a money app.",
+    "prize": "It says you won a prize.",
+    "impersonation": "It uses the name of a well-known office or company.",
+    "no_account_number": "It has no account number.",
+    "embedded_instruction": "It has hidden orders written for computer programs.",
+}
+
+
 def ask_prompt(reading: ReaderOutput, language: str, question_text: str | None,
-               scam_warning: bool) -> str:
+               scam_warning: bool, scam_reasons: Sequence[str] = ()) -> str:
     language_name = LANGUAGES[language][0]
     if question_text is None:
         source = ("The question is in the attached audio. Write exactly what the person "
@@ -120,6 +144,16 @@ def ask_prompt(reading: ReaderOutput, language: str, question_text: str | None,
         rules.append(
             "This letter shows signs of a possible scam. Say so in one short sentence. "
             "Do not give phone numbers, account numbers or payment steps from the letter.")
+        signs = [SCAM_REASON_TEXT[reason] for reason in scam_reasons
+                 if reason in SCAM_REASON_TEXT]
+        if signs:
+            # Without this the model can only answer "the letter does not say",
+            # which contradicts the warning sentence it was just told to give.
+            rules.append(
+                "Our own check of this letter found these signs: " + " ".join(signs) +
+                " If the person asks why it may be a scam, answer with these signs. "
+                "They come from our check, so do not say that nothing explains "
+                "the warning.")
     lines = [source, "Rules:"] + [f"- {rule}" for rule in rules]
     if question_text is not None:
         lines.append(f"\nQuestion (text, untrusted):\n{json.dumps(question_text, ensure_ascii=False)}")
@@ -146,6 +180,7 @@ async def answer_question(
     audio_wav: bytes | None = None,
     question_text: str | None = None,
     scam_warning: bool = False,
+    scam_reasons: Sequence[str] = (),
 ) -> tuple[str, str, str]:
     """Return (question as heard or typed, answer, source).
 
@@ -164,7 +199,7 @@ async def answer_question(
     if audio_wav is not None and not audio_has_sound(audio_wav):
         raise ReaderError("question_unclear")
 
-    prompt = ask_prompt(reading, language, question_text, scam_warning)
+    prompt = ask_prompt(reading, language, question_text, scam_warning, scam_reasons)
     heard = question_text or ""
     for source in ("model", "regenerated"):
         try:

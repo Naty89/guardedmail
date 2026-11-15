@@ -4,9 +4,11 @@ import {
   ChevronRight,
   CircleAlert,
   CircleCheck,
+  FileText,
   History,
   Loader,
   TriangleAlert,
+  Upload,
   X,
   Zap,
 } from "lucide-react";
@@ -21,7 +23,7 @@ import { Card } from "@/components/ui/card";
 import { t, type Lang } from "@/i18n";
 import { downscaleImage } from "@/lib/downscale";
 import { formatBytes } from "@/lib/format";
-import { MAX_PAGES, type LetterSource, type SampleId, type ScreenProps } from "@/lib/screens";
+import { MAX_FILE_BYTES, MAX_PAGES, type LetterSource, type SampleId, type ScreenProps } from "@/lib/screens";
 import { cn } from "@/lib/utils";
 
 type Props = ScreenProps & {
@@ -29,10 +31,13 @@ type Props = ScreenProps & {
   onSourceChange: (source: LetterSource | null) => void;
 };
 
-type PhotoState = "idle" | "preparing" | "error";
+type PhotoState = "idle" | "preparing" | "image_error" | "file_error";
 
 /** First screen: pick a language, then take a photo or choose a sample letter. */
 export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }: Props) {
+  // Two hidden inputs: one goes straight to the camera, the other is a file
+  // picker that also allows PDFs.
+  const cameraInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [photoState, setPhotoState] = useState<PhotoState>("idle");
 
@@ -51,14 +56,24 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
     const file = event.target.files?.[0];
     event.target.value = ""; // lets the user pick the same file again
     if (!file) return;
+    // Some pickers leave the MIME type empty, so also trust the file name.
+    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
     setPhotoState("preparing");
     try {
-      const image = await downscaleImage(file);
-      // A new photo is added after the pages already taken (a sample is replaced).
-      onSourceChange({ kind: "photo", images: [...photos, image].slice(0, MAX_PAGES) });
+      let page: Blob;
+      if (isPdf) {
+        // The server renders the PDF pages itself; here we only check the size
+        // and make sure the Blob keeps the PDF type (preview + upload need it).
+        if (file.size > MAX_FILE_BYTES) throw new Error("File is too large");
+        page = file.type === "application/pdf" ? file : new Blob([file], { type: "application/pdf" });
+      } else {
+        page = await downscaleImage(file);
+      }
+      // A new page is added after the pages already taken (a sample is replaced).
+      onSourceChange({ kind: "photo", images: [...photos, page].slice(0, MAX_PAGES) });
       setPhotoState("idle");
     } catch {
-      setPhotoState("error");
+      setPhotoState(isPdf ? "file_error" : "image_error");
     }
   }
 
@@ -93,12 +108,21 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
           <p className="mt-2 text-on-primary-muted">{t(lang, "capture_intro")}</p>
         </div>
 
-        {/* The real file input is hidden; the visible <button> opens it. */}
+        {/* The real file inputs are hidden; the visible <button>s open them. */}
         <input
-          ref={fileInput}
+          ref={cameraInput}
           type="file"
           accept="image/*"
           capture="environment"
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden="true"
+          onChange={handleFile}
+        />
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/*,application/pdf"
           className="sr-only"
           tabIndex={-1}
           aria-hidden="true"
@@ -113,10 +137,10 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
               {t(lang, "preparing_photo")}
             </p>
           )}
-          {photoState === "error" && (
+          {(photoState === "image_error" || photoState === "file_error") && (
             <p className="flex items-start gap-2 rounded-xl bg-danger-soft p-3 font-semibold text-danger">
               <CircleAlert className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-              {t(lang, "photo_error")}
+              {t(lang, photoState === "file_error" ? "file_error" : "photo_error")}
             </p>
           )}
           {photos.length > 0 && (
@@ -139,11 +163,20 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {previewUrls.map((url, index) => (
               <li key={url} className="flex items-center gap-3 rounded-xl bg-white/12 p-2">
-                <img
-                  src={url}
-                  alt={t(lang, "photo_preview_alt")}
-                  className="h-16 w-12 shrink-0 rounded-md border border-white/30 bg-surface object-cover object-top"
-                />
+                {photos[index]?.type === "application/pdf" ? (
+                  <span
+                    aria-hidden="true"
+                    className="flex h-16 w-12 shrink-0 items-center justify-center rounded-md border border-white/30 bg-surface text-muted-foreground"
+                  >
+                    <FileText className="size-6" />
+                  </span>
+                ) : (
+                  <img
+                    src={url}
+                    alt={t(lang, "photo_preview_alt")}
+                    className="h-16 w-12 shrink-0 rounded-md border border-white/30 bg-surface object-cover object-top"
+                  />
+                )}
                 <span className="grow">
                   <span className="block font-semibold">{t(lang, "page_n", { n: index + 1 })}</span>
                   <span className="block text-sm text-on-primary-muted">
@@ -191,15 +224,25 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
             )}
           </>
         ) : (
-          <Button
-            size="lg"
-            variant="accent"
-            disabled={preparing}
-            onClick={() => fileInput.current?.click()}
-          >
-            <Camera aria-hidden="true" />
-            {t(lang, "take_photo")}
-          </Button>
+          <>
+            <Button
+              size="lg"
+              variant="accent"
+              disabled={preparing}
+              onClick={() => cameraInput.current?.click()}
+            >
+              <Camera aria-hidden="true" />
+              {t(lang, "take_photo")}
+            </Button>
+            <Button
+              variant="light"
+              disabled={preparing}
+              onClick={() => fileInput.current?.click()}
+            >
+              <Upload aria-hidden="true" />
+              {t(lang, "choose_file")}
+            </Button>
+          </>
         )}
       </Card>
 

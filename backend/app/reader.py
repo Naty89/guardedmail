@@ -8,7 +8,7 @@ Security notes (do not weaken):
   never looks at `raw_text` or the explanation.
 
 Pipeline (see `read_letter`):
-1. preprocess the image
+1. preprocess the image (a PDF upload is rendered to one image per page first)
 2. two extraction calls in parallel, with differently worded prompts
 3. evidence check: the amount and due date must appear in the transcription
 4. explanation call, from the extracted data only (not the image)
@@ -28,6 +28,7 @@ from typing import Protocol
 
 import cv2
 import numpy as np
+import pypdfium2 as pdfium
 from PIL import Image, ImageOps
 from pydantic import ValidationError
 
@@ -69,11 +70,65 @@ def pages_sha256(pages: list[bytes]) -> str:
     return hashlib.sha256("|".join(image_sha256(page) for page in pages).encode()).hexdigest()
 
 
+def _is_pdf(data: bytes) -> bool:
+    """True if the upload looks like a PDF. The header belongs at the very
+    start, but the PDF spec tolerates a little junk in front of it."""
+    return data[:1024].lstrip().startswith(b"%PDF")
+
+
+def pdf_to_pages(pdf_bytes: bytes) -> list[bytes]:
+    """Render every page of a PDF to a JPEG, so the image pipeline can read it.
+
+    A PDF counts towards the same page limit as photos: a 4-page PDF is a
+    4-page letter. Rendering is deterministic, so the same PDF always gets
+    the same cache key and reading it twice is free.
+    """
+    if len(pdf_bytes) > MAX_UPLOAD_BYTES:
+        raise ReaderError("image_too_large")
+    try:
+        pdf = pdfium.PdfDocument(io.BytesIO(pdf_bytes))
+    except Exception:  # junk file, or a password-protected PDF
+        raise ReaderError("image_unreadable", "pdf_open_failed") from None
+    try:
+        count = len(pdf)
+        if count == 0:
+            raise ReaderError("image_empty")
+        if count > MAX_PAGES:
+            raise ReaderError("too_many_pages", f"pdf has {count} pages")
+        pages: list[bytes] = []
+        for index in range(count):
+            page = pdf[index]
+            longest_pt = max(page.get_width(), page.get_height(), 1)
+            bitmap = page.render(scale=LONG_EDGE_PX / longest_pt)
+            image = bitmap.to_pil().convert("RGB")
+            buffer = io.BytesIO()
+            image.save(buffer, "JPEG", quality=JPEG_QUALITY)
+            pages.append(buffer.getvalue())
+        return pages
+    except ReaderError:
+        raise
+    except Exception:
+        raise ReaderError("image_unreadable", "pdf_render_failed") from None
+    finally:
+        pdf.close()
+
+
 def as_pages(images: "bytes | list[bytes]") -> list[bytes]:
-    """Accept one image or a list of pages, and check the count."""
-    pages = [images] if isinstance(images, (bytes, bytearray)) else list(images)
-    if not pages:
+    """Accept one image, one PDF, or a list of pages, and check the count.
+
+    PDFs are expanded into one image per page here, so everything after this
+    point only ever sees image bytes.
+    """
+    uploads = [images] if isinstance(images, (bytes, bytearray)) else list(images)
+    if not uploads:
         raise ReaderError("image_empty")
+    pages: list[bytes] = []
+    for upload in uploads:
+        upload = bytes(upload)
+        if _is_pdf(upload):
+            pages.extend(pdf_to_pages(upload))
+        else:
+            pages.append(upload)
     if len(pages) > MAX_PAGES:
         raise ReaderError("too_many_pages", f"at most {MAX_PAGES}")
     return pages
@@ -386,22 +441,36 @@ def explanation_input(reading: ReaderOutput) -> str:
 
 def explanation_prompt(reading: ReaderOutput, language: str) -> str:
     language_name = LANGUAGES[language][0]
-    return (
+    prompt = (
         f"Explain this letter in {language_name} (language code {language}). "
         f"Write directly in {language_name}; do not write English first.\n"
         "Rules:\n"
         "- At most 120 words. Short sentences. About 6th-grade reading level.\n"
         "- Use this order: who sent it, what they want, how much and by when, "
         "what happens next according to the letter.\n"
+        "- Report what the letter says; never tell the reader what to do. Write "
+        "'The letter asks you to pay X' or 'They want X', not 'You must pay X' "
+        "or 'Pay now'.\n"
         "- Do not add facts, opinions or advice that are not in the letter.\n"
         "- Copy amounts and reference numbers exactly as given, using Western "
         "digits 0-9 only. Do not write any other numbers.\n"
         f"- Write each date with the month as a word in {language_name} and the "
         "day and year as digits (not as 2026-11-24), so it reads well aloud. "
         "Keep the same day, month and year.\n"
-        "- Plain text only: no headings, lists or formatting.\n\n"
-        f"Letter data (JSON):\n{explanation_input(reading)}"
+        "- Plain text only: no headings, lists or formatting.\n"
     )
+    if reading.doc_type == "scam_suspect" or reading.scam_signals:
+        # The reader may be elderly and the text is also read aloud: a scam
+        # letter's "how to pay" details must never be repeated as steps to
+        # follow. The warning not to pay is added by our own code, not here.
+        prompt += (
+            "- This letter shows signs of a scam. Describe what it demands as "
+            "claims of the letter ('It demands ...', 'It threatens ...'). Do "
+            "not write phone numbers, web addresses, account numbers or "
+            "payment methods from the letter, and never repeat instructions "
+            "on how to pay.\n"
+        )
+    return prompt + f"\nLetter data (JSON):\n{explanation_input(reading)}"
 
 
 # --------------------------------------------------------- 5. number guard
@@ -458,6 +527,28 @@ TEMPLATES: dict[str, tuple[str, str, str, str]] = {
     "am": ("ይህ ደብዳቤ ከ{sender} የተላከ ነው።", "ይህን ደብዳቤ ማን እንደላከው ግልጽ አይደለም።",
            "{amount} እንዲከፍሉ ይጠይቃሉ።", "የመጨረሻው ቀን {date} ነው።"),
 }
+
+
+# First sentence of the explanation for a letter the scam check flagged. Our
+# own fixed wording (never model-made), so a flagged letter always starts by
+# telling the reader not to pay, and the read-aloud audio says it too.
+# No digits, so prepending never trips the number guard.
+SCAM_WARNINGS: dict[str, str] = {
+    "en": "This letter may be a scam. Do not pay it and do not contact the sender.",
+    "es": "Esta carta puede ser una estafa. No la pague y no contacte a quien la envió.",
+    "hi": "यह पत्र धोखाधड़ी हो सकता है। इसका भुगतान न करें और भेजने वाले से संपर्क न करें।",
+    "te": "ఈ లేఖ మోసం కావచ్చు. దీనికి చెల్లింపు చేయవద్దు, పంపిన వారిని సంప్రదించవద్దు.",
+    "ta": "இது மோசடிக் கடிதமாக இருக்கலாம். இதற்குப் பணம் செலுத்த வேண்டாம்; அனுப்பியவரைத் தொடர்பு கொள்ள வேண்டாம்.",
+    "pt": "Esta carta pode ser um golpe. Não pague e não entre em contato com o remetente.",
+    "zh": "这封信可能是诈骗。请不要付款，也不要联系寄信人。",
+    "ar": "قد تكون هذه الرسالة احتيالًا. لا تدفعها ولا تتواصل مع المرسل.",
+    "am": "ይህ ደብዳቤ ማጭበርበር ሊሆን ይችላል። ክፍያ አይፈጽሙ እና ላጉዋቸውንም አይገናኙ።",
+}
+
+
+def scam_warning(language: str) -> str:
+    """The do-not-pay sentence for a flagged letter, in the user's language."""
+    return SCAM_WARNINGS.get(language, SCAM_WARNINGS["en"])
 
 
 def templated_explanation(reading: ReaderOutput, language: str) -> str:

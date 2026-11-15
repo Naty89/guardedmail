@@ -150,6 +150,46 @@ def test_prompt_marks_inputs_untrusted_and_adds_the_scam_rule_only_when_needed()
     assert "untrusted" in ask.ASK_SYSTEM and "cannot" in ask.ASK_SYSTEM
 
 
+def test_prompt_gives_the_scam_reasons_so_why_questions_get_a_real_answer():
+    prompt = ask.ask_prompt(reading(), "en", "Why is this a scam?",
+                            scam_warning=True, scam_reasons=["wire", "mismatch_sender"])
+    assert ask.SCAM_REASON_TEXT["wire"] in prompt
+    assert ask.SCAM_REASON_TEXT["mismatch_sender"] in prompt
+    assert "answer with these signs" in prompt
+
+
+def test_warning_without_reasons_keeps_the_old_prompt():
+    prompt = ask.ask_prompt(reading(), "en", "q?", scam_warning=True)
+    assert "possible scam" in prompt
+    assert not any(text in prompt for text in ask.SCAM_REASON_TEXT.values())
+
+
+def test_unknown_reason_ids_never_reach_the_prompt():
+    prompt = ask.ask_prompt(reading(), "en", "q?", scam_warning=True,
+                            scam_reasons=["pay now", "wire"])
+    assert ask.SCAM_REASON_TEXT["wire"] in prompt and "pay now" not in prompt
+
+
+def test_every_scam_reason_id_has_wording_without_digits():
+    import typing
+
+    from app import scam
+    from app.schemas import ScamReasonId
+    assert set(typing.get_args(ScamReasonId)) == set(ask.SCAM_REASON_TEXT)
+    produced = set(scam.STRONG_RULES) | {"impersonation", "no_account_number",
+                                         "mismatch_sender", "unknown_payee"}
+    assert produced <= set(ask.SCAM_REASON_TEXT)
+    # No digits, so the reason wording can never trip the number guard.
+    assert not any(ch.isdigit() for text in ask.SCAM_REASON_TEXT.values() for ch in text)
+
+
+def test_reasons_reach_the_model_through_answer_question():
+    caller = FakeCaller(reply("It asks you to pay with gift cards."))
+    heard, answer, source = run(caller, scam_warning=True, scam_reasons=["gift_card"])
+    assert source == "model"
+    assert ask.SCAM_REASON_TEXT["gift_card"] in caller.calls[0]["prompt"]
+
+
 def test_fallback_exists_for_every_language_and_has_no_numbers():
     assert set(ask.FALLBACKS) == set(LANGUAGES)
     assert not any(ch.isdigit() for text in ask.FALLBACKS.values() for ch in text)
@@ -259,6 +299,18 @@ def test_scam_letter_question_gets_the_scam_rule(client, monkeypatch):
     client.state["asker"] = FakeCaller(reply("This letter shows signs of a possible scam."))
     post_question(client, letter, monkeypatch, data={"question": "How do I pay?"})
     assert "possible scam" in client.state["asker"].calls[0]["prompt"]
+
+
+def test_scam_letter_why_question_gets_the_signs_the_check_found(client, monkeypatch):
+    client.state["reader"] = client.reader_class(scam=True)
+    letter = upload(client, shade=40)
+    client.state["asker"] = FakeCaller(reply("It asks you to pay with gift cards."))
+    response = post_question(client, letter, monkeypatch,
+                             data={"question": "Why is this a scam?"})
+    assert response.status_code == 200
+    prompt = client.state["asker"].calls[0]["prompt"]
+    # The letter's scam_signals found by the check are explained in the prompt.
+    assert ask.SCAM_REASON_TEXT["gift_card"] in prompt
 
 
 def test_question_and_answer_text_stay_out_of_the_audit_log(client, monkeypatch):

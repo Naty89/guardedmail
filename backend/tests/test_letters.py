@@ -153,6 +153,42 @@ def test_scam_letter_with_embedded_instruction_is_flagged_not_payable():
     assert store.STORE.by_proposal(proposal.id).intent is None
 
 
+# ------------------------------------------------------- scam warning line
+
+
+def test_flagged_letter_explanation_starts_with_the_do_not_pay_warning():
+    response, _ = process(first=reading_json(**SCAM),
+                          explanation="The letter demands gift cards.")
+    assert response.scam.risk != "low"
+    assert response.explanation == (
+        reader.scam_warning("en") + " The letter demands gift cards.")
+
+
+def test_clean_letter_explanation_has_no_warning():
+    response, _ = process()
+    assert response.scam.risk == "low"
+    assert response.explanation == "A bill for $84.12."
+    assert reader.scam_warning("en") not in response.explanation
+
+
+def test_the_warning_follows_the_language():
+    response, _ = process(first=reading_json(**SCAM), language="es",
+                          explanation="La carta exige tarjetas de regalo.")
+    assert response.explanation.startswith(reader.scam_warning("es"))
+
+
+def test_the_warning_is_added_every_time_and_never_saved_in_the_cache():
+    image = photo(shade=90)
+    kwargs = dict(first=reading_json(**SCAM), explanation="The letter demands gift cards.")
+    first, _ = process(image=image, **kwargs)
+    again, caller = process(image=image, **kwargs)
+    assert caller.calls == 0                       # the second one came from the cache
+    assert again.explanation == first.explanation
+    assert again.explanation.startswith(reader.scam_warning("en"))
+    cached = store.load_cached_reading(reader.image_sha256(image), "en")
+    assert cached.explanation == "The letter demands gift cards."   # cache stays clean
+
+
 def test_unknown_payee_gets_calendar_and_no_token():
     response, _ = process(first=reading_json(payee_candidate="Someone Else Inc"))
     assert response.proposal.action == "calendar"

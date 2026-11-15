@@ -28,6 +28,8 @@ export type SampleId = "electric_bill" | "suspicious_letter";
 /** What the user picked on the Capture screen. */
 /** The most pages one letter can have (the server enforces the same limit). */
 export const MAX_PAGES = 4;
+/** The largest single file the server accepts, in bytes (same limit as the backend). */
+export const MAX_FILE_BYTES = 15 * 1024 * 1024;
 
 export type LetterSource =
   | { kind: "photo"; images: Blob[] } // one Blob per page, in order

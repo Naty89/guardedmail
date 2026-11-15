@@ -26,6 +26,7 @@ from app.reader import (
     as_pages,
     pages_sha256,
     read_letter,
+    scam_warning,
     thumbnail,
 )
 from app.schemas import (
@@ -207,6 +208,14 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
     await audit.record("reader", "scam_checked", letter_id=letter_id, risk=scam.risk,
                        reason_ids=[reason.reason_id for reason in scam.reasons])
 
+    explanation = reading.explanation
+    if scam.risk != "low":
+        # Our own fixed first sentence, never model-made: a flagged letter's
+        # explanation always starts by telling the reader not to pay, and the
+        # read-aloud audio says it too. The cached reading stays without it,
+        # so this survives restarts and reopens (it is added here every time).
+        explanation = f"{scam_warning(language)} {explanation}"
+
     merchants = await get_trusted_merchants()
     verdict = policy.decide(
         first, second,
@@ -252,7 +261,7 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
         expires_at=expires_at, balance_cents=current_balance_cents())
 
     response = LetterResponse(
-        letter_id=letter_id, language=language, explanation=reading.explanation,
+        letter_id=letter_id, language=language, explanation=explanation,
         summary=LetterSummary(
             doc_type=first.doc_type, sender=first.payee_candidate,
             amount_cents=first.amount_cents or None, due_date=first.due_date),

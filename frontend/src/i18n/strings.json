@@ -139,7 +139,9 @@
     "pages_ready": "{n} pages are ready",
     "max_pages": "That is the most pages: {n}.",
     "offer_gone": "This payment offer is no longer available, so nothing was paid. Tap below to get a new one.",
-    "get_new_offer": "Get a new offer"
+    "get_new_offer": "Get a new offer",
+    "choose_file": "Choose a photo or PDF",
+    "file_error": "We could not open this file. Please try again."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -279,7 +281,9 @@
     "pages_ready": "{n} páginas listas",
     "max_pages": "Ese es el máximo de páginas: {n}.",
     "offer_gone": "Esta oferta de pago ya no está disponible, así que no se pagó nada. Toque abajo para obtener una nueva.",
-    "get_new_offer": "Obtener una nueva oferta"
+    "get_new_offer": "Obtener una nueva oferta",
+    "choose_file": "Elegir una foto o PDF",
+    "file_error": "No pudimos abrir este archivo. Inténtalo de nuevo."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -419,7 +423,9 @@
     "pages_ready": "{n} पन्ने तैयार हैं",
     "max_pages": "यह अधिकतम पन्ने हैं: {n}।",
     "offer_gone": "यह भुगतान प्रस्ताव अब उपलब्ध नहीं है, इसलिए कुछ भी नहीं चुकाया गया। नया प्रस्ताव पाने के लिए नीचे दबाएँ।",
-    "get_new_offer": "नया प्रस्ताव पाएँ"
+    "get_new_offer": "नया प्रस्ताव पाएँ",
+    "choose_file": "फ़ोटो या PDF चुनें",
+    "file_error": "हम यह फ़ाइल नहीं खोल पाए। कृपया फिर से कोशिश करें।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -559,7 +565,9 @@
     "pages_ready": "{n} పేజీలు సిద్ధంగా ఉన్నాయి",
     "max_pages": "ఇదే గరిష్ట పేజీలు: {n}.",
     "offer_gone": "ఈ చెల్లింపు ఆఫర్ ఇప్పుడు అందుబాటులో లేదు, కాబట్టి ఏమీ చెల్లించబడలేదు. కొత్తది పొందడానికి క్రింద నొక్కండి.",
-    "get_new_offer": "కొత్త ఆఫర్ పొందండి"
+    "get_new_offer": "కొత్త ఆఫర్ పొందండి",
+    "choose_file": "ఫోటో లేదా PDF ఎంచుకోండి",
+    "file_error": "ఈ ఫైల్‌ను తెరవలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -699,7 +707,9 @@
     "pages_ready": "{n} பக்கங்கள் தயார்",
     "max_pages": "இதுவே அதிகபட்ச பக்கங்கள்: {n}.",
     "offer_gone": "இந்தப் பணம் செலுத்தும் வாய்ப்பு இப்போது இல்லை, எனவே எதுவும் செலுத்தப்படவில்லை. புதியதைப் பெற கீழே தட்டவும்.",
-    "get_new_offer": "புதிய வாய்ப்பைப் பெறுங்கள்"
+    "get_new_offer": "புதிய வாய்ப்பைப் பெறுங்கள்",
+    "choose_file": "புகைப்படம் அல்லது PDF தேர்ந்தெடுக்கவும்",
+    "file_error": "இந்தக் கோப்பைத் திறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -839,7 +849,9 @@
     "pages_ready": "{n} páginas prontas",
     "max_pages": "Esse é o máximo de páginas: {n}.",
     "offer_gone": "Esta oferta de pagamento não está mais disponível, então nada foi pago. Toque abaixo para obter uma nova.",
-    "get_new_offer": "Obter uma nova oferta"
+    "get_new_offer": "Obter uma nova oferta",
+    "choose_file": "Escolher uma foto ou PDF",
+    "file_error": "Não conseguimos abrir este arquivo. Tente de novo."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -979,7 +991,9 @@
     "pages_ready": "{n} 页已就绪",
     "max_pages": "已达到页数上限：{n}。",
     "offer_gone": "这个付款提议已失效，所以没有扣款。点按下方获取新的提议。",
-    "get_new_offer": "获取新的提议"
+    "get_new_offer": "获取新的提议",
+    "choose_file": "选择照片或 PDF",
+    "file_error": "无法打开这个文件。请再试一次。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -1119,7 +1133,9 @@
     "pages_ready": "{n} صفحات جاهزة",
     "max_pages": "هذا أقصى عدد من الصفحات: {n}.",
     "offer_gone": "عرض الدفع هذا لم يعد متاحًا، لذلك لم يُدفع أي شيء. اضغط أدناه للحصول على عرض جديد.",
-    "get_new_offer": "احصل على عرض جديد"
+    "get_new_offer": "احصل على عرض جديد",
+    "choose_file": "اختيار صورة أو ملف PDF",
+    "file_error": "لم نتمكن من فتح هذا الملف. حاول مرة أخرى."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1259,6 +1275,8 @@
     "pages_ready": "{n} ገጾች ዝግጁ ናቸው",
     "max_pages": "ይህ ከፍተኛው የገጽ ብዛት ነው፦ {n}።",
     "offer_gone": "ይህ የክፍያ ቅናሽ ከእንግዲህ የለም፣ ስለዚህ ምንም አልተከፈለም። አዲስ ለማግኘት ከታች ይንኩ።",
-    "get_new_offer": "አዲስ ቅናሽ ያግኙ"
+    "get_new_offer": "አዲስ ቅናሽ ያግኙ",
+    "choose_file": "ፎቶ ወይም PDF ይምረጡ",
+    "file_error": "ይህን ፋይል መክፈት አልቻልንም። እባክዎ እንደገና ይሞክሩ።"
   }
 }
