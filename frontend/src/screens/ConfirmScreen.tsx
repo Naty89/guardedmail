@@ -84,6 +84,7 @@ export function ConfirmScreen({ lang, go, letter, setLetter, setReceipt }: Scree
             src={letterImageUrl(letter.letter_id)}
             alt={t(lang, "letter_photo_alt")}
             className="h-32 w-24 shrink-0 rounded-lg border bg-muted object-cover object-top"
+            onError={(event) => (event.currentTarget.style.display = "none")} // an old letter may have no picture
           />
           <DialogDescription className="text-xl leading-snug font-semibold text-foreground">
             {t(lang, "confirm_pay_question", { amount, merchant })}

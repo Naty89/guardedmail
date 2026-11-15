@@ -307,6 +307,29 @@ class AccountResponse(BaseModel):
     recent_payments: list[PaymentSummary] = []
 
 
+HistoryStatus = Literal["paid", "flagged", "declined", "open", "info"]
+
+
+class HistoryItem(BaseModel):
+    """One letter in the history list. Facts are as the reader saw them (display only)."""
+
+    letter_id: UUID  # the most recent time this letter was read
+    language: LanguageCode
+    ts: datetime
+    sender: str
+    doc_type: DocType
+    amount_cents: int | None = None
+    due_date: date | None = None
+    risk: RiskLevel
+    status: HistoryStatus
+
+
+class HistoryResponse(BaseModel):
+    """Response of GET /history, newest first."""
+
+    items: list[HistoryItem] = []
+
+
 class AuditEvent(BaseModel):
     """One entry in the hash-chained audit log (loose for now)."""
 

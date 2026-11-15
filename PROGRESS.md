@@ -370,7 +370,10 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [ ] Calendar link not tried on a real iPhone or Android: opens in a new tab (`target=_blank`) so the installed iPhone app should keep running, but that is unverified
 - [x] **Display settings:** a header button opens text size (normal, large, extra large = 18px, 21px, 24px base) and a high-contrast mode (pure black on white, text at least 7:1, strong card edges, no shadows). Saved on the device, applied before first paint, follows the phone's own "increase contrast" setting on first visit. Layout re-measured at 360px with extra-large text and high contrast: no overflow, no small tap targets (found and fixed two real overflows: the due date and the question box)
 - [x] `tests/test_i18n.py`: every language has every string, placeholders survive translation, English never says safe/legitimate/verified, digits are always 0-9
-- [ ] Letter history (in progress)
+- [x] **Letter history ("My letters"):** `GET /history` lists every letter read, newest first, rebuilt from the audit log (so it survives restarts and cannot disagree with the log). One entry per photo and language. Status with icon and word: Paid, Possible scam, Not paid, Waiting for you, No payment needed. Tapping a letter reopens it with `POST /history/{id}/open`: no photo and no model call, everything is decided again from the saved reading, so a payable bill gets a NEW proposal and token, and an already-paid letter cannot be paid again. Verified in a browser: reopen a bill, pay it, list shows Paid, reopening it offers no Pay button
+- [x] **Fixed the "real uploads are cached inside the repo" problem:** new reader results go to `backend/data/readings` and small letter pictures to `backend/data/thumbs` (both git-ignored); the committed `fixtures` are still read, and the warm-up and eval scripts still write there on purpose
+- [ ] History is shared by everyone using this server (there is no login), and the letter pictures are stored on this laptop in `backend/data/thumbs`. Fine for invented letters only
+- [ ] A letter whose saved reading was deleted shows "We could not open this letter again"
 - [ ] Multi-page letters (not started)
 
 ---

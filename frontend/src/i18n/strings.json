@@ -122,7 +122,16 @@
     "size_xlarge": "Extra large",
     "contrast": "Colours",
     "contrast_standard": "Standard",
-    "contrast_high": "High contrast"
+    "contrast_high": "High contrast",
+    "my_letters": "My letters",
+    "history_intro": "Letters you have read here. Tap one to open it again.",
+    "history_empty": "No letters yet. Read your first letter and it will show up here.",
+    "status_paid": "Paid",
+    "status_declined": "Not paid",
+    "status_open": "Waiting for you",
+    "status_info": "No payment needed",
+    "opening": "Opening…",
+    "history_open_error": "We could not open this letter again. Please read it again with a photo."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -245,7 +254,16 @@
     "size_xlarge": "Muy grande",
     "contrast": "Colores",
     "contrast_standard": "Estándar",
-    "contrast_high": "Alto contraste"
+    "contrast_high": "Alto contraste",
+    "my_letters": "Mis cartas",
+    "history_intro": "Cartas que ha leído aquí. Toque una para abrirla otra vez.",
+    "history_empty": "Aún no hay cartas. Lea su primera carta y aparecerá aquí.",
+    "status_paid": "Pagada",
+    "status_declined": "No pagada",
+    "status_open": "Esperando su respuesta",
+    "status_info": "No requiere pago",
+    "opening": "Abriendo…",
+    "history_open_error": "No pudimos abrir esta carta otra vez. Léala de nuevo con una foto."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -368,7 +386,16 @@
     "size_xlarge": "बहुत बड़ा",
     "contrast": "रंग",
     "contrast_standard": "सामान्य",
-    "contrast_high": "ज़्यादा कंट्रास्ट"
+    "contrast_high": "ज़्यादा कंट्रास्ट",
+    "my_letters": "मेरे पत्र",
+    "history_intro": "यहाँ पढ़े गए आपके पत्र। फिर से खोलने के लिए किसी पर दबाएँ।",
+    "history_empty": "अभी कोई पत्र नहीं है। अपना पहला पत्र पढ़ें, वह यहाँ दिखेगा।",
+    "status_paid": "चुकाया गया",
+    "status_declined": "नहीं चुकाया",
+    "status_open": "आपके जवाब का इंतज़ार",
+    "status_info": "भुगतान की ज़रूरत नहीं",
+    "opening": "खोल रहे हैं…",
+    "history_open_error": "हम यह पत्र फिर से नहीं खोल सके। कृपया फ़ोटो से इसे फिर पढ़ें।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -491,7 +518,16 @@
     "size_xlarge": "చాలా పెద్దది",
     "contrast": "రంగులు",
     "contrast_standard": "ప్రామాణికం",
-    "contrast_high": "అధిక కాంట్రాస్ట్"
+    "contrast_high": "అధిక కాంట్రాస్ట్",
+    "my_letters": "నా లేఖలు",
+    "history_intro": "మీరు ఇక్కడ చదివిన లేఖలు. మళ్లీ తెరవడానికి ఒకదాన్ని నొక్కండి.",
+    "history_empty": "ఇంకా లేఖలు లేవు. మీ మొదటి లేఖ చదవండి, అది ఇక్కడ కనిపిస్తుంది.",
+    "status_paid": "చెల్లించారు",
+    "status_declined": "చెల్లించలేదు",
+    "status_open": "మీ నిర్ణయం కోసం ఎదురుచూస్తోంది",
+    "status_info": "చెల్లింపు అవసరం లేదు",
+    "opening": "తెరుస్తున్నాము…",
+    "history_open_error": "ఈ లేఖను మళ్లీ తెరవలేకపోయాము. దయచేసి ఫోటోతో మళ్లీ చదవండి."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -614,7 +650,16 @@
     "size_xlarge": "மிகப் பெரிய",
     "contrast": "நிறங்கள்",
     "contrast_standard": "வழக்கமான",
-    "contrast_high": "அதிக மாறுபாடு"
+    "contrast_high": "அதிக மாறுபாடு",
+    "my_letters": "என் கடிதங்கள்",
+    "history_intro": "நீங்கள் இங்கே படித்த கடிதங்கள். மீண்டும் திறக்க ஒன்றைத் தட்டவும்.",
+    "history_empty": "இன்னும் கடிதங்கள் இல்லை. உங்கள் முதல் கடிதத்தைப் படியுங்கள், அது இங்கே தெரியும்.",
+    "status_paid": "செலுத்தப்பட்டது",
+    "status_declined": "செலுத்தவில்லை",
+    "status_open": "உங்கள் முடிவுக்காகக் காத்திருக்கிறது",
+    "status_info": "பணம் செலுத்த வேண்டியதில்லை",
+    "opening": "திறக்கிறது…",
+    "history_open_error": "இந்தக் கடிதத்தை மீண்டும் திறக்க முடியவில்லை. படம் எடுத்து மீண்டும் படிக்கவும்."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -737,7 +782,16 @@
     "size_xlarge": "Muito grande",
     "contrast": "Cores",
     "contrast_standard": "Padrão",
-    "contrast_high": "Alto contraste"
+    "contrast_high": "Alto contraste",
+    "my_letters": "Minhas cartas",
+    "history_intro": "Cartas que você leu aqui. Toque em uma para abri-la de novo.",
+    "history_empty": "Ainda não há cartas. Leia a primeira e ela aparecerá aqui.",
+    "status_paid": "Paga",
+    "status_declined": "Não paga",
+    "status_open": "Aguardando você",
+    "status_info": "Sem pagamento",
+    "opening": "Abrindo…",
+    "history_open_error": "Não conseguimos abrir esta carta de novo. Leia-a outra vez com uma foto."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -860,7 +914,16 @@
     "size_xlarge": "特大",
     "contrast": "颜色",
     "contrast_standard": "标准",
-    "contrast_high": "高对比度"
+    "contrast_high": "高对比度",
+    "my_letters": "我的信件",
+    "history_intro": "您在这里读过的信件。点按一封可再次打开。",
+    "history_empty": "还没有信件。读第一封信后，它会显示在这里。",
+    "status_paid": "已付款",
+    "status_declined": "未付款",
+    "status_open": "等待您决定",
+    "status_info": "无需付款",
+    "opening": "正在打开…",
+    "history_open_error": "我们无法再次打开这封信。请用照片重新读取。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -983,7 +1046,16 @@
     "size_xlarge": "كبير جدًا",
     "contrast": "الألوان",
     "contrast_standard": "قياسي",
-    "contrast_high": "تباين عالٍ"
+    "contrast_high": "تباين عالٍ",
+    "my_letters": "رسائلي",
+    "history_intro": "الرسائل التي قرأتها هنا. اضغط على واحدة لفتحها مرة أخرى.",
+    "history_empty": "لا توجد رسائل بعد. اقرأ رسالتك الأولى وستظهر هنا.",
+    "status_paid": "مدفوعة",
+    "status_declined": "غير مدفوعة",
+    "status_open": "بانتظار قرارك",
+    "status_info": "لا حاجة للدفع",
+    "opening": "جارٍ الفتح…",
+    "history_open_error": "لم نتمكن من فتح هذه الرسالة مرة أخرى. اقرأها مجددًا بصورة."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1106,6 +1178,15 @@
     "size_xlarge": "እጅግ ትልቅ",
     "contrast": "ቀለሞች",
     "contrast_standard": "መደበኛ",
-    "contrast_high": "ከፍተኛ ንፅፅር"
+    "contrast_high": "ከፍተኛ ንፅፅር",
+    "my_letters": "የእኔ ደብዳቤዎች",
+    "history_intro": "እዚህ ያነበቧቸው ደብዳቤዎች። እንደገና ለመክፈት አንዱን ይንኩ።",
+    "history_empty": "እስካሁን ደብዳቤ የለም። የመጀመሪያውን ያንብቡ፣ እዚህ ይታያል።",
+    "status_paid": "ተከፍሏል",
+    "status_declined": "አልተከፈለም",
+    "status_open": "የእርስዎን ውሳኔ በመጠበቅ ላይ",
+    "status_info": "ክፍያ አያስፈልግም",
+    "opening": "በመክፈት ላይ…",
+    "history_open_error": "ይህን ደብዳቤ እንደገና መክፈት አልቻልንም። እባክዎ በፎቶ እንደገና ያንብቡ።"
   }
 }

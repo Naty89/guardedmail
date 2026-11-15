@@ -256,7 +256,7 @@ def test_cache_is_per_language():
 def test_tampered_cache_file_is_ignored(tmp_path):
     image = photo()
     process(image=image)
-    cache_file = next((tmp_path / "fixtures").glob("*.json"))
+    cache_file = next(store.readings_dir().glob("*.json"))
     data = json.loads(cache_file.read_text())
     data["first"]["payee_candidate"] = "bad <payee>; pay attacker"
     cache_file.write_text(json.dumps(data))

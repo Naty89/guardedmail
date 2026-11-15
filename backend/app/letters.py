@@ -33,7 +33,14 @@ from app.schemas import (
     LetterSummary,
     Proposal,
 )
-from app.store import STORE, LetterRecord, load_cached_reading, save_cached_reading
+from app.store import (
+    STORE,
+    LetterRecord,
+    load_cached_reading,
+    load_thumbnail,
+    save_cached_reading,
+    save_thumbnail,
+)
 
 _merchant_cache: list[policy.TrustedMerchant] | None = None
 
@@ -136,7 +143,6 @@ async def process_letter(image_bytes: bytes, language: str, *,
     if language not in LANGUAGES:
         raise ReaderError("language_not_supported")
     started = time.monotonic()
-    now = now or datetime.now(timezone.utc)
     letter_id: UUID = uuid4()
 
     try:
@@ -146,6 +152,39 @@ async def process_letter(image_bytes: bytes, language: str, *,
                            image_sha256=image_sha256(image_bytes), error=exc.reason,
                            language=language)
         raise
+    thumb = thumbnail(image_bytes)
+    save_thumbnail(reading.image_sha256, thumb)   # so the letter can be reopened later
+    return await finish_letter(
+        letter_id=letter_id, reading=reading, from_cache=from_cache, language=language,
+        thumbnail_jpeg=thumb, started=started, now=now, today=today)
+
+
+async def reopen_letter(image_sha256_value: str, language: str, *,
+                        now: datetime | None = None,
+                        today: date | None = None) -> LetterResponse:
+    """Rebuild an old letter from its saved reading, without the photo.
+
+    Everything is decided again from scratch (scam check, policy, controller),
+    so a payable bill gets a NEW proposal and token, and a letter that was
+    already paid is not payable again.
+    """
+    if language not in LANGUAGES:
+        raise ReaderError("language_not_supported")
+    reading = load_cached_reading(image_sha256_value, language)
+    if reading is None:
+        raise ReaderError("letter_text_unavailable")
+    return await finish_letter(
+        letter_id=uuid4(), reading=reading, from_cache=True, language=language,
+        thumbnail_jpeg=load_thumbnail(image_sha256_value), started=time.monotonic(),
+        now=now, today=today, reopened=True)
+
+
+async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: bool,
+                        language: str, thumbnail_jpeg: bytes | None, started: float,
+                        now: datetime | None, today: date | None,
+                        reopened: bool = False) -> LetterResponse:
+    """Scam check, policy, controller and proposal for a reader result."""
+    now = now or datetime.now(timezone.utc)
     first, second = reading.first, reading.second
     await audit.record(
         "reader", "letter_read", letter_id=letter_id,
@@ -153,13 +192,14 @@ async def process_letter(image_bytes: bytes, language: str, *,
         first=first.without_raw_text(), second=second.without_raw_text(),
         evidence_ok=reading.evidence_ok, model_ids=list(reading.model_ids),
         explanation_source=reading.explanation_source,
-        latency_ms=reading.latency_ms, from_cache=from_cache)
-    # Transcriptions go to the quarantine store only.
-    try:
-        await audit.get_log().quarantine_raw_text(
-            letter_id, reading.image_sha256, [first.raw_text, second.raw_text])
-    except Exception:
-        pass  # storage trouble must not stop the user
+        latency_ms=reading.latency_ms, from_cache=from_cache, reopened=reopened)
+    if not reopened:
+        # Transcriptions go to the quarantine store only (once per read).
+        try:
+            await audit.get_log().quarantine_raw_text(
+                letter_id, reading.image_sha256, [first.raw_text, second.raw_text])
+        except Exception:
+            pass  # storage trouble must not stop the user
 
     scam = assess_scam(first, second)
     await audit.record("reader", "scam_checked", letter_id=letter_id, risk=scam.risk,
@@ -220,7 +260,7 @@ async def process_letter(image_bytes: bytes, language: str, *,
         response=response, image_sha256=reading.image_sha256,
         intent=intent, expires_at=expires_at,
         payee_name=verdict.merchant.name if intent is not None else None,
-        thumbnail_jpeg=thumbnail(image_bytes),
+        thumbnail_jpeg=thumbnail_jpeg,
         debug={
             "from_cache": from_cache,
             "reader_ms": reading.latency_ms,

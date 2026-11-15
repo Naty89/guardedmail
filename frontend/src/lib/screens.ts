@@ -9,7 +9,8 @@ export type Screen =
   | "confirm"
   | "receipt"
   | "scam_blocked"
-  | "audit";
+  | "audit"
+  | "history";
 
 export const SCREENS: readonly Screen[] = [
   "capture",
@@ -19,6 +20,7 @@ export const SCREENS: readonly Screen[] = [
   "receipt",
   "scam_blocked",
   "audit",
+  "history",
 ];
 
 export type SampleId = "electric_bill" | "suspicious_letter";

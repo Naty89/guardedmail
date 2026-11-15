@@ -36,7 +36,7 @@ from app.controller import choose_action
 from app.reader import ReaderError, ReaderResult, image_sha256, read_letter
 from app.scam import assess
 from app.schemas import PAYEE_MATCH_THRESHOLD
-from app.store import load_cached_reading, save_cached_reading
+from app.store import FIXTURES_DIR, load_cached_reading, save_cached_reading
 
 DEFAULT_FOLDER = Path(__file__).resolve().parents[1] / "fixtures" / "eval"
 LANGUAGE = "en"
@@ -200,7 +200,7 @@ async def get_reading(image_bytes: bytes) -> tuple[ReaderResult, bool]:
     if cached is not None:
         return cached, False
     reading = await read_letter(image_bytes, LANGUAGE)
-    save_cached_reading(reading, LANGUAGE)
+    save_cached_reading(reading, LANGUAGE, FIXTURES_DIR)  # eval letters are invented, so kept in the repo
     return reading, True
 
 

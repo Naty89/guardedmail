@@ -20,7 +20,13 @@ from app import tts
 from app.config import get_settings
 from app.reader import GeminiCaller, ReaderError, explain, image_sha256, read_letter
 from app.schemas import LANGUAGES, VOICE_ENABLED
-from app.store import SAMPLE_IDS, load_cached_reading, sample_image_bytes, save_cached_reading
+from app.store import (
+    FIXTURES_DIR,
+    SAMPLE_IDS,
+    load_cached_reading,
+    sample_image_bytes,
+    save_cached_reading,
+)
 
 PAUSE_S = 7.0
 
@@ -37,13 +43,13 @@ async def warm(refresh_explanations: bool) -> int:
             try:
                 if reading is None:
                     reading = await read_letter(image, language, caller)
-                    save_cached_reading(reading, language)
+                    save_cached_reading(reading, language, FIXTURES_DIR)
                     print(f"{label}: read ({reading.explanation_source})")
                     await asyncio.sleep(PAUSE_S)
                 elif refresh_explanations:
                     text, source = await explain(caller, reading.first, language)
                     reading = replace(reading, explanation=text, explanation_source=source)
-                    save_cached_reading(reading, language)
+                    save_cached_reading(reading, language, FIXTURES_DIR)
                     print(f"{label}: explanation rewritten ({source})")
                     await asyncio.sleep(PAUSE_S)
                 else:

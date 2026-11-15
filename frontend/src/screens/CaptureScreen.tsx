@@ -4,6 +4,7 @@ import {
   ChevronRight,
   CircleAlert,
   CircleCheck,
+  History,
   Loader,
   TriangleAlert,
   Zap,
@@ -192,6 +193,11 @@ export function CaptureScreen({ lang, go, source, onLangChange, onSourceChange }
           />
         </ul>
       </section>
+
+      <Button variant="outline" onClick={() => go("history")}>
+        <History aria-hidden="true" />
+        {t(lang, "my_letters")}
+      </Button>
 
       <InstallHint lang={lang} />
     </div>

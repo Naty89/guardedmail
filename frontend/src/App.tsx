@@ -14,6 +14,7 @@ import { AuditScreen } from "@/screens/AuditScreen";
 import { CaptureScreen } from "@/screens/CaptureScreen";
 import { ConfirmScreen } from "@/screens/ConfirmScreen";
 import { ExplanationScreen } from "@/screens/ExplanationScreen";
+import { HistoryScreen } from "@/screens/HistoryScreen";
 import { ReadingScreen } from "@/screens/ReadingScreen";
 import { ReceiptScreen } from "@/screens/ReceiptScreen";
 import { ScamBlockedScreen } from "@/screens/ScamBlockedScreen";
@@ -115,6 +116,7 @@ export default function App() {
         {screen === "receipt" && <ReceiptScreen {...props} />}
         {screen === "scam_blocked" && <ScamBlockedScreen {...props} />}
         {screen === "audit" && <AuditScreen {...props} />}
+        {screen === "history" && <HistoryScreen {...props} />}
       </main>
 
       {debug && <JudgePanel lang={lang} screen={screen} go={setScreen} letter={letter} />}

@@ -257,3 +257,33 @@ export function askLetter(id: string, question: Blob | string): Promise<AskResul
 export function answerAudioUrl(id: string, answerId: number): string {
   return `/letters/${encodeURIComponent(id)}/answers/${answerId}/audio`;
 }
+
+/* ------------------------------------------------------------------ */
+/* Letter history                                                      */
+/* ------------------------------------------------------------------ */
+
+export type HistoryStatus = "paid" | "flagged" | "declined" | "open" | "info";
+
+/** One past letter. Facts are as the reader saw them: display only. */
+export type HistoryItem = {
+  letter_id: string;
+  language: Lang;
+  ts: string;
+  sender: string;
+  doc_type: string;
+  amount_cents: number | null;
+  due_date: string | null;
+  risk: "low" | "med" | "high";
+  status: HistoryStatus;
+};
+
+/** GET /history: every letter read on this server, newest first. */
+export function getHistory(): Promise<{ items: HistoryItem[] }> {
+  return request<{ items: HistoryItem[] }>("/history");
+}
+
+/** POST /history/{id}/open: reopen an old letter as a fresh result (new proposal if payable). */
+export function openHistoryLetter(id: string): Promise<Letter> {
+  return postJson<Letter>(`/history/${encodeURIComponent(id)}/open`);
+}
+

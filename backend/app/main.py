@@ -18,11 +18,12 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import ask, audit, calendar_export, payer, tts
+from app import ask, audit, calendar_export, history, payer, tts
 from app.letters import (
     current_balance_cents,
     demo_account_id,
     process_letter,
+    reopen_letter,
     restore_from_audit,
 )
 from app.nessie import NessieError, get_read_client
@@ -32,6 +33,7 @@ from app.schemas import (
     AskResponse,
     AuditResponse,
     BillSummary,
+    HistoryResponse,
     ConfirmRequest,
     ConfirmResponse,
     LetterResponse,
@@ -46,7 +48,7 @@ FRONTEND_DIST: Path = REPO_ROOT / "frontend" / "dist"
 
 # Paths that belong to the API. A 404 under these stays a JSON 404 and is
 # never answered with the frontend. Add new API prefixes here.
-API_PREFIXES = ("/health", "/letters", "/proposals", "/account", "/audit")
+API_PREFIXES = ("/health", "/letters", "/proposals", "/account", "/audit", "/history")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -349,6 +351,27 @@ async def get_audit(letter_id: UUID | None = None) -> AuditResponse:
     log = audit.get_log()
     chain_ok, _ = await log.chain_ok()
     return AuditResponse(events=await log.events(letter_id), chain_ok=chain_ok)
+
+
+@app.get("/history")
+async def get_history() -> HistoryResponse:
+    """Every letter read on this server, newest first, rebuilt from the audit log."""
+    return HistoryResponse(items=history.build_history(await audit.get_log().events()))
+
+
+@app.post("/history/{letter_id}/open")
+async def open_history_letter(letter_id: UUID) -> LetterResponse:
+    """Reopen an old letter as a fresh result (new proposal and token if payable)."""
+    events = await audit.get_log().events(letter_id)
+    read = next((e for e in events if e.get("event") == "letter_read"), None)
+    if read is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    try:
+        return await reopen_letter(
+            str(read["data"].get("image_sha256", "")), str(read["data"].get("language", "")))
+    except ReaderError as exc:
+        status = 404 if exc.reason == "letter_text_unavailable" else 400
+        raise HTTPException(status, {"error": exc.reason}) from None
 
 
 # Later milestones add their routes here.

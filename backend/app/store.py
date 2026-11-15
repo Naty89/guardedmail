@@ -8,10 +8,12 @@
 """
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from uuid import UUID
 
+from app import audit
 from app.reader import ReaderResult
 from app.schemas import LetterResponse, PaymentIntent, ReaderOutput
 
@@ -21,16 +23,25 @@ SAMPLE_IDS = ("electric_bill", "suspicious_letter")
 
 
 # ------------------------------------------------------------ reader cache
+#
+# New results go to backend/data/readings (git-ignored), never into the
+# committed fixtures folder. Lookups check data/ first, then fixtures/, so the
+# demo sample letters (committed on purpose) still work.
+
+
+def readings_dir() -> Path:
+    return audit.DATA_DIR / "readings"
+
+
+def thumbs_dir() -> Path:
+    return audit.DATA_DIR / "thumbs"
 
 
 def _cache_path(image_sha256: str, language: str, directory: Path) -> Path:
     return directory / f"{image_sha256}_{language}.json"
 
 
-def load_cached_reading(image_sha256: str, language: str,
-                        directory: Path | None = None) -> ReaderResult | None:
-    """Return the cached reader result for this image and language, if any."""
-    path = _cache_path(image_sha256, language, directory or FIXTURES_DIR)
+def _load_from(path: Path, image_sha256: str) -> ReaderResult | None:
     if not path.is_file():
         return None
     try:
@@ -50,9 +61,24 @@ def load_cached_reading(image_sha256: str, language: str,
         return None  # unreadable cache file: behave as if there were none
 
 
+def load_cached_reading(image_sha256: str, language: str,
+                        directory: Path | None = None) -> ReaderResult | None:
+    """Return the cached reader result for this image and language, if any.
+
+    With no `directory`, looks in backend/data/readings and then in the committed
+    fixtures folder.
+    """
+    for folder in ([directory] if directory else [readings_dir(), FIXTURES_DIR]):
+        found = _load_from(_cache_path(image_sha256, language, folder), image_sha256)
+        if found is not None:
+            return found
+    return None
+
+
 def save_cached_reading(result: ReaderResult, language: str,
                         directory: Path | None = None) -> None:
-    directory = directory or FIXTURES_DIR
+    """Save a reader result. Defaults to backend/data/readings, not the repo."""
+    directory = directory or readings_dir()
     directory.mkdir(parents=True, exist_ok=True)
     data = {
         "first": result.first.model_dump(mode="json"),
@@ -64,6 +90,24 @@ def save_cached_reading(result: ReaderResult, language: str,
     }
     _cache_path(result.image_sha256, language, directory).write_text(
         json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+_SHA_RE = re.compile(r"[0-9a-f]{64}")
+
+
+def save_thumbnail(image_sha256: str, jpeg: bytes) -> None:
+    """Keep a small picture of the letter so an old letter can be reopened."""
+    if not _SHA_RE.fullmatch(image_sha256):
+        return
+    thumbs_dir().mkdir(parents=True, exist_ok=True)
+    (thumbs_dir() / f"{image_sha256}.jpg").write_bytes(jpeg)
+
+
+def load_thumbnail(image_sha256: str) -> bytes | None:
+    if not _SHA_RE.fullmatch(image_sha256):  # never build a path from unchecked text
+        return None
+    path = thumbs_dir() / f"{image_sha256}.jpg"
+    return path.read_bytes() if path.is_file() else None
 
 
 def sample_image_bytes(sample_id: str) -> bytes | None:
