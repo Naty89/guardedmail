@@ -87,7 +87,7 @@ export default function App() {
         key={screen === "confirm" ? "explanation" : screen}
         ref={main}
         tabIndex={-1}
-        className="screen-in mx-auto w-full max-w-xl grow px-5 pt-7 pb-24 outline-none"
+        className="screen-in mx-auto w-full max-w-xl grow px-5 pt-7 pb-[max(6rem,calc(env(safe-area-inset-bottom)+4rem))] outline-none"
       >
         {screen === "capture" && (
           <CaptureScreen {...props} onLangChange={changeLang} onSourceChange={setSource} />

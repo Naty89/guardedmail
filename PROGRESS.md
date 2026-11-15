@@ -364,6 +364,17 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [ ] Spoken answers use Gemini speech only while the 10 daily speech calls last, then the browser voice
 - [ ] Not available with `DEMO_OFFLINE=1` (answers are not cached)
 
+## Installable app (PWA)
+
+- [x] Web app manifest, home-screen icons (`scripts/make_app_icons.py` draws them from the header mark), full-screen "standalone" window, status-bar colour, notch and home-bar spacing
+- [x] Chrome reports no manifest errors and no installability errors on the tunnel address
+- [x] No service worker on purpose: it could cache API answers (balance, audit log) and serve stale screens during development. The app needs the server anyway, so an offline shell would add nothing
+- [ ] **Install on a real iPhone and a real Android phone is untested.** iPhone: Safari, Share, Add to Home Screen. Android: Chrome menu, Install app (or Add to Home screen)
+- [ ] **The installed app points at the tunnel address, which changes every time the tunnel restarts.** Then the home-screen icon opens an error page. Fix: a stable address (ngrok free static domain, a Cloudflare named tunnel with your own domain, or hosting the server somewhere). Reinstall after the address changes
+- [ ] Not a native app (no App Store or Play Store listing). A native wrapper (Capacitor) would be a separate project
+
+---
+
 ## Design system (restyle, 2026-11-14)
 
 - [x] Direction: calm and editorial, with colour where it counts. Cream background, navy ink, cobalt blue (`#1d4ed8`) for main actions and colour blocks, sunny yellow (`#ffc933`, always with dark ink text) as the pop, no gradients, hairline dividers, one dominant action per screen

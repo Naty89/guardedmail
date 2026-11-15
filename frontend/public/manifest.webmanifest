@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Guarded Mail",
+  "short_name": "Guarded Mail",
+  "description": "Photograph a confusing letter or bill. Get a plain-words explanation, a scam check, and one proposed action. Demo bank, no real money.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6ec",
+  "theme_color": "#121b38",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["finance", "utilities", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
