@@ -135,6 +135,14 @@ export function getLetter(id: string): Promise<Letter> {
   return request<Letter>(`/letters/${encodeURIComponent(id)}`);
 }
 
+/**
+ * GET /letters/{id}/calendar.ics: the due date as a calendar file with two
+ * reminders. The server refuses it for scam-flagged letters (409).
+ */
+export function calendarUrl(id: string): string {
+  return `/letters/${encodeURIComponent(id)}/calendar.ics`;
+}
+
 /** GET /letters/{id}/image: a small picture of the letter for the confirm dialog. */
 export function letterImageUrl(id: string): string {
   return `/letters/${encodeURIComponent(id)}/image`;

@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   Ban,
+  CalendarPlus,
   CircleCheck,
   CircleX,
   FileSearch,
@@ -50,6 +51,8 @@ function describe(event: AuditEvent, lang: Lang): { icon: LucideIcon; text: stri
       };
     case "question_asked":
       return { icon: MessageCircleQuestion, text: t(lang, "ev_question_asked") };
+    case "calendar_exported":
+      return { icon: CalendarPlus, text: t(lang, "ev_calendar_exported") };
     case "payment_blocked":
       return { icon: Ban, text: t(lang, "ev_payment_blocked") };
     default:

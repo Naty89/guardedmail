@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import ask, audit, payer, tts
+from app import ask, audit, calendar_export, payer, tts
 from app.letters import (
     current_balance_cents,
     demo_account_id,
@@ -128,6 +128,36 @@ def get_letter_image(letter_id: UUID) -> Response:
     if record is None or record.thumbnail_jpeg is None:
         raise HTTPException(404, {"error": "letter_not_found"})
     return Response(record.thumbnail_jpeg, media_type="image/jpeg")
+
+
+@app.get("/letters/{letter_id}/calendar.ics")
+async def get_letter_calendar(letter_id: UUID) -> Response:
+    """The letter's due date as a calendar file, with two reminders.
+
+    Refused for letters flagged as a possible scam, and for letters where the
+    two readings did not agree on a due date.
+    """
+    record = STORE.by_letter(letter_id)
+    if record is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    letter = record.response
+    if letter.scam.risk != "low":
+        raise HTTPException(409, {"error": "scam_flagged"})
+    due = letter.proposal.due_date
+    if due is None:
+        raise HTTPException(409, {"error": "no_due_date"})
+    paying = letter.proposal.action == "pay"
+    ics = calendar_export.build_ics(
+        letter_id=letter_id, language=letter.language, due=due,
+        # Merchant name from our own records for a bill; otherwise the short sender text.
+        name=(letter.proposal.payee_name if paying else letter.summary.sender) or "",
+        amount_cents=letter.proposal.amount_cents if paying else None)
+    await audit.record("user", "calendar_exported", letter_id=letter_id, due_date=due.isoformat())
+    return Response(
+        ics, media_type="text/calendar; charset=utf-8",
+        headers={"Content-Disposition":
+                 f'inline; filename="{calendar_export.filename_for(due)}"',
+                 "Cache-Control": "no-store"})
 
 
 @app.get("/letters/{letter_id}/audio")

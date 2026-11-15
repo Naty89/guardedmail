@@ -111,7 +111,10 @@
     "install_ios": "Tap the Share button, then “Add to Home Screen”.",
     "install_android": "It opens full screen, like any other app.",
     "install_button": "Install the app",
-    "not_now": "Not now"
+    "not_now": "Not now",
+    "calendar_add": "Add to calendar",
+    "calendar_note": "You will get a reminder 3 days before and on the day.",
+    "ev_calendar_exported": "The due date was saved to your calendar."
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -223,7 +226,10 @@
     "install_ios": "Toque el botón Compartir y luego «Añadir a pantalla de inicio».",
     "install_android": "Se abre a pantalla completa, como cualquier otra aplicación.",
     "install_button": "Instalar la aplicación",
-    "not_now": "Ahora no"
+    "not_now": "Ahora no",
+    "calendar_add": "Añadir al calendario",
+    "calendar_note": "Recibirá un recordatorio 3 días antes y el mismo día.",
+    "ev_calendar_exported": "La fecha límite se guardó en su calendario."
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -335,7 +341,10 @@
     "install_ios": "शेयर बटन दबाएँ, फिर “होम स्क्रीन में जोड़ें” चुनें।",
     "install_android": "यह किसी भी दूसरे ऐप की तरह पूरी स्क्रीन पर खुलता है।",
     "install_button": "ऐप इंस्टॉल करें",
-    "not_now": "अभी नहीं"
+    "not_now": "अभी नहीं",
+    "calendar_add": "कैलेंडर में जोड़ें",
+    "calendar_note": "आपको 3 दिन पहले और उसी दिन याद दिलाया जाएगा।",
+    "ev_calendar_exported": "अंतिम तारीख आपके कैलेंडर में सहेजी गई।"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -447,7 +456,10 @@
     "install_ios": "షేర్ బటన్‌ను నొక్కి, ఆపై “హోమ్ స్క్రీన్‌కు జోడించు” ఎంచుకోండి.",
     "install_android": "ఇది ఇతర యాప్‌ల లాగే పూర్తి స్క్రీన్‌లో తెరుచుకుంటుంది.",
     "install_button": "యాప్‌ను ఇన్‌స్టాల్ చేయండి",
-    "not_now": "ఇప్పుడు వద్దు"
+    "not_now": "ఇప్పుడు వద్దు",
+    "calendar_add": "క్యాలెండర్‌కు జోడించండి",
+    "calendar_note": "మీకు 3 రోజుల ముందు మరియు ఆ రోజున రిమైండర్ వస్తుంది.",
+    "ev_calendar_exported": "చివరి తేదీ మీ క్యాలెండర్‌లో సేవ్ చేయబడింది."
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -559,7 +571,10 @@
     "install_ios": "பகிர் பொத்தானைத் தட்டி, பின்னர் “முகப்புத் திரையில் சேர்” என்பதைத் தேர்ந்தெடுக்கவும்.",
     "install_android": "மற்ற செயலிகளைப் போலவே இது முழுத் திரையில் திறக்கும்.",
     "install_button": "செயலியை நிறுவவும்",
-    "not_now": "இப்போது வேண்டாம்"
+    "not_now": "இப்போது வேண்டாம்",
+    "calendar_add": "நாள்காட்டியில் சேர்க்கவும்",
+    "calendar_note": "3 நாட்களுக்கு முன்பும் அன்றும் நினைவூட்டல் கிடைக்கும்.",
+    "ev_calendar_exported": "கடைசி தேதி உங்கள் நாள்காட்டியில் சேமிக்கப்பட்டது."
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -671,7 +686,10 @@
     "install_ios": "Toque no botão Compartilhar e depois em “Adicionar à Tela de Início”.",
     "install_android": "Ele abre em tela cheia, como qualquer outro aplicativo.",
     "install_button": "Instalar o aplicativo",
-    "not_now": "Agora não"
+    "not_now": "Agora não",
+    "calendar_add": "Adicionar ao calendário",
+    "calendar_note": "Você receberá um lembrete 3 dias antes e no próprio dia.",
+    "ev_calendar_exported": "O prazo foi salvo no seu calendário."
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -783,7 +801,10 @@
     "install_ios": "点按“分享”按钮，然后选择“添加到主屏幕”。",
     "install_android": "它像其他应用一样全屏打开。",
     "install_button": "安装应用",
-    "not_now": "暂不"
+    "not_now": "暂不",
+    "calendar_add": "添加到日历",
+    "calendar_note": "您会在 3 天前和当天收到提醒。",
+    "ev_calendar_exported": "截止日期已保存到您的日历。"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -895,7 +916,10 @@
     "install_ios": "اضغط على زر المشاركة، ثم «إضافة إلى الشاشة الرئيسية».",
     "install_android": "يُفتح بملء الشاشة مثل أي تطبيق آخر.",
     "install_button": "ثبّت التطبيق",
-    "not_now": "ليس الآن"
+    "not_now": "ليس الآن",
+    "calendar_add": "أضف إلى التقويم",
+    "calendar_note": "ستصلك تذكرة قبل 3 أيام وفي اليوم نفسه.",
+    "ev_calendar_exported": "تم حفظ آخر موعد في تقويمك."
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1007,6 +1031,9 @@
     "install_ios": "የማጋራት ቁልፉን ይንኩ፣ ከዚያ “ወደ መነሻ ማያ ገጽ አክል” ይምረጡ።",
     "install_android": "ልክ እንደ ሌሎች መተግበሪያዎች ሙሉ ማያ ገጽ ይከፈታል።",
     "install_button": "መተግበሪያውን ይጫኑ",
-    "not_now": "አሁን አይደለም"
+    "not_now": "አሁን አይደለም",
+    "calendar_add": "ወደ ቀን መቁጠሪያ ጨምር",
+    "calendar_note": "ከ3 ቀን በፊት እና በዕለቱ ማስታወሻ ያገኛሉ።",
+    "ev_calendar_exported": "የመጨረሻው ቀን በቀን መቁጠሪያዎ ተቀምጧል።"
   }
 }

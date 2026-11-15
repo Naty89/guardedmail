@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, CircleHelp, ListChecks, Wallet } from "lucide-react";
+import { ArrowLeft, CalendarDays, CalendarPlus, CircleHelp, ListChecks, Wallet } from "lucide-react";
 import { useEffect } from "react";
 
 import { AskBox } from "@/components/AskBox";
@@ -6,13 +6,14 @@ import { LetterFacts } from "@/components/LetterFacts";
 import { Num } from "@/components/Num";
 import { PlayButton } from "@/components/PlayButton";
 import { ScamStatus } from "@/components/ScamStatus";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { t, type Lang, type StringKey } from "@/i18n";
-import { letterAudioUrl, type Proposal } from "@/lib/api";
+import { calendarUrl, letterAudioUrl, type Proposal } from "@/lib/api";
 import { formatDate } from "@/lib/dates";
 import { formatCents } from "@/lib/format";
 import type { Screen, ScreenProps } from "@/lib/screens";
+import { cn } from "@/lib/utils";
 
 /** The plain-words explanation, the scam check result, and ONE action. */
 export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
@@ -41,7 +42,7 @@ export function ExplanationScreen({ lang, go, letter }: ScreenProps) {
 
       <ScamStatus lang={lang} scam={letter.scam} />
 
-      <ActionCard lang={lang} proposal={letter.proposal} go={go} />
+      <ActionCard lang={lang} letterId={letter.letter_id} proposal={letter.proposal} go={go} />
 
       <AskBox lang={lang} letter={letter} />
 
@@ -67,12 +68,24 @@ function blockMessage(reason: string | null): StringKey {
   return "cannot_pay_generic";
 }
 
+/** A link styled as a button. target=_blank keeps the installed app open on iPhone. */
+function CalendarLink({ lang, letterId, className }: { lang: Lang; letterId: string; className: string }) {
+  return (
+    <a href={calendarUrl(letterId)} target="_blank" rel="noopener" className={className}>
+      <CalendarPlus aria-hidden="true" />
+      {t(lang, "calendar_add")}
+    </a>
+  );
+}
+
 function ActionCard({
   lang,
+  letterId,
   proposal,
   go,
 }: {
   lang: Lang;
+  letterId: string;
   proposal: Proposal;
   go: (screen: Screen) => void;
 }) {
@@ -98,6 +111,13 @@ function ActionCard({
         <Button size="lg" variant="accent" onClick={() => go("confirm")}>
           {t(lang, "pay_button", { amount })}
         </Button>
+        {proposal.due_date && (
+          <CalendarLink
+            lang={lang}
+            letterId={letterId}
+            className={cn(buttonVariants({ variant: "light" }), "underline underline-offset-4")}
+          />
+        )}
       </section>
     );
   }
@@ -113,6 +133,8 @@ function ActionCard({
           <Num dir="auto">{formatDate(proposal.due_date, lang)}</Num>
         </p>
         <p className="m-0 text-muted-foreground">{t(lang, blockMessage(proposal.block_reason))}</p>
+        <CalendarLink lang={lang} letterId={letterId} className={buttonVariants({ size: "lg" })} />
+        <p className="m-0 text-sm text-muted-foreground">{t(lang, "calendar_note")}</p>
       </Card>
     );
   }
