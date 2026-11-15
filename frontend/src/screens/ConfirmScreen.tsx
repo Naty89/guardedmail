@@ -4,13 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { t, type StringKey } from "@/i18n";
-import { confirmProposal, letterImageUrl, rejectProposal } from "@/lib/api";
+import { confirmProposal, letterImageUrl, openHistoryLetter, rejectProposal } from "@/lib/api";
 import { formatCents } from "@/lib/format";
 import type { ScreenProps } from "@/lib/screens";
 
+/**
+ * Reasons that only mean "this offer is gone": the server was restarted and forgot
+ * it, or it took more than 5 minutes. Nothing was paid, and a new offer fixes it.
+ */
+const OFFER_GONE = ["proposal_not_found", "token_expired", "token_invalid"];
+
 /** Plain-words message for each reason the server may refuse a payment. */
 function blockedMessage(reason: string | null): StringKey {
-  if (reason === "token_expired") return "payment_expired";
+  if (reason && OFFER_GONE.includes(reason)) return "offer_gone";
   if (reason === "already_paid" || reason === "token_reused") return "already_paid";
   return "payment_failed";
 }
@@ -27,6 +33,8 @@ export function ConfirmScreen({ lang, go, letter, setLetter, setReceipt }: Scree
   const noButton = useRef<HTMLButtonElement>(null);
   const [state, setState] = useState<"asking" | "paying" | "blocked">("asking");
   const [message, setMessage] = useState<StringKey | null>(null);
+  const [canRefresh, setCanRefresh] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const proposal = letter?.proposal;
   const payable =
@@ -51,10 +59,24 @@ export function ConfirmScreen({ lang, go, letter, setLetter, setReceipt }: Scree
         return;
       }
       setMessage(blockedMessage(result.block_reason));
+      setCanRefresh(result.block_reason !== null && OFFER_GONE.includes(result.block_reason));
     } catch {
       setMessage("payment_failed");
     }
     setState("blocked");
+  }
+
+  /** Rebuild the offer from the saved reading (no photo needed) and start again. */
+  async function getNewOffer() {
+    setRefreshing(true);
+    try {
+      setLetter(await openHistoryLetter(letter!.letter_id));
+      go("explanation"); // the new offer has a new payment token; the user taps Pay again
+    } catch {
+      setMessage("history_open_error");
+      setCanRefresh(false);
+      setRefreshing(false);
+    }
   }
 
   function decline() {
@@ -110,9 +132,19 @@ export function ConfirmScreen({ lang, go, letter, setLetter, setReceipt }: Scree
         </div>
 
         {state === "blocked" ? (
-          <Button size="lg" variant="outline" onClick={() => go("explanation")}>
-            {t(lang, "back")}
-          </Button>
+          <div className="grid grid-cols-1 gap-3">
+            {canRefresh && (
+              <Button size="lg" disabled={refreshing} onClick={getNewOffer}>
+                {refreshing ? (
+                  <Loader className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                ) : null}
+                {t(lang, "get_new_offer")}
+              </Button>
+            )}
+            <Button size="lg" variant="outline" disabled={refreshing} onClick={() => go("explanation")}>
+              {t(lang, "back")}
+            </Button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">
             {/* Same size on purpose: neither answer is made easier to tap. */}

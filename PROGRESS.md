@@ -169,8 +169,12 @@ Contrast ratios were calculated by hand, not measured.
   and make mock payments. Share the address only with judges.
 - **One server process.** Letters, open proposals and the audit chain lock live in
   one process. Run a single uvicorn worker.
-- **Open proposals are lost on restart.** Paid ones and the balance are restored
-  from the audit log; an unpaid letter must be read again.
+- **Open payment offers are lost when the server restarts** (they live in memory).
+  Paid ones and the balance are restored from the audit log. If you tap Pay after a
+  restart the app now says the offer is no longer available and offers "Get a new
+  offer", which rebuilds it from the saved reading (found and fixed 2026-11-15: it used
+  to say only "the payment did not go through"). To avoid surprises during a demo, run
+  the server WITHOUT `--reload`: it restarts itself whenever a file changes.
 - **Nessie does not change its balance.** Purchases stay "pending". The balance
   shown is our own ledger.
 - **The quarantine file is plain text** on the laptop (`backend/data/`).

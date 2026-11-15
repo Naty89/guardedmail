@@ -137,7 +137,9 @@
     "remove_page": "Remove page {n}",
     "pages_hint": "More than one page? Add each page, in order.",
     "pages_ready": "{n} pages are ready",
-    "max_pages": "That is the most pages: {n}."
+    "max_pages": "That is the most pages: {n}.",
+    "offer_gone": "This payment offer is no longer available, so nothing was paid. Tap below to get a new one.",
+    "get_new_offer": "Get a new offer"
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -275,7 +277,9 @@
     "remove_page": "Quitar la página {n}",
     "pages_hint": "¿Tiene más de una página? Añada cada página, en orden.",
     "pages_ready": "{n} páginas listas",
-    "max_pages": "Ese es el máximo de páginas: {n}."
+    "max_pages": "Ese es el máximo de páginas: {n}.",
+    "offer_gone": "Esta oferta de pago ya no está disponible, así que no se pagó nada. Toque abajo para obtener una nueva.",
+    "get_new_offer": "Obtener una nueva oferta"
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -413,7 +417,9 @@
     "remove_page": "पन्ना {n} हटाएँ",
     "pages_hint": "एक से ज़्यादा पन्ने हैं? हर पन्ना क्रम से जोड़ें।",
     "pages_ready": "{n} पन्ने तैयार हैं",
-    "max_pages": "यह अधिकतम पन्ने हैं: {n}।"
+    "max_pages": "यह अधिकतम पन्ने हैं: {n}।",
+    "offer_gone": "यह भुगतान प्रस्ताव अब उपलब्ध नहीं है, इसलिए कुछ भी नहीं चुकाया गया। नया प्रस्ताव पाने के लिए नीचे दबाएँ।",
+    "get_new_offer": "नया प्रस्ताव पाएँ"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -551,7 +557,9 @@
     "remove_page": "పేజీ {n} తొలగించండి",
     "pages_hint": "ఒకటి కంటే ఎక్కువ పేజీలా? ప్రతి పేజీని క్రమంలో జోడించండి.",
     "pages_ready": "{n} పేజీలు సిద్ధంగా ఉన్నాయి",
-    "max_pages": "ఇదే గరిష్ట పేజీలు: {n}."
+    "max_pages": "ఇదే గరిష్ట పేజీలు: {n}.",
+    "offer_gone": "ఈ చెల్లింపు ఆఫర్ ఇప్పుడు అందుబాటులో లేదు, కాబట్టి ఏమీ చెల్లించబడలేదు. కొత్తది పొందడానికి క్రింద నొక్కండి.",
+    "get_new_offer": "కొత్త ఆఫర్ పొందండి"
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -689,7 +697,9 @@
     "remove_page": "பக்கம் {n} ஐ நீக்கவும்",
     "pages_hint": "ஒன்றுக்கு மேற்பட்ட பக்கங்களா? ஒவ்வொரு பக்கத்தையும் வரிசையாகச் சேர்க்கவும்.",
     "pages_ready": "{n} பக்கங்கள் தயார்",
-    "max_pages": "இதுவே அதிகபட்ச பக்கங்கள்: {n}."
+    "max_pages": "இதுவே அதிகபட்ச பக்கங்கள்: {n}.",
+    "offer_gone": "இந்தப் பணம் செலுத்தும் வாய்ப்பு இப்போது இல்லை, எனவே எதுவும் செலுத்தப்படவில்லை. புதியதைப் பெற கீழே தட்டவும்.",
+    "get_new_offer": "புதிய வாய்ப்பைப் பெறுங்கள்"
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -827,7 +837,9 @@
     "remove_page": "Remover a página {n}",
     "pages_hint": "Mais de uma página? Adicione cada página, em ordem.",
     "pages_ready": "{n} páginas prontas",
-    "max_pages": "Esse é o máximo de páginas: {n}."
+    "max_pages": "Esse é o máximo de páginas: {n}.",
+    "offer_gone": "Esta oferta de pagamento não está mais disponível, então nada foi pago. Toque abaixo para obter uma nova.",
+    "get_new_offer": "Obter uma nova oferta"
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -965,7 +977,9 @@
     "remove_page": "删除第 {n} 页",
     "pages_hint": "有多页吗？请按顺序添加每一页。",
     "pages_ready": "{n} 页已就绪",
-    "max_pages": "已达到页数上限：{n}。"
+    "max_pages": "已达到页数上限：{n}。",
+    "offer_gone": "这个付款提议已失效，所以没有扣款。点按下方获取新的提议。",
+    "get_new_offer": "获取新的提议"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -1103,7 +1117,9 @@
     "remove_page": "احذف الصفحة {n}",
     "pages_hint": "أكثر من صفحة؟ أضف كل صفحة بالترتيب.",
     "pages_ready": "{n} صفحات جاهزة",
-    "max_pages": "هذا أقصى عدد من الصفحات: {n}."
+    "max_pages": "هذا أقصى عدد من الصفحات: {n}.",
+    "offer_gone": "عرض الدفع هذا لم يعد متاحًا، لذلك لم يُدفع أي شيء. اضغط أدناه للحصول على عرض جديد.",
+    "get_new_offer": "احصل على عرض جديد"
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1241,6 +1257,8 @@
     "remove_page": "ገጽ {n} አስወግድ",
     "pages_hint": "ከአንድ በላይ ገጽ አለ? እያንዳንዱን ገጽ በቅደም ተከተል ጨምር።",
     "pages_ready": "{n} ገጾች ዝግጁ ናቸው",
-    "max_pages": "ይህ ከፍተኛው የገጽ ብዛት ነው፦ {n}።"
+    "max_pages": "ይህ ከፍተኛው የገጽ ብዛት ነው፦ {n}።",
+    "offer_gone": "ይህ የክፍያ ቅናሽ ከእንግዲህ የለም፣ ስለዚህ ምንም አልተከፈለም። አዲስ ለማግኘት ከታች ይንኩ።",
+    "get_new_offer": "አዲስ ቅናሽ ያግኙ"
   }
 }
