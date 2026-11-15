@@ -75,6 +75,18 @@ class JsonlBackend:
     async def append_quarantine(self, row: dict) -> None:
         self._append(QUARANTINE_FILE, row)
 
+    async def purge_quarantine(self, image_sha256: str) -> int:
+        """Remove the stored transcriptions of one photo. Returns how many were removed."""
+        rows = self._read(QUARANTINE_FILE)
+        kept = [row for row in rows if row.get("image_sha256") != image_sha256]
+        if len(kept) != len(rows):
+            path = self.directory / QUARANTINE_FILE
+            temp = path.with_suffix(".tmp")
+            temp.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in kept),
+                            encoding="utf-8")
+            temp.replace(path)
+        return len(rows) - len(kept)
+
 
 class MongoBackend:
     """Same interface on MongoDB (collections `audit` and `quarantine_raw_text`).
@@ -96,6 +108,10 @@ class MongoBackend:
 
     async def append_quarantine(self, row: dict) -> None:
         await self._db.quarantine_raw_text.insert_one(dict(row))
+
+    async def purge_quarantine(self, image_sha256: str) -> int:
+        result = await self._db.quarantine_raw_text.delete_many({"image_sha256": image_sha256})
+        return result.deleted_count
 
 
 # --------------------------------------------------------------------- log
@@ -160,6 +176,11 @@ class AuditLog:
             "image_sha256": image_sha256,
             "raw_texts": texts,
         })
+
+
+    async def purge_quarantine(self, image_sha256: str) -> int:
+        """Delete a photo's stored transcriptions. The audit events stay (they hold no letter text)."""
+        return await self._backend.purge_quarantine(image_sha256)
 
 
 _log: AuditLog | None = None

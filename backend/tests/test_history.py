@@ -184,7 +184,7 @@ def test_history_lists_letters_newest_first_with_status(client):
 def test_paying_a_letter_marks_it_paid_in_history(client):
     letter = upload(client)
     proposal = letter["proposal"]
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": proposal["token"]})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": proposal["token"]})
     [item] = client.get("/history").json()["items"]
     assert item["status"] == "paid"
 
@@ -220,14 +220,14 @@ def test_reopened_letter_can_be_paid_with_its_new_token(client):
     letter = upload(client)
     body = client.post(f"/history/{letter['letter_id']}/open").json()
     result = client.post(f"/proposals/{body['proposal']['id']}/confirm",
-                         json={"token": body["proposal"]["token"]}).json()
+                         json={"acknowledged": True, "token": body["proposal"]["token"]}).json()
     assert result["status"] == "paid"
 
 
 def test_reopening_a_paid_letter_cannot_pay_again(client):
     letter = upload(client)
     proposal = letter["proposal"]
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": proposal["token"]})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": proposal["token"]})
     body = client.post(f"/history/{letter['letter_id']}/open").json()
     assert body["proposal"]["action"] != "pay" and body["proposal"]["token"] is None
     assert body["proposal"]["block_reason"] == "already_paid"

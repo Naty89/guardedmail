@@ -10,6 +10,8 @@ Status:
   declined  you said "No, don't pay"
   open      a payment was offered and you have not decided
   info      nothing to pay (a notice, an unknown payee, a date to remember)
+
+A letter whose picture and text were deleted is hidden (unless it is read again).
 """
 
 from datetime import date, datetime
@@ -24,6 +26,7 @@ def _parse_time(value: str) -> datetime:
 def build_history(events: list[dict]) -> list[HistoryItem]:
     """Turn audit events (oldest first) into history items (newest first)."""
     paid_images: set[str] = set()
+    deleted_at: dict[str, str] = {}   # photo hash -> when its picture and text were deleted
     rejected_letters: set[str] = set()
     letters: dict[str, dict] = {}
 
@@ -33,6 +36,8 @@ def build_history(events: list[dict]) -> list[HistoryItem]:
         kind = event.get("event")
         if kind == "payment_executed" and data.get("image_sha256"):
             paid_images.add(data["image_sha256"])
+        elif kind == "letter_deleted" and data.get("image_sha256"):
+            deleted_at[data["image_sha256"]] = event["ts"]
         elif kind == "proposal_rejected" and letter_id:
             rejected_letters.add(letter_id)
         elif kind == "letter_read" and letter_id:
@@ -55,6 +60,8 @@ def build_history(events: list[dict]) -> list[HistoryItem]:
 
     items = []
     for (sha, language), letter in latest.items():
+        if sha in deleted_at and letter["ts"] <= deleted_at[sha]:
+            continue   # deleted, and not read again since
         first = letter["read"]["data"].get("first", {})
         risk = letter.get("risk", "low")
         if sha in paid_images:

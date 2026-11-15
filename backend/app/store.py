@@ -103,6 +103,23 @@ def save_thumbnail(image_sha256: str, jpeg: bytes) -> None:
     (thumbs_dir() / f"{image_sha256}.jpg").write_bytes(jpeg)
 
 
+def delete_letter_files(image_sha256: str) -> int:
+    """Delete the saved readings (every language) and the picture of a letter.
+
+    Only touches backend/data. The committed demo fixtures are never deleted.
+    Returns how many files were removed.
+    """
+    if not _SHA_RE.fullmatch(image_sha256):
+        return 0
+    removed = 0
+    paths = list(readings_dir().glob(f"{image_sha256}_*.json")) + [thumbs_dir() / f"{image_sha256}.jpg"]
+    for path in paths:
+        if path.is_file():
+            path.unlink()
+            removed += 1
+    return removed
+
+
 def load_thumbnail(image_sha256: str) -> bytes | None:
     if not _SHA_RE.fullmatch(image_sha256):  # never build a path from unchecked text
         return None
@@ -133,6 +150,7 @@ class LetterRecord:
     payee_name: str | None = None      # trusted merchant name, for "pay" only
     receipt: dict | None = None        # set once paid
     thumbnail_jpeg: bytes | None = None
+    requires_ack: bool = False         # the confirm call must carry acknowledged=true
     answers: list[str] = field(default_factory=list)  # answers given by /ask, for read-aloud
     debug: dict = field(default_factory=dict)
 
@@ -168,8 +186,22 @@ class Store:
     def payments(self) -> list[dict]:
         return list(self._payments)
 
+    def payee_history(self, merchant_id: str) -> tuple[int, str | None]:
+        """How many times we paid this merchant, and the date of the last payment."""
+        paid = [p for p in self._payments if p.get("merchant_id") == merchant_id]
+        last = max((p.get("paid_on") or "" for p in paid), default="") or None
+        return len(paid), last
+
     def paid_total_cents(self) -> int:
         return sum(payment["amount_cents"] for payment in self._payments)
+
+    def forget_image(self, image_sha256: str) -> None:
+        """Drop the in-memory letters for this photo. The ledger (payments, and the
+        "already paid" memory) is kept: deleting a letter must not undo a payment."""
+        for letter_id, record in list(self._by_letter.items()):
+            if record.image_sha256 == image_sha256:
+                del self._by_letter[letter_id]
+                self._by_proposal.pop(record.response.proposal.id, None)
 
     def reset(self) -> None:
         self.__init__()

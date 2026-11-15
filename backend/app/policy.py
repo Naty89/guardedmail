@@ -181,6 +181,11 @@ def decide(
     if evidence_ok is not True:
         block(ReasonId.EVIDENCE_MISSING)
 
+    # 5b. If the reader itself says it could not read the letter clearly, do not
+    #     offer to pay it. A blurry photo is a reason to retake it.
+    if "low" in (first.confidence, second.confidence):
+        block(ReasonId.LOW_CONFIDENCE)
+
     # 6. Amount: 0 < amount <= min(cap, balance). Checked on both readings.
     for amount in (first.amount_cents, second.amount_cents):
         if type(amount) is not int or amount <= 0:

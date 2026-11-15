@@ -313,23 +313,36 @@ _MONTHS = ["january", "february", "march", "april", "may", "june", "july",
            "august", "september", "october", "november", "december"]
 
 
+def amount_span(amount_cents: int, raw_text: str) -> tuple[int, int] | None:
+    """Where the amount is written in the transcription, as (start, end), or None.
+
+    Matches "$84.12", "84.12" and "$1,234.56" (commas are optional). A whole-dollar
+    amount may be printed without cents ("$84").
+    """
+    dollars, cents = divmod(amount_cents, 100)
+    digits = ",?".join(str(dollars))          # 1234 -> "1,?2,?3,?4": commas allowed anywhere
+    patterns = [rf"\$?\s?(?<![\d.]){digits}\.{cents:02d}(?!\d)"]
+    if cents == 0:
+        patterns.append(rf"\$?\s?(?<![\d.]){digits}(?![.,]?\d)")
+    for pattern in patterns:
+        match = re.search(pattern, raw_text)
+        if match:
+            return match.span()
+    return None
+
+
 def amount_in_text(amount_cents: int, raw_text: str) -> bool:
     """True if the amount is written somewhere in the transcription."""
-    text = raw_text.replace(",", "")
-    dollars, cents = divmod(amount_cents, 100)
-    if re.search(rf"(?<![\d.]){dollars}\.{cents:02d}(?!\d)", text):
-        return True
-    # A whole-dollar amount may be printed without cents ("$84").
-    return cents == 0 and re.search(rf"(?<![\d.]){dollars}(?![\d.]\d|\d)", text) is not None
+    return amount_span(amount_cents, raw_text) is not None
 
 
-def date_in_text(due: date, raw_text: str) -> bool:
-    """True if the date is written somewhere in the transcription.
+def date_span(due: date, raw_text: str) -> tuple[int, int] | None:
+    """Where the date is written in the transcription, as (start, end), or None.
 
     Accepts numeric forms (11/24/2026, 11-24-26, 2026-11-24) and month names
     (November 24, Nov 24, 24 November), with or without the year.
     """
-    text = raw_text.lower()
+    text = raw_text.lower()                  # lower-casing keeps every position the same
     y, m, d = due.year, due.month, due.day
     yy = y % 100
     numeric = [
@@ -339,14 +352,27 @@ def date_in_text(due: date, raw_text: str) -> bool:
     ]
     month = _MONTHS[m - 1]
     month_names = rf"(?:{month}|{month[:3]})\.?"
+    # A full month-day-year form first, so the whole date is highlighted, then shorter forms.
     worded = [
+        rf"{month_names}\s+0?{d}(?:st|nd|rd|th)?,?\s+{y}(?!\d)",
+        rf"(?<!\d)0?{d}(?:st|nd|rd|th)?\s+(?:of\s+)?{month_names},?\s+{y}(?!\d)",
         rf"{month_names}\s+0?{d}(?:st|nd|rd|th)?(?!\d)",
         rf"(?<!\d)0?{d}(?:st|nd|rd|th)?\s+(?:of\s+)?{month_names}",
     ]
     for pattern in numeric:
-        if re.search(rf"(?<!\d){pattern}(?!\d)", text):
-            return True
-    return any(re.search(pattern, text) for pattern in worded)
+        match = re.search(rf"(?<!\d){pattern}(?!\d)", text)
+        if match:
+            return match.span()
+    for pattern in worded:
+        match = re.search(pattern, text)
+        if match:
+            return match.span()
+    return None
+
+
+def date_in_text(due: date, raw_text: str) -> bool:
+    """True if the date is written somewhere in the transcription."""
+    return date_span(due, raw_text) is not None
 
 
 def evidence_ok(reading: ReaderOutput) -> bool:

@@ -235,7 +235,8 @@ def new_proposal(client, shade=200) -> dict:
 
 
 def confirm(client, proposal_id, **body):
-    return client.post(f"/proposals/{proposal_id}/confirm", json=body)
+    # Most tests are about the payment itself, so they tick the acknowledgement box.
+    return client.post(f"/proposals/{proposal_id}/confirm", json={"acknowledged": True, **body})
 
 
 def test_confirm_pays_and_returns_a_receipt(client):
@@ -305,7 +306,7 @@ def test_confirm_needs_a_token(client):
 def test_unknown_proposal_is_blocked(client):
     body = confirm(client, str(uuid4()), token="x" * 64).json()
     assert body["status"] == "blocked" and body["block_reason"] == "proposal_not_found"
-    assert client.post("/proposals/not-a-uuid/confirm", json={"token": "x"}).status_code == 422
+    assert client.post("/proposals/not-a-uuid/confirm", json={"acknowledged": True, "token": "x"}).status_code == 422
 
 
 def test_token_from_one_proposal_cannot_confirm_another(client):

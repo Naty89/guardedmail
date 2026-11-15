@@ -32,16 +32,17 @@ def properties(ics: str) -> list[str]:
     return ics.replace("\r\n ", "").split("\r\n")[:-1]
 
 
-def test_file_is_a_well_formed_all_day_event_with_two_reminders():
+def test_file_is_a_well_formed_all_day_event_with_three_reminders():
     lines = properties(build())
     assert lines[0] == "BEGIN:VCALENDAR" and lines[-1] == "END:VCALENDAR"
     assert "VERSION:2.0" in lines and "BEGIN:VEVENT" in lines and "END:VEVENT" in lines
     assert "DTSTART;VALUE=DATE:20261124" in lines and "DTEND;VALUE=DATE:20261125" in lines
     assert f"UID:{LETTER}@guarded-mail" in lines
     assert "DTSTAMP:20261114T120000Z" in lines
-    assert lines.count("BEGIN:VALARM") == lines.count("END:VALARM") == 2
-    assert "TRIGGER:-P2DT15H" in lines and "TRIGGER:PT9H" in lines
-    assert lines.count("ACTION:DISPLAY") == 2
+    assert lines.count("BEGIN:VALARM") == lines.count("END:VALARM") == 3
+    # A week before, the day before, and on the day, all at 9:00.
+    assert "TRIGGER:-P6DT15H" in lines and "TRIGGER:-PT15H" in lines and "TRIGGER:PT9H" in lines
+    assert lines.count("ACTION:DISPLAY") == 3
 
 
 def test_lines_end_with_crlf_and_are_at_most_75_bytes():
@@ -73,7 +74,7 @@ def test_letter_text_cannot_add_calendar_properties(hostile):
     assert names <= {"BEGIN", "END", "VERSION", "PRODID", "CALSCALE", "METHOD", "UID",
                      "DTSTAMP", "DTSTART", "DTEND", "SUMMARY", "DESCRIPTION", "TRANSP",
                      "ACTION", "TRIGGER"}
-    assert lines.count("BEGIN:VALARM") == 2
+    assert lines.count("BEGIN:VALARM") == 3
     summary = next(line for line in lines if line.startswith("SUMMARY:"))
     # Every comma, semicolon and backslash inside the text is escaped.
     assert not re.search(r"(?<!\\)[;,]", summary[len("SUMMARY:"):].replace("\\\\", ""))

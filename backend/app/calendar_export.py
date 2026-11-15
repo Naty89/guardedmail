@@ -11,7 +11,7 @@ line, so a stray newline could add a property). So every value is escaped and
 stripped of control characters before it is written, and lines are folded to
 the 75-byte limit in the standard.
 
-The two reminders: 3 days before at 9:00, and on the day at 9:00.
+The three reminders: a week before, the day before, and on the day, all at 9:00.
 """
 
 import re
@@ -71,7 +71,7 @@ def filename_for(due: date) -> str:
 
 def build_ics(*, letter_id: UUID, language: str, due: date, name: str,
               amount_cents: int | None, now: datetime | None = None) -> str:
-    """Return the text of an .ics file with one all-day event and two reminders.
+    """Return the text of an .ics file with one all-day event and three reminders.
 
     name          sender or merchant (escaped here)
     amount_cents  pass a value only for a payable bill; otherwise None
@@ -103,7 +103,12 @@ def build_ics(*, letter_id: UUID, language: str, due: date, name: str,
         "BEGIN:VALARM",
         "ACTION:DISPLAY",
         f"DESCRIPTION:{escape_text(title)}",
-        "TRIGGER:-P2DT15H",     # 3 days before, at 9:00
+        "TRIGGER:-P6DT15H",     # a week before, at 9:00
+        "END:VALARM",
+        "BEGIN:VALARM",
+        "ACTION:DISPLAY",
+        f"DESCRIPTION:{escape_text(title)}",
+        "TRIGGER:-PT15H",       # the day before, at 9:00
         "END:VALARM",
         "BEGIN:VALARM",
         "ACTION:DISPLAY",

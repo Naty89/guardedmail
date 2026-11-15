@@ -27,6 +27,7 @@ MAX_PAYEE_CHARS = 60
 MAX_RAW_TEXT_CHARS = 20000
 MAX_SCAM_SIGNALS = 7  # one slot per distinct signal
 MAX_QUOTE_CHARS = 200
+ACK_AMOUNT_CENTS = 25000  # payments of $250 or more need an extra "I checked this" tick
 
 # Letters, digits, underscore, space and . , & ' - only. No newlines, colons,
 # slashes, brackets or semicolons, so a sentence of instructions rarely fits.
@@ -62,6 +63,9 @@ ScamReasonId = Literal[
 ]
 Confidence = Literal["low", "med", "high"]
 RiskLevel = Literal["low", "med", "high"]
+# What we tell the user about the scam check. "cannot_tell" is an honest "we are not sure".
+CheckState = Literal["possible_scam", "cannot_tell", "no_warning_signs"]
+Notice = Literal["legal", "medical", "time_sensitive"]
 ProposalAction = Literal["pay", "calendar", "flag", "ask_user"]
 AuditActor = Literal["reader", "policy", "user", "payer"]
 
@@ -87,6 +91,8 @@ class ReasonId(str, Enum):
     PROPOSAL_NOT_FOUND = "proposal_not_found"
     PROPOSAL_REJECTED = "proposal_rejected"
     PAYMENT_FAILED = "payment_failed"
+    LOW_CONFIDENCE = "low_confidence"
+    ACKNOWLEDGEMENT_REQUIRED = "acknowledgement_required"
 
 
 # ------------------------------------------------- untrusted: reader output
@@ -215,6 +221,10 @@ class Proposal(BaseModel):
     expires_at: datetime | None = None
     token: str | None = None
     block_reason: ReasonId | None = None
+    # Payee memory, from our own payment records (never from the letter):
+    first_payment: bool | None = None   # True = we have never paid this payee before
+    last_paid: date | None = None       # the last time we paid this payee
+    requires_ack: bool = False          # the user must tick "I checked this" to confirm
 
 
 class LetterSummary(BaseModel):
@@ -237,7 +247,25 @@ class LetterResponse(BaseModel):
     explanation: str
     summary: LetterSummary
     scam: ScamResult
+    check_state: CheckState = "no_warning_signs"
+    notices: list[Notice] = []
     proposal: Proposal
+
+
+class OriginalHighlight(BaseModel):
+    """A stretch of the original text to mark: the sentence behind a claim."""
+
+    start: int
+    end: int
+    kind: Literal["amount", "due_date", "sender"]
+
+
+class OriginalResponse(BaseModel):
+    """Response of GET /letters/{id}/original: the text read from the photo."""
+
+    text: str  # untrusted letter text. For display to the user only.
+    highlights: list[OriginalHighlight] = []
+    truncated: bool = False
 
 
 class AskResponse(BaseModel):
@@ -250,11 +278,16 @@ class AskResponse(BaseModel):
 
 
 class ConfirmRequest(BaseModel):
-    """Body of POST /proposals/{id}/confirm. Token only: no amount, no payee."""
+    """Body of POST /proposals/{id}/confirm.
+
+    The token, plus whether the user ticked "I checked this with the sender".
+    There is no amount and no payee: the server uses the ones it stored.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     token: str = Field(min_length=1, max_length=512)
+    acknowledged: bool = False
 
 
 class Receipt(BaseModel):

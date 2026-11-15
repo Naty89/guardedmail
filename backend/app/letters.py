@@ -14,7 +14,7 @@ import time
 from datetime import date, datetime, timezone
 from uuid import UUID, uuid4
 
-from app import audit, policy
+from app import audit, guidance, policy
 from app.config import get_settings
 from app.controller import choose_action
 from app.nessie import NessieError, get_read_client
@@ -29,6 +29,7 @@ from app.reader import (
     thumbnail,
 )
 from app.schemas import (
+    ACK_AMOUNT_CENTS,
     LANGUAGES,
     LetterResponse,
     LetterSummary,
@@ -94,6 +95,7 @@ async def restore_from_audit() -> int:
             STORE.record_payment(str(data.get("image_sha256", "")), {
                 "nessie_id": str(data.get("nessie_id", "")),
                 "payee_name": str(data.get("payee_name", "")),
+                "merchant_id": str(data.get("merchant_id", "")),
                 "amount_cents": int(data.get("amount_cents", 0)),
                 "paid_on": str(event.get("ts", ""))[:10],
             })
@@ -225,7 +227,13 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
 
     intent = verdict.intent if action == "pay" else None
     expires_at = None
+    requires_ack = False
     if intent is not None:
+        # Payee memory, from our own payment records. A first payment to a payee,
+        # or a large one, needs the user's extra "I checked this" tick to confirm.
+        paid_count, last_paid = STORE.payee_history(intent.merchant_id)
+        first_payment = paid_count == 0
+        requires_ack = first_payment or intent.amount_cents >= ACK_AMOUNT_CENTS
         # Every field below comes from the PaymentIntent or our merchant record.
         expires_at = policy.expiry_for(now)
         proposal = Proposal(
@@ -234,6 +242,9 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
             amount_cents=intent.amount_cents, due_date=intent.due_date,
             expires_at=datetime.fromtimestamp(expires_at, timezone.utc),
             token=policy.sign_token(intent, expires_at, get_settings().token_secret),
+            first_payment=first_payment,
+            last_paid=date.fromisoformat(last_paid) if last_paid else None,
+            requires_ack=requires_ack,
         )
     else:
         proposal = Proposal(
@@ -251,8 +262,13 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
         amount_cents=intent.amount_cents if intent else None,
         expires_at=expires_at, balance_cents=current_balance_cents())
 
+    state = guidance.check_state(scam_risk=scam.risk, first=first, second=second,
+                                 evidence_ok=reading.evidence_ok)
+    notices = guidance.detect_notices(first, second, state, today or now.date())
+
     response = LetterResponse(
         letter_id=letter_id, language=language, explanation=reading.explanation,
+        check_state=state, notices=notices,
         summary=LetterSummary(
             doc_type=first.doc_type, sender=first.payee_candidate,
             amount_cents=first.amount_cents or None, due_date=first.due_date),
@@ -260,7 +276,7 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
     )
     STORE.add(LetterRecord(
         response=response, image_sha256=reading.image_sha256,
-        intent=intent, expires_at=expires_at,
+        intent=intent, expires_at=expires_at, requires_ack=requires_ack,
         payee_name=verdict.merchant.name if intent is not None else None,
         thumbnail_jpeg=thumbnail_jpeg,
         debug={
@@ -273,6 +289,11 @@ async def finish_letter(*, letter_id: UUID, reading: ReaderResult, from_cache: b
             "policy_allowed": verdict.allowed,
             "policy_reasons": [reason.value for reason in verdict.reasons],
             "match_score": verdict.match_score,
+            "check_state": state,
+            # Exactly what the payment side is given. Nothing from the letter's text.
+            "payment_side": None if intent is None else {
+                "proposal_id": str(intent.proposal_id), "merchant_id": intent.merchant_id,
+                "amount_cents": intent.amount_cents, "due_date": intent.due_date.isoformat()},
         },
     ))
     return response

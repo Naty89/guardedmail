@@ -180,7 +180,7 @@ def upload(client, shade=200) -> dict:
 def test_paying_a_letter_leaves_a_complete_verified_trail(client):
     letter = upload(client)
     proposal = letter["proposal"]
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": proposal["token"]})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": proposal["token"]})
 
     body = client.get(f"/audit?letter_id={letter['letter_id']}").json()
     assert body["chain_ok"] is True
@@ -212,9 +212,9 @@ def test_transcription_goes_to_quarantine_and_never_to_the_audit_log(client):
 def test_blocked_and_rejected_actions_are_logged_with_reason_ids(client):
     letter = upload(client)
     proposal = letter["proposal"]
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": "0" * 64})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": "0" * 64})
     client.post(f"/proposals/{proposal['id']}/reject")
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": proposal["token"]})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": proposal["token"]})
     events = client.get(f"/audit?letter_id={letter['letter_id']}").json()["events"]
     blocked = [e["data"]["reason"] for e in events if e["event"] == "payment_blocked"]
     assert blocked == ["token_invalid", "proposal_rejected"]
@@ -239,7 +239,7 @@ def test_tampered_log_is_reported_by_the_api(client):
 def test_ledger_survives_a_restart(client):
     letter = upload(client)
     proposal = letter["proposal"]
-    client.post(f"/proposals/{proposal['id']}/confirm", json={"token": proposal["token"]})
+    client.post(f"/proposals/{proposal['id']}/confirm", json={"acknowledged": True, "token": proposal["token"]})
     assert client.get("/account").json()["balance_cents"] == 191588
 
     # "Restart": memory is wiped, then the app replays the audit log.

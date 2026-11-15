@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import REPO_ROOT, get_settings
-from app import ask, audit, calendar_export, history, payer, tts
+from app import ask, audit, calendar_export, history, original, payer, store as stored, tts
 from app.letters import (
     current_balance_cents,
     demo_account_id,
@@ -37,6 +37,7 @@ from app.schemas import (
     ConfirmRequest,
     ConfirmResponse,
     LetterResponse,
+    OriginalResponse,
     PaymentSummary,
     ReasonId,
     Receipt,
@@ -169,6 +170,41 @@ async def get_letter_calendar(letter_id: UUID) -> Response:
                  "Cache-Control": "no-store"})
 
 
+@app.get("/letters/{letter_id}/original")
+def get_letter_original(letter_id: UUID) -> OriginalResponse:
+    """The text read from the photo, with the amount, due date and sender marked.
+
+    For the user's screen only: the explanation can be compared with it. It is
+    not sent to any model.
+    """
+    record = STORE.by_letter(letter_id)
+    if record is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    reading = load_cached_reading(record.image_sha256, record.response.language)
+    if reading is None:
+        raise HTTPException(404, {"error": "letter_text_unavailable"})
+    text = reading.first.raw_text
+    truncated = len(text) > original.MAX_ORIGINAL_CHARS
+    text = text[:original.MAX_ORIGINAL_CHARS]
+    return OriginalResponse(text=text, highlights=original.highlights(reading.first, text),
+                            truncated=truncated)
+
+
+@app.post("/letters/{letter_id}/trusted-alert", status_code=204)
+async def trusted_alert(letter_id: UUID) -> Response:
+    """Record that the user asked someone they trust to check this letter.
+
+    The message itself is sent from the user's own phone (share sheet), so only
+    the fact that it happened is logged here.
+    """
+    record = STORE.by_letter(letter_id)
+    if record is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    await audit.record("user", "trusted_person_asked", letter_id=letter_id,
+                       check_state=record.response.check_state)
+    return Response(status_code=204)
+
+
 @app.get("/letters/{letter_id}/audio")
 async def get_letter_audio(letter_id: UUID) -> Response:
     """The explanation read aloud (WAV), or 204 so the browser uses its own voice."""
@@ -271,6 +307,10 @@ async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmRe
         return await blocked(ReasonId.PROPOSAL_REJECTED)
     if record.status != "paid" and STORE.is_paid(record.image_sha256):
         return await blocked(ReasonId.ALREADY_PAID)
+    if record.requires_ack and not body.acknowledged:
+        # First payment to this payee, or a large payment: the user must tick
+        # "I checked this". Checked before the token, so the token is not used up.
+        return await blocked(ReasonId.ACKNOWLEDGEMENT_REQUIRED)
 
     settings = get_settings()
     now = datetime.now(timezone.utc)
@@ -290,6 +330,7 @@ async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmRe
     record.status = "paid"
     STORE.record_payment(record.image_sha256, {
         "nessie_id": result.nessie_id, "payee_name": record.payee_name or "",
+        "merchant_id": record.intent.merchant_id,
         "amount_cents": record.intent.amount_cents, "paid_on": now.date().isoformat(),
     })
     receipt = Receipt(
@@ -304,7 +345,8 @@ async def confirm_proposal(proposal_id: UUID, body: ConfirmRequest) -> ConfirmRe
         image_sha256=record.image_sha256, merchant_id=record.intent.merchant_id,
         payee_name=receipt.payee_name, amount_cents=receipt.amount_cents,
         nessie_id=receipt.nessie_id, new_balance_cents=receipt.new_balance_cents,
-        bill_marked=result.bill_marked, tool_calls=list(result.steps))
+        bill_marked=result.bill_marked, acknowledged=body.acknowledged,
+        tool_calls=list(result.steps))
     return ConfirmResponse(status="paid", receipt=receipt)
 
 
@@ -379,6 +421,26 @@ async def open_history_letter(letter_id: UUID) -> LetterResponse:
     except ReaderError as exc:
         status = 404 if exc.reason == "letter_text_unavailable" else 400
         raise HTTPException(status, {"error": exc.reason}) from None
+
+
+@app.delete("/history/{letter_id}")
+async def delete_history_letter(letter_id: UUID) -> dict:
+    """Delete a letter's saved picture and text, and hide it from the list.
+
+    What stays: the audit log's record that the letter was read and what was
+    decided (it holds no letter text), and any payment already made.
+    """
+    events = await audit.get_log().events(letter_id)
+    read = next((e for e in events if e.get("event") == "letter_read"), None)
+    if read is None:
+        raise HTTPException(404, {"error": "letter_not_found"})
+    sha = str(read["data"].get("image_sha256", ""))
+    files = stored.delete_letter_files(sha)
+    transcripts = await audit.get_log().purge_quarantine(sha)
+    STORE.forget_image(sha)
+    await audit.record("user", "letter_deleted", letter_id=letter_id, image_sha256=sha,
+                       files_removed=files, transcripts_removed=transcripts)
+    return {"status": "deleted"}
 
 
 # Later milestones add their routes here.

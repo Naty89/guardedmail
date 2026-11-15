@@ -299,9 +299,11 @@ def test_post_letters_returns_the_documented_shape(client):
     response = upload(client)
     assert response.status_code == 200
     body = response.json()
-    assert set(body) == {"letter_id", "language", "explanation", "summary", "scam", "proposal"}
+    assert set(body) == {"letter_id", "language", "explanation", "summary", "scam",
+                         "check_state", "notices", "proposal"}
     assert set(body["proposal"]) == {"id", "action", "payee_name", "amount_cents",
-                                     "due_date", "expires_at", "token", "block_reason"}
+                                     "due_date", "expires_at", "token", "block_reason",
+                                     "first_payment", "last_paid", "requires_ack"}
     assert body["proposal"]["action"] == "pay"
     assert "raw_text" not in response.text and RAW not in response.text
 

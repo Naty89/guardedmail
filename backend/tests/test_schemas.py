@@ -542,8 +542,10 @@ def test_reason_ids():
         "proposal_not_found",
         "proposal_rejected",
         "payment_failed",
+        "low_confidence",
+        "acknowledgement_required",
     }
-    assert len(values) == len(set(values)) == 18
+    assert len(values) == len(set(values)) == 20
     for reason in ReasonId:
         assert re.fullmatch(r"[a-z]+(_[a-z]+)*", reason.value)
         assert reason.name == reason.value.upper()
