@@ -20,7 +20,7 @@ export function LetterFacts({ lang, letter }: { lang: Lang; letter: Letter }) {
         </span>
       </Fact>
       {hasNumbers && (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] divide-x divide-hairline border-t border-hairline rtl:divide-x-reverse">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] divide-x divide-hairline border-t border-hairline rtl:divide-x-reverse big:grid-cols-1 big:divide-x-0 big:divide-y">
           {amount_cents !== null && (
             <Fact label={t(lang, "amount")}>
               <span className="font-heading text-2xl">

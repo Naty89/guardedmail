@@ -114,7 +114,15 @@
     "not_now": "Not now",
     "calendar_add": "Add to calendar",
     "calendar_note": "You will get a reminder 3 days before and on the day.",
-    "ev_calendar_exported": "The due date was saved to your calendar."
+    "ev_calendar_exported": "The due date was saved to your calendar.",
+    "display_settings": "Display",
+    "text_size": "Text size",
+    "size_normal": "Normal",
+    "size_large": "Large",
+    "size_xlarge": "Extra large",
+    "contrast": "Colours",
+    "contrast_standard": "Standard",
+    "contrast_high": "High contrast"
   },
   "es": {
     "app_name": "Guarded Mail",
@@ -229,7 +237,15 @@
     "not_now": "Ahora no",
     "calendar_add": "Añadir al calendario",
     "calendar_note": "Recibirá un recordatorio 3 días antes y el mismo día.",
-    "ev_calendar_exported": "La fecha límite se guardó en su calendario."
+    "ev_calendar_exported": "La fecha límite se guardó en su calendario.",
+    "display_settings": "Pantalla",
+    "text_size": "Tamaño del texto",
+    "size_normal": "Normal",
+    "size_large": "Grande",
+    "size_xlarge": "Muy grande",
+    "contrast": "Colores",
+    "contrast_standard": "Estándar",
+    "contrast_high": "Alto contraste"
   },
   "hi": {
     "app_name": "Guarded Mail",
@@ -344,7 +360,15 @@
     "not_now": "अभी नहीं",
     "calendar_add": "कैलेंडर में जोड़ें",
     "calendar_note": "आपको 3 दिन पहले और उसी दिन याद दिलाया जाएगा।",
-    "ev_calendar_exported": "अंतिम तारीख आपके कैलेंडर में सहेजी गई।"
+    "ev_calendar_exported": "अंतिम तारीख आपके कैलेंडर में सहेजी गई।",
+    "display_settings": "डिस्प्ले",
+    "text_size": "अक्षरों का आकार",
+    "size_normal": "सामान्य",
+    "size_large": "बड़ा",
+    "size_xlarge": "बहुत बड़ा",
+    "contrast": "रंग",
+    "contrast_standard": "सामान्य",
+    "contrast_high": "ज़्यादा कंट्रास्ट"
   },
   "te": {
     "app_name": "Guarded Mail",
@@ -459,7 +483,15 @@
     "not_now": "ఇప్పుడు వద్దు",
     "calendar_add": "క్యాలెండర్‌కు జోడించండి",
     "calendar_note": "మీకు 3 రోజుల ముందు మరియు ఆ రోజున రిమైండర్ వస్తుంది.",
-    "ev_calendar_exported": "చివరి తేదీ మీ క్యాలెండర్‌లో సేవ్ చేయబడింది."
+    "ev_calendar_exported": "చివరి తేదీ మీ క్యాలెండర్‌లో సేవ్ చేయబడింది.",
+    "display_settings": "డిస్‌ప్లే",
+    "text_size": "అక్షరాల పరిమాణం",
+    "size_normal": "సాధారణం",
+    "size_large": "పెద్దది",
+    "size_xlarge": "చాలా పెద్దది",
+    "contrast": "రంగులు",
+    "contrast_standard": "ప్రామాణికం",
+    "contrast_high": "అధిక కాంట్రాస్ట్"
   },
   "ta": {
     "app_name": "Guarded Mail",
@@ -574,7 +606,15 @@
     "not_now": "இப்போது வேண்டாம்",
     "calendar_add": "நாள்காட்டியில் சேர்க்கவும்",
     "calendar_note": "3 நாட்களுக்கு முன்பும் அன்றும் நினைவூட்டல் கிடைக்கும்.",
-    "ev_calendar_exported": "கடைசி தேதி உங்கள் நாள்காட்டியில் சேமிக்கப்பட்டது."
+    "ev_calendar_exported": "கடைசி தேதி உங்கள் நாள்காட்டியில் சேமிக்கப்பட்டது.",
+    "display_settings": "காட்சி",
+    "text_size": "எழுத்தின் அளவு",
+    "size_normal": "வழக்கமான",
+    "size_large": "பெரிய",
+    "size_xlarge": "மிகப் பெரிய",
+    "contrast": "நிறங்கள்",
+    "contrast_standard": "வழக்கமான",
+    "contrast_high": "அதிக மாறுபாடு"
   },
   "pt": {
     "app_name": "Guarded Mail",
@@ -689,7 +729,15 @@
     "not_now": "Agora não",
     "calendar_add": "Adicionar ao calendário",
     "calendar_note": "Você receberá um lembrete 3 dias antes e no próprio dia.",
-    "ev_calendar_exported": "O prazo foi salvo no seu calendário."
+    "ev_calendar_exported": "O prazo foi salvo no seu calendário.",
+    "display_settings": "Tela",
+    "text_size": "Tamanho do texto",
+    "size_normal": "Normal",
+    "size_large": "Grande",
+    "size_xlarge": "Muito grande",
+    "contrast": "Cores",
+    "contrast_standard": "Padrão",
+    "contrast_high": "Alto contraste"
   },
   "zh": {
     "app_name": "Guarded Mail",
@@ -804,7 +852,15 @@
     "not_now": "暂不",
     "calendar_add": "添加到日历",
     "calendar_note": "您会在 3 天前和当天收到提醒。",
-    "ev_calendar_exported": "截止日期已保存到您的日历。"
+    "ev_calendar_exported": "截止日期已保存到您的日历。",
+    "display_settings": "显示",
+    "text_size": "文字大小",
+    "size_normal": "标准",
+    "size_large": "大",
+    "size_xlarge": "特大",
+    "contrast": "颜色",
+    "contrast_standard": "标准",
+    "contrast_high": "高对比度"
   },
   "ar": {
     "app_name": "Guarded Mail",
@@ -919,7 +975,15 @@
     "not_now": "ليس الآن",
     "calendar_add": "أضف إلى التقويم",
     "calendar_note": "ستصلك تذكرة قبل 3 أيام وفي اليوم نفسه.",
-    "ev_calendar_exported": "تم حفظ آخر موعد في تقويمك."
+    "ev_calendar_exported": "تم حفظ آخر موعد في تقويمك.",
+    "display_settings": "العرض",
+    "text_size": "حجم النص",
+    "size_normal": "عادي",
+    "size_large": "كبير",
+    "size_xlarge": "كبير جدًا",
+    "contrast": "الألوان",
+    "contrast_standard": "قياسي",
+    "contrast_high": "تباين عالٍ"
   },
   "am": {
     "app_name": "Guarded Mail",
@@ -1034,6 +1098,14 @@
     "not_now": "አሁን አይደለም",
     "calendar_add": "ወደ ቀን መቁጠሪያ ጨምር",
     "calendar_note": "ከ3 ቀን በፊት እና በዕለቱ ማስታወሻ ያገኛሉ።",
-    "ev_calendar_exported": "የመጨረሻው ቀን በቀን መቁጠሪያዎ ተቀምጧል።"
+    "ev_calendar_exported": "የመጨረሻው ቀን በቀን መቁጠሪያዎ ተቀምጧል።",
+    "display_settings": "ማሳያ",
+    "text_size": "የጽሑፍ መጠን",
+    "size_normal": "መደበኛ",
+    "size_large": "ትልቅ",
+    "size_xlarge": "እጅግ ትልቅ",
+    "contrast": "ቀለሞች",
+    "contrast_standard": "መደበኛ",
+    "contrast_high": "ከፍተኛ ንፅፅር"
   }
 }

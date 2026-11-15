@@ -3,10 +3,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { BackendStatus } from "@/components/BackendStatus";
 import { DemoTag } from "@/components/DemoTag";
+import { DisplaySettings } from "@/components/DisplaySettings";
 import { JudgePanel } from "@/components/JudgePanel";
 import { dirFor, loadLang, saveLang, t, type Lang } from "@/i18n";
 import type { Letter, Receipt } from "@/lib/api";
 import { isDebug } from "@/lib/debug";
+import { applyPrefs, loadPrefs, savePrefs, type Prefs } from "@/lib/prefs";
 import type { LetterSource, Screen, ScreenProps } from "@/lib/screens";
 import { AuditScreen } from "@/screens/AuditScreen";
 import { CaptureScreen } from "@/screens/CaptureScreen";
@@ -27,6 +29,7 @@ export default function App() {
   const [letter, setLetter] = useState<Letter | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [debug] = useState(isDebug);
+  const [prefs, setPrefs] = useState<Prefs>(loadPrefs);
   const dir = dirFor(lang);
 
   // Keep <html> in step too: dialogs render outside our root element.
@@ -46,6 +49,16 @@ export default function App() {
     main.current?.focus();
     window.scrollTo(0, 0);
   }, [screen]);
+
+  // Text size and contrast go on <html> so the stylesheet can react to them.
+  useEffect(() => {
+    applyPrefs(prefs);
+  }, [prefs]);
+
+  function changePrefs(next: Prefs) {
+    setPrefs(next);
+    savePrefs(next);
+  }
 
   function changeLang(next: Lang) {
     setLang(next);
@@ -71,16 +84,19 @@ export default function App() {
         <p className="m-0 flex items-center gap-2.5" lang="en" dir="ltr" aria-label={t(lang, "app_name")}>
           <span
             aria-hidden="true"
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-ink shadow-[0_3px_8px_-3px_rgb(18_27_56/0.55)]"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent big:size-9 text-ink shadow-[0_3px_8px_-3px_rgb(18_27_56/0.55)]"
           >
             <Mail className="size-[1.35rem]" strokeWidth={2.25} />
           </span>
-          <span aria-hidden="true" className="flex items-center gap-1.5 text-[1.5rem] leading-none font-bold">
+          <span aria-hidden="true" className="flex items-center gap-1.5 text-[1.5rem] leading-none font-bold big:text-[1.2rem]">
             <span className="text-ink">Guarded</span>
             <span className="rounded-lg bg-primary px-2 py-0.5 text-white">Mail</span>
           </span>
         </p>
-        <BackendStatus lang={lang} />
+        <div className="flex items-center gap-1">
+          <BackendStatus lang={lang} />
+          <DisplaySettings lang={lang} prefs={prefs} onChange={changePrefs} />
+        </div>
       </header>
 
       <main

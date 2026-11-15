@@ -364,6 +364,17 @@ UNAUTHORISED PAYMENTS                0 / 14
 - [ ] Spoken answers use Gemini speech only while the 10 daily speech calls last, then the browser voice
 - [ ] Not available with `DEMO_OFFLINE=1` (answers are not cached)
 
+## Added features (2026-11-15)
+
+- [x] **Calendar export:** `GET /letters/{id}/calendar.ics` gives an all-day event with two reminders (3 days before at 9:00, and on the day at 9:00). Built from stored facts only; letter text is escaped so it cannot add calendar properties (tested with hostile names); refused for scam letters and for letters with no agreed due date. "Add to calendar" on the pay panel and the calendar card. Logged in the audit log
+- [ ] Calendar link not tried on a real iPhone or Android: opens in a new tab (`target=_blank`) so the installed iPhone app should keep running, but that is unverified
+- [x] **Display settings:** a header button opens text size (normal, large, extra large = 18px, 21px, 24px base) and a high-contrast mode (pure black on white, text at least 7:1, strong card edges, no shadows). Saved on the device, applied before first paint, follows the phone's own "increase contrast" setting on first visit. Layout re-measured at 360px with extra-large text and high contrast: no overflow, no small tap targets (found and fixed two real overflows: the due date and the question box)
+- [x] `tests/test_i18n.py`: every language has every string, placeholders survive translation, English never says safe/legitimate/verified, digits are always 0-9
+- [ ] Letter history (in progress)
+- [ ] Multi-page letters (not started)
+
+---
+
 ## Installable app (PWA)
 
 - [x] Web app manifest, home-screen icons (`scripts/make_app_icons.py` draws them from the header mark), full-screen "standalone" window, status-bar colour, notch and home-bar spacing
